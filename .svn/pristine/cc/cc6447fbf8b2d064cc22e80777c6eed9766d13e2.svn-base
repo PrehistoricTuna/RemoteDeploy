@@ -1,0 +1,4 @@
+[Internet]
+LocalIP=5.11.1.2
+Netmask=255.252.0.0
+Gateway=1.8.254.254
