@@ -1364,18 +1364,24 @@ namespace RemoteDeploy.DataPack
             }
 
         }
-
         #endregion
 
+        /// <summary>
+        /// 初始化心跳计时器
+        /// </summary>
         private static void HeartBeatTimerInit()
         {
-            timerHB.Interval = 15000;
-            timerHB.AutoReset = false;
             timerHB.Stop();
             timerHB.Close();
+            timerHB.Interval = 15000;
+            timerHB.AutoReset = false;
             timerHB.Start();
+            timerHB.Elapsed += new ElapsedEventHandler(timerHB_Elapsed);
         }
 
+        /// <summary>
+        /// 心跳计时器事件
+        /// </summary>
         private static void timerHB_Elapsed(object sender, EventArgs e)
         {
             timeout = true;

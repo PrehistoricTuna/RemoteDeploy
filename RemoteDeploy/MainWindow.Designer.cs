@@ -1070,7 +1070,7 @@
             // 
             // timer2
             //
-            this.timer1.Enabled = false;
+            this.timer2.Enabled = false;
             this.timer2.Interval = 22000;
             //this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
