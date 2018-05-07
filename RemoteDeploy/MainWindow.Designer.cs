@@ -1064,7 +1064,7 @@
             // 
             // timer1
             // 
-            this.timer1.Enabled = true;
+            this.timer1.Enabled = false;
             this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
@@ -1072,7 +1072,7 @@
             //
             this.timer2.Enabled = false;
             this.timer2.Interval = 22000;
-            //this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // dataGridViewTextBoxColumn1
             // 

@@ -58,6 +58,8 @@ namespace RemoteDeploy
 
         private bool selectConfirmed = false;
 
+        private int skipCountMax = 15;
+
         private Dictionary<BackgroundWorker, IProduct> wokerList = new Dictionary<BackgroundWorker, IProduct>();
         #endregion
 
@@ -412,6 +414,8 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void linkEstab_Click(object sender, EventArgs e)
         {
+            timer1.Enabled = true;
+
             //遍历用户选择的需要建立链接的产品对象信息
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
             {
@@ -420,11 +424,44 @@ namespace RemoteDeploy
                 if (product.CTcpClient != null)
                 {
                     product.CTcpClient.Socket_TCPClient_Dispose();
-                    InitDataGridViewColumns();
-                    InitSelectedDevice();
+                    //InitDataGridViewColumns();
+                    //InitSelectedDevice();
                 }
                 //发送建链信息帧
-                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));                
+                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+
+                //bool rev = false;
+                //int skipCount = 0;
+                //do
+                //{
+                //    ///如果文件状态为true
+                //    if (product.ProductState == "正常")
+                //    {
+                //        product.Report.ReportWindow("VOBC产品" + product.ProductID + "已与下位机建链");
+                //        LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "完成首次建链");
+                //        rev = true;
+                //    }
+                //    else
+                //    {
+                //        //计数15次 未收到允许更新就跳出循环结束
+                //        if (skipCount > skipCountMax)
+                //        {
+                //            skipCount = 0;
+                //            product.Report.ReportWindow("VOBC产品" + product.ProductID + "建链超时，请重新尝试建链！");
+                //            LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "建链超时！");
+                //            break;
+                //        }
+                //        else
+                //        {
+                //            //跳出计数+1
+                //            skipCount++;
+
+                //            //休眠1秒
+                //            Thread.Sleep(1000);
+                //        }
+                //        //Thread.Sleep(3000);
+                //    }
+                //} while (rev == false);
 
                 if (timer2.Enabled == false)
                 {
@@ -633,7 +670,15 @@ namespace RemoteDeploy
         /// </summary>
         private void APPInit()
         {
-            
+            //禁用确认按钮
+            button_OK.Enabled = false;
+
+            //禁用建链按钮
+            linkEstab.Enabled = false;
+
+            //禁用状态查看按钮
+            tsbStateUpdate.Enabled = false;
+
             //禁用部署按钮
             tsbDeploy.Enabled = false;
 
@@ -883,6 +928,8 @@ namespace RemoteDeploy
         void login_ChangeState(bool topmost)
         {
             button_OK.Enabled = true;
+            linkEstab.Enabled = true;
+            tsbStateUpdate.Enabled = true;
         }
 
         /// <summary>
@@ -891,6 +938,10 @@ namespace RemoteDeploy
         private void 注销ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             button_OK.Enabled = false;
+            linkEstab.Enabled = false;
+            tsbStateUpdate.Enabled = false;
+            tsbDeploy.Enabled = false;
+            tsbStop.Enabled = false;
         }
 
         /// <summary>
@@ -979,11 +1030,18 @@ namespace RemoteDeploy
             {
                 //获取产品实例对象
                 IProduct product = container[oneProduct.Index] as IProduct;
-                if (product.CTcpClient == null)
-                //if (product.ProductState != "正常")
+                //if (product.CTcpClient == null)
+                if (product.ProductState == "正常")
                 {
-                    //发送建链信息帧
-                    CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+                    product.Report.ReportWindow("VOBC产品" + product.ProductID + "已与下位机建链");
+                    LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "完成首次建链");
+                    ////发送建链信息帧
+                    //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+                }
+                else
+                {
+                    product.Report.ReportWindow("VOBC产品" + product.ProductID + "建链超时，请重新尝试建链！");
+                    LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "建链超时！");
                 }
             }
             timer2.Stop();

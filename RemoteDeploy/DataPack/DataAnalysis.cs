@@ -116,7 +116,7 @@ namespace RemoteDeploy.DataPack
 
         public static bool timeout = false;
 
-        private static bool timerEnable = true;
+        private static bool timerEnable = false;
 
         #endregion
 
@@ -1364,11 +1364,9 @@ namespace RemoteDeploy.DataPack
             }
 
         }
+
         #endregion
 
-        /// <summary>
-        /// 初始化心跳计时器
-        /// </summary>
         private static void HeartBeatTimerInit()
         {
             timerHB.Stop();
@@ -1376,12 +1374,9 @@ namespace RemoteDeploy.DataPack
             timerHB.Interval = 15000;
             timerHB.AutoReset = false;
             timerHB.Start();
-            timerHB.Elapsed += new ElapsedEventHandler(timerHB_Elapsed);
+            timerHB.Elapsed += new System.Timers.ElapsedEventHandler(timerHB_Elapsed);
         }
 
-        /// <summary>
-        /// 心跳计时器事件
-        /// </summary>
         private static void timerHB_Elapsed(object sender, EventArgs e)
         {
             timeout = true;

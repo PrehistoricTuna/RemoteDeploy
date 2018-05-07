@@ -18,8 +18,8 @@ namespace RemoteDeploy
             InitializeComponent();
             comboBox_UserType.Items.Add("VOBC");
             comboBox_UserType.Items.Add("ZC");
-            dataGridView1.DataSource = SqliteHelper.ExecuteNonQuery("SELECT * FROM VOBCPassword", null);
-            dataGridView2.DataSource = SqliteHelper.ExecuteNonQuery("SELECT * FROM ZCPassword", null);
+            //dataGridView1.DataSource = SqliteHelper.ExecuteNonQuery("SELECT * FROM VOBCPassword", null);
+            //dataGridView2.DataSource = SqliteHelper.ExecuteNonQuery("SELECT * FROM ZCPassword", null);
         }
         public static string SQLQuery = "";
         public event ChangeButtonState ChangeState;
@@ -56,10 +56,10 @@ namespace RemoteDeploy
             if (i == true)
             {
                 
-                    this.Close();
-                    MessageBox.Show("登陆成功");
-                    ChangeState(true);
-               
+                this.Close();
+                MessageBox.Show("登陆成功");
+                ChangeState(true);
+                
             }
             else
             {
