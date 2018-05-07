@@ -130,11 +130,6 @@ namespace RemoteDeploy.DataPack
         {
             VOBCProduct vobc = CDeviceDataFactory.Instance.GetProductByIpPort(client.ServerIP, client.ServerPort);
 
-            if(timeout == true)
-            {
-
-            }
-
             try
             {
                 //若有黏包 拆包处理
@@ -212,7 +207,7 @@ namespace RemoteDeploy.DataPack
                             }
                             else
                             {
-                                item.SetProductState(serverIP, "故障");
+                                //TODO:非 CommonConstValue.constValueHEX55/CommonConstValue.constValueHEXAA的回执 暂不处理
                             }
                         }
                         //VOBC状态信息回复帧
@@ -1385,7 +1380,6 @@ namespace RemoteDeploy.DataPack
         private static void timerHB_Elapsed(object sender, EventArgs e)
         {
             timeout = true;
-            //CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "待重启");
         }
 
         #endregion

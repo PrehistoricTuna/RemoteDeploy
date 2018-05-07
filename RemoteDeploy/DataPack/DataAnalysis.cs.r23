@@ -6,7 +6,6 @@ using RemoteDeploy.Models.VOBC;
 using RemoteDeploy.EquData;
 using TCT.ShareLib.LogManager;
 using System.Net;
-using System.Timers;
 using RemoteDeploy.Common;
 using RemoteDeploy.Command;
 using RemoteDeploy.ControlDispatcher;
@@ -112,12 +111,6 @@ namespace RemoteDeploy.DataPack
         /// </summary>
         private static int updateSuccessFileCount = 0;
 
-        private static Timer timerHB = new Timer();
-
-        public static bool timeout = false;
-
-        private static bool timerEnable = false;
-
         #endregion
 
         #region VOBC通信帧解析
@@ -129,12 +122,6 @@ namespace RemoteDeploy.DataPack
         public static void VOBCDataAnalysis(byte[] Data,Socket_TCPClient client)
         {
             VOBCProduct vobc = CDeviceDataFactory.Instance.GetProductByIpPort(client.ServerIP, client.ServerPort);
-
-            if(timeout == true)
-            {
-
-            }
-
             try
             {
                 //若有黏包 拆包处理
@@ -157,8 +144,8 @@ namespace RemoteDeploy.DataPack
                         return;
                     }
                     /*①非空验证 防止异常出现 
-                        *②CRC验证
-                        */
+                     *②CRC验证
+                     */
                     else if (recvServerData != null && recvServerData.Length > 0)
                     {
                         //CRC校验结果
@@ -179,10 +166,7 @@ namespace RemoteDeploy.DataPack
                         //心跳帧
                         if (recvServerData[iter] == vobcResponseFrame_Heart)
                         {
-                            if (timerEnable)
-                            {
-                                HeartBeatTimerInit();
-                            }
+
                         }
                         //建链回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_OpenLink)
@@ -192,7 +176,7 @@ namespace RemoteDeploy.DataPack
 
                             iter++;
                             //LogManager.InfoLog.LogCommunicationInfo("Socket_TCPClient", "Me_ReceiveMessage", "收到建链回复帧");
-
+                            
                             //获取VOBCContainer
                             IProContainer item = CDeviceDataFactory.Instance.ProjectConsole.Projducts.Find(tar =>
                                 tar is VOBCContainer);
@@ -201,10 +185,6 @@ namespace RemoteDeploy.DataPack
                             if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                             {
                                 item.SetProductState(serverIP, "正常");
-
-                                //启用并开始心跳超时计时器
-                                timerEnable = true;
-                                HeartBeatTimerInit();
                             }
                             else if (recvServerData[iter] == CommonConstValue.constValueHEXAA)
                             {
@@ -212,7 +192,7 @@ namespace RemoteDeploy.DataPack
                             }
                             else
                             {
-                                item.SetProductState(serverIP, "故障");
+                                //TODO:非 CommonConstValue.constValueHEX55/CommonConstValue.constValueHEXAA的回执 暂不处理
                             }
                         }
                         //VOBC状态信息回复帧
@@ -233,7 +213,7 @@ namespace RemoteDeploy.DataPack
 
                             //解析后的数据回传界面
                             //ATP信息回传
-                            DeviceState deviceState = new DeviceState(vobcInfo.AtpStatus, vobcInfo.AtpSoftVersion, vobcInfo.AtpDataVersion);
+                            DeviceState deviceState = new DeviceState(vobcInfo.AtpStatus, vobcInfo.AtpSoftVersion,vobcInfo.AtpDataVersion);
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "ATP", deviceState);
 
                             //ATO信息回传
@@ -241,11 +221,11 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "ATO", deviceState);
 
                             //MMI信息回传
-                            deviceState = new DeviceState(vobcInfo.MmiStatus, vobcInfo.MmiSoftVersion, "无");
+                            deviceState = new DeviceState(vobcInfo.MmiStatus, vobcInfo.MmiSoftVersion,"无");
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "MMI", deviceState);
 
                             //COM1信息回传
-                            deviceState = new DeviceState(vobcInfo.ComStatus, vobcInfo.Com1SoftVersion, "无");
+                            deviceState = new DeviceState(vobcInfo.ComStatus, vobcInfo.Com1SoftVersion,"无");
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "COM_1", deviceState);
 
                             //COM2信息回传
@@ -253,7 +233,7 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "COM_2", deviceState);
 
                             //CCOV信息回传
-                            deviceState = new DeviceState(vobcInfo.CCOVStatus, vobcInfo.CCOVSoftVersion, vobcInfo.CCOVDataVersion);
+                            deviceState = new DeviceState(vobcInfo.CCOVStatus, vobcInfo.CCOVSoftVersion,vobcInfo.CCOVDataVersion);
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "CC", deviceState);
 
                             //通知界面刷新
@@ -329,10 +309,6 @@ namespace RemoteDeploy.DataPack
                             //通知界面刷新
                             CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
-                            //禁用并停止心跳超时计时器
-                            timerEnable = false;
-                            timerHB.Stop();
-                            timerHB.Close();
                         }
                         //远程重启回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_Restart)
@@ -401,7 +377,7 @@ namespace RemoteDeploy.DataPack
                             LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到文件更新完成回复帧");
 
                             //获取更新子子系统类型
-                            Common.vobcSystemType sysType = getVobcSystemType(recvServerData, (iter + 1));
+                            Common.vobcSystemType sysType =getVobcSystemType(recvServerData, (iter + 1));
 
                             ////获取更新的文件类型
                             //Common.vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
@@ -458,7 +434,7 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
 
                             //当出现更新失败的设备时直接提示整车状态为更新失败
-                            if (recvServerData[iter + 3] == CommonConstValue.constValueHEXAA)
+                            if(recvServerData[iter + 3] == CommonConstValue.constValueHEXAA)
                             {
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
                             }
@@ -538,7 +514,7 @@ namespace RemoteDeploy.DataPack
 
                             //通过子系统类型 获取该类型对应的更新文件列表
                             if (vobc != null)
-                            {
+                            { 
                                 VobcCheckFile checkFile = vobc.CheckFileList.Find((VobcCheckFile temp) => temp.vobcSystemType == sysType);
 
                                 //如果为null 说明没有该子子系统更新  发送一个无效帧
@@ -556,7 +532,7 @@ namespace RemoteDeploy.DataPack
 
                                 //记录日志
                                 LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "向CCOV发送VOBC设备" + vobc.ProductID + "子子系统" + checkFile.vobcSystemType.ToString() + "的MD5校验信息");
-
+                            
                             }
                         }
 
@@ -1371,22 +1347,6 @@ namespace RemoteDeploy.DataPack
         }
 
         #endregion
-
-        private static void HeartBeatTimerInit()
-        {
-            timerHB.Stop();
-            timerHB.Close();
-            timerHB.Interval = 15000;
-            timerHB.AutoReset = false;
-            timerHB.Start();
-            timerHB.Elapsed += new System.Timers.ElapsedEventHandler(timerHB_Elapsed);
-        }
-
-        private static void timerHB_Elapsed(object sender, EventArgs e)
-        {
-            timeout = true;
-            //CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "待重启");
-        }
 
         #endregion
 

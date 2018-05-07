@@ -318,10 +318,6 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
             if (DataAnalysis.timeout == true)
             {
                 pro.CTcpClient.Socket_TCPClient_Dispose();
-                IProContainer item = CDeviceDataFactory.Instance.ProjectConsole.Projducts.Find(tar =>
-                                tar is VOBCContainer);
-                item.SetProductState(pro.CTcpClient.ServerIP, "故障");
-                //pro.Ip
                 LogManager.InfoLog.LogProcInfo("VOBCCommand", "TcpVobc_EBackData", "超过通信中断判定时间未收到心跳信息，断开连接！");
                 pro.Report.ReportWindow("超过通信中断判定时间未收到心跳信息，断开连接！");
             }

@@ -714,7 +714,6 @@ namespace RemoteDeploy
             check.Text = "查看";
             check.Name = "details";
             check.UseColumnTextForButtonValue = true;
-            check.Width = 50;
             dataGrid_VOBC.Columns.Add(check);
             ///初始化控件列信息
             InitDataGridViewColumns();

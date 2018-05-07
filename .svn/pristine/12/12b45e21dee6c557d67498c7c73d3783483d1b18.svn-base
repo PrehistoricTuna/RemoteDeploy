@@ -212,7 +212,7 @@ namespace RemoteDeploy.DataPack
                             }
                             else
                             {
-                                item.SetProductState(serverIP, "故障");
+                                //TODO:非 CommonConstValue.constValueHEX55/CommonConstValue.constValueHEXAA的回执 暂不处理
                             }
                         }
                         //VOBC状态信息回复帧

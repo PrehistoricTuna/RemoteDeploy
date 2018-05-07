@@ -1126,7 +1126,6 @@
             // 
             this.dataGridViewButtonColumn1.HeaderText = "查看";
             this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
-
             // 
             // dataGridViewTextBoxColumn4
             // 

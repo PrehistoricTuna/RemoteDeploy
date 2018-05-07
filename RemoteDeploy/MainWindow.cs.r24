@@ -58,8 +58,6 @@ namespace RemoteDeploy
 
         private bool selectConfirmed = false;
 
-        private int skipCountMax = 15;
-
         private Dictionary<BackgroundWorker, IProduct> wokerList = new Dictionary<BackgroundWorker, IProduct>();
         #endregion
 
@@ -192,7 +190,7 @@ namespace RemoteDeploy
                 ///判断子系统文件选择框选中状态
                 if ((checkBox_core.Checked == false && checkBox_data.Checked == false && checkBox_ini.Checked == false && checkBox_nvram.Checked == false && checkBox_bootloader.Checked == false) || (deviceSelect == false))
                 {
-                    System.Windows.Forms.MessageBox.Show("请选择烧录文件或设备!");
+                    System.Windows.Forms.MessageBox.Show("请选择烧录文件!");
                     return;
                 }
 
@@ -414,8 +412,6 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void linkEstab_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = true;
-
             //遍历用户选择的需要建立链接的产品对象信息
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
             {
@@ -424,44 +420,11 @@ namespace RemoteDeploy
                 if (product.CTcpClient != null)
                 {
                     product.CTcpClient.Socket_TCPClient_Dispose();
-                    //InitDataGridViewColumns();
-                    //InitSelectedDevice();
+                    InitDataGridViewColumns();
+                    InitSelectedDevice();
                 }
                 //发送建链信息帧
-                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
-
-                //bool rev = false;
-                //int skipCount = 0;
-                //do
-                //{
-                //    ///如果文件状态为true
-                //    if (product.ProductState == "正常")
-                //    {
-                //        product.Report.ReportWindow("VOBC产品" + product.ProductID + "已与下位机建链");
-                //        LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "完成首次建链");
-                //        rev = true;
-                //    }
-                //    else
-                //    {
-                //        //计数15次 未收到允许更新就跳出循环结束
-                //        if (skipCount > skipCountMax)
-                //        {
-                //            skipCount = 0;
-                //            product.Report.ReportWindow("VOBC产品" + product.ProductID + "建链超时，请重新尝试建链！");
-                //            LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "建链超时！");
-                //            break;
-                //        }
-                //        else
-                //        {
-                //            //跳出计数+1
-                //            skipCount++;
-
-                //            //休眠1秒
-                //            Thread.Sleep(1000);
-                //        }
-                //        //Thread.Sleep(3000);
-                //    }
-                //} while (rev == false);
+                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));                
 
                 if (timer2.Enabled == false)
                 {
@@ -670,31 +633,12 @@ namespace RemoteDeploy
         /// </summary>
         private void APPInit()
         {
-            //禁用确认按钮
-            button_OK.Enabled = false;
-
-            //禁用建链按钮
-            linkEstab.Enabled = false;
-
-            //禁用状态查看按钮
-            tsbStateUpdate.Enabled = false;
-
+            
             //禁用部署按钮
             tsbDeploy.Enabled = false;
 
             //禁用停止按钮
             tsbStop.Enabled = false;
-
-            //禁用建立链接按钮
-            linkEstab.Enabled = false;
-
-            //禁用状态查看按钮
-            tsbStateUpdate.Enabled = false;
-
-            //禁用确认选择按钮
-            button_OK.Enabled = false;
-
-            checkBox_bootloader.Enabled = false;
 
             //命令集合初始化
             CommandQueue.instance.m_CommandQueue.Enqueue(new InitCommand());
@@ -714,7 +658,6 @@ namespace RemoteDeploy
             check.Text = "查看";
             check.Name = "details";
             check.UseColumnTextForButtonValue = true;
-            check.Width = 50;
             dataGrid_VOBC.Columns.Add(check);
             ///初始化控件列信息
             InitDataGridViewColumns();
@@ -939,23 +882,7 @@ namespace RemoteDeploy
         /// </summary>
         void login_ChangeState(bool topmost)
         {
-            //启用建立连接按钮
-            linkEstab.Enabled = true;
-
-            //启用状态查看按钮
-            tsbStateUpdate.Enabled = true;
-
-            //启用确认选择按钮
             button_OK.Enabled = true;
-
-            //显示已登录人员
-            this.Text = "远程部署工具V180427-" + Login.username;
-            
-            //超级管理员可以勾选引导文件
-            if (Login.usertype == "超级管理员")
-            {
-                checkBox_bootloader.Enabled = true;
-            }
         }
 
         /// <summary>
@@ -963,20 +890,7 @@ namespace RemoteDeploy
         /// </summary>
         private void 注销ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            //禁用建立连接按钮
-            linkEstab.Enabled = false;
-
-            //禁用状态查看按钮
-            tsbStateUpdate.Enabled = false;
-
-            //禁用确认选择按钮
             button_OK.Enabled = false;
-
-            //禁用引导文件勾选
-            checkBox_bootloader.Enabled = false;
-
-            this.Text = "远程部署工具V180427-未登录";
         }
 
         /// <summary>
@@ -1065,13 +979,11 @@ namespace RemoteDeploy
             {
                 //获取产品实例对象
                 IProduct product = container[oneProduct.Index] as IProduct;
-                //if (product.CTcpClient == null)
-                if (product.ProductState != "正常")
+                if (product.CTcpClient == null)
+                //if (product.ProductState != "正常")
                 {
-                    product.Report.ReportWindow("VOBC产品" + product.ProductID + "建链超时，请重新尝试建链！");
-                    LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "建链超时！");
-                    ////发送建链信息帧
-                    //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+                    //发送建链信息帧
+                    CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
                 }
             }
             timer2.Stop();
