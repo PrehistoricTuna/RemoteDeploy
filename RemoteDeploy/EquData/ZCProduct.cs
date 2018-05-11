@@ -9,6 +9,9 @@ using AutoBurnInterface;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// ZC添加检查状态
+    /// </summary>
     public class ZCAddCheckState
     {
         public bool m_ccSent = false;
@@ -23,6 +26,9 @@ namespace RemoteDeploy.EquData
             m_comSent = false;
         }
     }
+    /// <summary>
+    /// ZC产品
+    /// </summary>
     public class ZCProduct:IProduct
     {
         private AutoBurnPush autoBurnPush;
@@ -61,6 +67,10 @@ namespace RemoteDeploy.EquData
             }
         }
 
+        /// <summary>
+        /// 加载xml文件的方法
+        /// </summary>
+        /// <param name="xmlNode">xml文档中的单个节点</param>
         public override void LoadXml(XmlNode xmlNode)
         {
             m_productID = xmlNode.Attributes[CShareLib.XML_PRODUCTID].InnerText;
@@ -87,6 +97,10 @@ namespace RemoteDeploy.EquData
             }
         }
 
+        /// <summary>
+        /// 判断是否准备好更新的方法
+        /// </summary>
+        /// <returns>布尔类型值</returns>
         internal bool IsReadyUpdate()
         {
             bool rtnValue = true;
@@ -117,7 +131,7 @@ namespace RemoteDeploy.EquData
         /// ZC设备工厂
         /// </summary>
         /// <param name="type"></param>
-        /// <returns></returns>
+        /// <returns>返回设备实例</returns>
         private ZCDevice CreateZCDevice(string type)
         {
             ZCDevice device;
@@ -141,6 +155,10 @@ namespace RemoteDeploy.EquData
             }
             return device;
         }
+        /// <summary>
+        /// 文件更新执行方法
+        /// </summary>
+        /// <returns>布尔型变量</returns>
         protected override bool FileUpdateExec()
         {
             Report.ReportWindow("ZC设备" + m_productID + "正在上传文件...");
@@ -176,14 +194,27 @@ namespace RemoteDeploy.EquData
             }
             return true;
         }
+
+        /// <summary>
+        /// 生成配置文件的方法（重写）
+        /// </summary>
         protected override void GenConfigHLHT()
         {
             LogManager.InfoLog.LogProcInfo("ZCProduct", "GenConfigHLHT", "生成ZC设备"+m_productID+"配置文件（未实现）");
         }
+
+        /// <summary>
+        /// 等待更新结果
+        /// </summary>
         public override void WaitForUpdateResult()
         {
             throw new NotImplementedException();
         }
+        /// <summary>
+        /// 获得烧录的设备名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public string GetDeviceNameByBurnType(BurnDevice type)
         {
             foreach (ZCDevice device in m_cBelongsDevice)

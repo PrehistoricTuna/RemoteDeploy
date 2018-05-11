@@ -19,6 +19,11 @@ namespace RemoteDeploy.DataPack
 
         #region 打包建链请求信息
 
+
+        /// <summary>
+        /// 打包建链请求
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackBuildLinkRequest()
         {
             byte[] pData = new byte[8];
@@ -69,7 +74,10 @@ namespace RemoteDeploy.DataPack
         #endregion*/
 
         #region 打包列车状态请求信息
-
+        /// <summary>
+        /// 打包列车状态请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackVOBCInfoRequest()
         {
             byte[] pData = new byte[8];
@@ -96,6 +104,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包文件上传请求信息
+        /// <summary>
+        /// 打包文件上传请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackFileTransferRequest()
         {
             byte[] pData = new byte[8];
@@ -125,7 +137,7 @@ namespace RemoteDeploy.DataPack
         /// 打包文件校验请求信息
         /// </summary>
         /// <param name="checkFileList">待验证VOBC信息实体类集合</param>
-        /// <returns></returns>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackFileVerificationRequest(VobcCheckFile checkFile)
         {
             byte[] pData = new byte[111];
@@ -238,7 +250,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包文件更新请求信息
-
+        /// <summary>
+        /// 打包文件更新请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackFileUpdateRequest()
         {
             byte[] pData = new byte[16];
@@ -275,7 +290,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包停止更新请求信息
-
+        /// <summary>
+        /// 打包停止更新请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackStopUpdateRequest()
         {
             byte[] pData = new byte[8];
@@ -301,7 +319,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包远程重启请求信息
-
+        /// <summary>
+        /// 打包远程重启请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackRemoteRebootRequest()
         {
             byte[] pData = new byte[8];
@@ -327,7 +348,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包断开连接请求信息
-
+        /// <summary>
+        /// 打包断开连接请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackDisconnectRequest()
         {
             byte[] pData = new byte[8];
@@ -353,7 +377,10 @@ namespace RemoteDeploy.DataPack
         #endregion
         
         #region 打包心跳请求信息
-
+        /// <summary>
+        /// 打包心跳请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackHeartbeatRequest()
         {
             byte[] pData = new byte[7];
@@ -378,7 +405,10 @@ namespace RemoteDeploy.DataPack
         #endregion
 
         #region 打包复位请求信息
-
+        /// <summary>
+        /// 打包复位请求信息
+        /// </summary>
+        /// <returns>帧字节数组</returns>
         public static byte[] PackResetRequest()
         {
             byte[] pData = new byte[9];

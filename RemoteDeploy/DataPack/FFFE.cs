@@ -6,6 +6,9 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.DataPack
 {
+    /// <summary>
+    /// FFFEState枚举类型
+    /// </summary>
     enum FFFEState
     {
         WAIT_FF_C1,
@@ -107,6 +110,12 @@ namespace RemoteDeploy.DataPack
 
         }
 
+        /// <summary>
+        /// 将数据帧进行FFFE转换
+        /// </summary>
+        /// <param name="src">源数据帧</param>
+        /// <param name="lenth">帧长度</param>
+        /// <returns>转换后的数据帧</returns>
         public static byte[] TransFFFE(byte[] src,Int32 lenth)
         {
             int SrcPos = 0;
@@ -199,6 +208,12 @@ namespace RemoteDeploy.DataPack
             return tar;
         }
 
+        /// <summary>
+        /// 解析FFFE数据帧
+        /// </summary>
+        /// <param name="pSrc">原报文数组</param>
+        /// <param name="SrcLen">原报文长度</param>
+        /// <returns></returns>
         public static byte[] TranslateFromFFFE(byte[] pSrc,int SrcLen)
         {
             byte[] pTgt = new byte[1024];

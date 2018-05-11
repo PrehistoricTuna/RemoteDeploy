@@ -7,6 +7,9 @@ using System.Net;
 
 namespace RemoteDeploy.NetworkService
 {
+    /// <summary>
+    /// udp类
+    /// </summary>
     public class Udp
     {
         public static void Send(string msg)

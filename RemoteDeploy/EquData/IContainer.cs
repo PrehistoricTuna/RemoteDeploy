@@ -92,6 +92,25 @@ namespace RemoteDeploy.EquData
         }
 
         /// <summary>
+        /// 外部接口设置某产品实体的部署失败状态信息
+        /// </summary>
+        public void SetProductFailReason(string ip, string failReason)
+        {
+            foreach (IProduct product in this)
+            {
+                if (product.Ip == ip)
+                {
+                    foreach (IDevice device in product.CBelongsDevice)
+                    {
+                        device.PreCheckFailReason = failReason;
+                    }
+                }
+            }
+            //通知数据变化
+            dataModify.Modify();
+        }
+
+        /// <summary>
         /// 外部接口设置某产品实体的某设备状态信息（状态信息包含N个字段）
         /// </summary>
         /// <param name="ip">产品IP信息</param>
@@ -111,8 +130,8 @@ namespace RemoteDeploy.EquData
                             device.State = deviceState.State;
                             device.SoftVersion = deviceState.SoftVersion;
                             device.DataVersion = deviceState.DataVersion;
-                            device.PreCheckResult = deviceState.PreCheckResult;
-                            device.PreCheckFailReason = deviceState.PreCheckFailReason;
+                            //device.PreCheckResult = deviceState.PreCheckResult;
+                            //device.PreCheckFailReason = deviceState.PreCheckFailReason;
                             LogManager.InfoLog.LogProcInfo("IProContainer", "SetProductState", "设置IP为" + product.Ip + "的产品" + product.Name + "中的设备" + device.DeviceName + "的状态为" + deviceState.State);
                         }
 

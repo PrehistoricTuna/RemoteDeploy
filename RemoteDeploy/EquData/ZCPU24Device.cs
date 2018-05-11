@@ -8,6 +8,9 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// ZCPU14设备类
+    /// </summary>
     public class ZCPU24Device:ZCDevice
     {
         private string m_ZcPu24CorePath = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\PU24\\vxWorks";

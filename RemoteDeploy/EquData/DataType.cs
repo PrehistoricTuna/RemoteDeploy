@@ -5,6 +5,9 @@ using System.Text;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// 产品线枚举
+    /// </summary>
     public enum EmProductLine
     {
         NEWAIR,
@@ -14,6 +17,9 @@ namespace RemoteDeploy.EquData
         NONE
     }
 
+    /// <summary>
+    /// 容器类型枚举
+    /// </summary>
     public enum EmContainerType
     {
         VOBC,
@@ -21,6 +27,9 @@ namespace RemoteDeploy.EquData
         NONE
     }
 
+    /// <summary>
+    /// 部署配置状态类
+    /// </summary>
     public class DeployConfiState
     {
         public bool IsBootLoaderCheck = false;

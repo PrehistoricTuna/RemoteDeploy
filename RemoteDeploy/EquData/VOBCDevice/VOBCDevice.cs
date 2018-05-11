@@ -85,6 +85,9 @@ namespace RemoteDeploy.EquData
                 //预检状态信息赋值
                 vobc.DeployConfigCheck = configState;
                 vobc.recvCheckCount = 0;
+
+                //开始部署前清空更新成功文件计数
+                UpdateSuccessFileCount = 0;
                 #region 给予更新状态实例赋初始值--依据用户在界面中勾选的烧录文件类型
 
                 DataAnalysis._updateFileState = new VOBCUpdateFileState();
@@ -116,8 +119,8 @@ namespace RemoteDeploy.EquData
                 #endregion
 
                 //设备预检
-                //string preCheckResult = String.Empty;//Modified @ 4.28，待改回
-                string preCheckResult = PreCheck(vobc.VobcStateInfo);
+                string preCheckResult = String.Empty;//Modified @ 4.28，待改回
+                //string preCheckResult = PreCheck(vobc.VobcStateInfo);
 
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
@@ -201,32 +204,32 @@ namespace RemoteDeploy.EquData
             //零速
             else if (vInfo.OperationSpeed != 0)
             {
-                failReason = "车辆非0速";
+                failReason = "预检车辆非0速";
             }
             //车辆位置
             else if (vInfo.TrainPosition != "非正线")
             {
-                failReason = "车辆位置：" + vInfo.TrainPosition;
+                failReason = "预检车辆位置：" + vInfo.TrainPosition;
             }
             //ATP状态
             else if (vInfo.AtpStatus != "正常")
             {
-                failReason = "ATP状态为：" + vInfo.AtpStatus;
+                failReason = "预检ATP状态为：" + vInfo.AtpStatus;
             }
             //ATO状态
             else if (vInfo.AtoStatus != "正常")
             {
-                failReason = "ATO状态为：" + vInfo.AtoStatus;
+                failReason = "预检ATO状态为：" + vInfo.AtoStatus;
             }
             //MMI状态
             else if (vInfo.MmiStatus != "正常")
             {
-                failReason = "MMI状态为：" + vInfo.MmiStatus;
+                failReason = "预检MMI状态为：" + vInfo.MmiStatus;
             }
             //COM状态
             else if (vInfo.ComStatus != "正常")
             {
-                failReason = "COM状态为：" + vInfo.ComStatus;
+                failReason = "预检COM状态为：" + vInfo.ComStatus;
             }
             else
             {

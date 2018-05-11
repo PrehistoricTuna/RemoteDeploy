@@ -13,6 +13,9 @@ namespace RemoteDeploy.DataPack
 
         #region CRC32多项式
 
+        /// <summary>
+        /// crc32校验表
+        /// </summary>
         private static UInt32[] crc32Table ={
             0x00000000,0x04c11db7,0x09823b6e,0x0d4326d9,0x130476dc,0x17c56b6b,
             0x1a864db2,0x1e475005,0x2608edb8,0x22c9f00f,0x2f8ad6d6,0x2b4bcb61,

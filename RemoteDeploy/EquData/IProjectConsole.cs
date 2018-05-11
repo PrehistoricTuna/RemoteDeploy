@@ -83,6 +83,11 @@ namespace RemoteDeploy.EquData
                 
             }
         }
+        /// <summary>
+        /// 添加容器函数
+        /// </summary>
+        /// <param name="container">产品集合容器</param>
+        /// <param name="node">xml文档中的单个节点</param>
         private void AddContainer(IProContainer container,XmlNode node)
         {
             container.LoadXml(node);

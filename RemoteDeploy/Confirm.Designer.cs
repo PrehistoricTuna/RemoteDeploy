@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Confirm));
             this.label1 = new System.Windows.Forms.Label();
             this.button_OK = new System.Windows.Forms.Button();
             this.button_Cancel = new System.Windows.Forms.Button();
@@ -48,7 +49,7 @@
             this.button_OK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_OK.Location = new System.Drawing.Point(58, 113);
             this.button_OK.Name = "button_OK";
-            this.button_OK.Size = new System.Drawing.Size(77, 31);
+            this.button_OK.Size = new System.Drawing.Size(75, 23);
             this.button_OK.TabIndex = 6;
             this.button_OK.Text = "确认部署";
             this.button_OK.UseVisualStyleBackColor = true;
@@ -59,7 +60,7 @@
             this.button_Cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.button_Cancel.Location = new System.Drawing.Point(210, 113);
             this.button_Cancel.Name = "button_Cancel";
-            this.button_Cancel.Size = new System.Drawing.Size(77, 31);
+            this.button_Cancel.Size = new System.Drawing.Size(75, 23);
             this.button_Cancel.TabIndex = 7;
             this.button_Cancel.Text = "取消";
             this.button_Cancel.UseVisualStyleBackColor = true;
@@ -73,8 +74,10 @@
             this.Controls.Add(this.button_Cancel);
             this.Controls.Add(this.button_OK);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Confirm";
             this.Text = "Confirm";
+            this.Load += new System.EventHandler(this.Confirm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -56,6 +56,9 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TCTicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoBurnInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -119,6 +122,12 @@
     <Compile Include="EquData\ZCProduct.cs" />
     <Compile Include="EquData\ZCPU13Device.cs" />
     <Compile Include="EquData\ZCPU24Device.cs" />
+    <Compile Include="LogHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogHistory.Designer.cs">
+      <DependentUpon>LogHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -196,6 +205,9 @@
     <EmbeddedResource Include="Confirm.resx">
       <DependentUpon>Confirm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LogHistory.resx">
+      <DependentUpon>LogHistory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
     </EmbeddedResource>
@@ -225,10 +237,8 @@
     <None Include="Resources\Orange.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\Debug\Config\Icon\Gray.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Red1.png" />
+    <Content Include="Resources\TCTlogo.png" />
+    <Content Include="TCTicon.ico" />
     <None Include="Resources\Green.png" />
     <None Include="Resources\DarkOrange.png" />
     <Content Include="Lib\ProgressODoom.dll" />
@@ -255,6 +265,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Debug\Config\Icon\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

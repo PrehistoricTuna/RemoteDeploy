@@ -40,6 +40,8 @@ namespace RemoteDeploy
     {
 
         #region 变量定义
+        //用于将用户名显示到界面
+        public static string username;
 
         //产品容器类实例
         private IProContainer container = null;
@@ -58,13 +60,16 @@ namespace RemoteDeploy
 
         private bool selectConfirmed = false;
 
-        private int skipCountMax = 15;
-
         private Dictionary<BackgroundWorker, IProduct> wokerList = new Dictionary<BackgroundWorker, IProduct>();
+
+        //enum类型的usertype
+        public Login.UserType usertypestat;
         #endregion
 
         #region 构造函数
-
+        /// <summary>
+        /// 窗体主函数
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -130,6 +135,9 @@ namespace RemoteDeploy
             ResetState();
 
         }
+        /// <summary>
+        /// 重置状态
+        /// </summary>
         private void ResetState()
         {
             if (container.FindAll(tar => (tar.InProcess == true)).Count == 0)
@@ -142,6 +150,10 @@ namespace RemoteDeploy
 
                 //启用确认选择按钮
                 button_OK.Enabled = true;
+
+                //启用状态查看按钮
+                tsbStateUpdate.Enabled = true;
+
                 //Thread.Sleep(50000);
                 //test_Click(null, e);
             }
@@ -219,6 +231,9 @@ namespace RemoteDeploy
 
                     //禁用确认选择按钮
                     button_OK.Enabled = false;
+
+                    //禁用状态查看
+                    tsbStateUpdate.Enabled = false; 
 
                     //后台线程执行部署操作
                     //backgroundWorkerDeploy.RunWorkerAsync();
@@ -371,6 +386,7 @@ namespace RemoteDeploy
             tsbStop.Enabled = false;
             tsbDeploy.Enabled = true;
             button_OK.Enabled = true;
+            tsbStateUpdate.Enabled = true;
         }
 
         //timer计时器事件  执行心跳帧发送
@@ -421,12 +437,12 @@ namespace RemoteDeploy
             {
                 //获取产品实例对象
                 IProduct product = container[oneProduct.Index] as IProduct;
-                if (product.CTcpClient != null)
-                {
-                    product.CTcpClient.Socket_TCPClient_Dispose();
-                    //InitDataGridViewColumns();
-                    //InitSelectedDevice();
-                }
+                //if (product.CTcpClient != null)
+                //{
+                //    product.CTcpClient.Socket_TCPClient_Dispose();
+                //    //InitDataGridViewColumns();
+                //    //InitSelectedDevice();
+                //}
                 //发送建链信息帧
                 CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
 
@@ -502,21 +518,7 @@ namespace RemoteDeploy
             }
         }
 
-        /// <summary>
-        /// 登录按钮单击事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button_login_Click(object sender, EventArgs e)
-        {
-            //弹出登录窗口并显示在屏幕中央区域
-            Login f2 = new Login();
-
-            f2.StartPosition = FormStartPosition.CenterParent;
-
-            f2.Show();
-
-        }
+    
 
         /// <summary>
         /// 选择详细查看的设备
@@ -694,7 +696,14 @@ namespace RemoteDeploy
             //禁用确认选择按钮
             button_OK.Enabled = false;
 
+            //禁用引导文件勾选
             checkBox_bootloader.Enabled = false;
+
+            //禁用配置文件勾选
+            checkBox_ini.Enabled = false;
+
+            //禁用nvram文件勾选
+            checkBox_nvram.Enabled = false;
 
             //命令集合初始化
             CommandQueue.instance.m_CommandQueue.Enqueue(new InitCommand());
@@ -842,6 +851,7 @@ namespace RemoteDeploy
                 this.Invoke(new Action(delegate()
                 {
                     rtbReportView.AppendText(reprort + "\n");
+                    SqliteHelper.ExecuteNonQuery("INSERT INTO LogHistory VALUES('" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "','" + reprort + "')", null);
                 }));
             }
             catch (Exception ex)
@@ -920,7 +930,10 @@ namespace RemoteDeploy
         /// </summary>
         private void 历史查询ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(System.Windows.Forms.Application.StartupPath + "\\log");
+            //System.Diagnostics.Process.Start(System.Windows.Forms.Application.StartupPath + "\\log");
+            LogHistory loghistory = new LogHistory(this.usertypestat);
+            loghistory.StartPosition = FormStartPosition.CenterParent;
+            loghistory.ShowDialog();
         }
 
         /// <summary>
@@ -930,32 +943,33 @@ namespace RemoteDeploy
         {
             Login login = new Login();
             login.StartPosition = FormStartPosition.CenterParent;
-            login.ChangeState += new ChangeButtonState(login_ChangeState);
-            login.ShowDialog();
-        }
-
-        /// <summary>
-        /// 登录成功
-        /// </summary>
-        void login_ChangeState(bool topmost)
-        {
-            //启用建立连接按钮
-            linkEstab.Enabled = true;
-
-            //启用状态查看按钮
-            tsbStateUpdate.Enabled = true;
-
-            //启用确认选择按钮
-            button_OK.Enabled = true;
-
-            //显示已登录人员
-            this.Text = "远程部署工具V180427-" + Login.username;
-            
-            //超级管理员可以勾选引导文件
-            if (Login.usertype == "超级管理员")
+            //login.ChangeState += new ChangeButtonState(login_ChangeState);
+            if (login.ShowDialog() == DialogResult.OK)
             {
-                checkBox_bootloader.Enabled = true;
-            }
+                //启用建立连接按钮
+                linkEstab.Enabled = true;
+
+                //启用状态查看按钮
+                tsbStateUpdate.Enabled = true;
+
+                //启用确认选择按钮
+                button_OK.Enabled = true;
+
+                //显示已登录人员
+                this.Text = "远程部署工具 - " + username + " 已登录";
+
+                //usertypestat更改状态
+                usertypestat = login.getusertype();
+
+
+                //超级管理员可以勾选引导文件,配置文件，NVRam文件
+                if (login.getusertype() == Login.UserType.manager)            
+                {
+                    checkBox_bootloader.Enabled = true;
+                    checkBox_ini.Enabled = true;
+                    checkBox_nvram.Enabled = true;
+                }
+            };
         }
 
         /// <summary>
@@ -976,7 +990,17 @@ namespace RemoteDeploy
             //禁用引导文件勾选
             checkBox_bootloader.Enabled = false;
 
-            this.Text = "远程部署工具V180427-未登录";
+            //禁用配置文件勾选
+            checkBox_ini.Enabled = false;
+
+            //禁用NVRam文件勾选
+            checkBox_nvram.Enabled = false;
+
+            this.Text = "远程部署工具 - 未登录";
+
+            //改变用户类型为none
+            usertypestat = Login.UserType.none;
+
         }
 
         /// <summary>
@@ -988,36 +1012,43 @@ namespace RemoteDeploy
         }
 
         #endregion
-
+        /// <summary>
+        /// 主窗体加载
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainWindow_Load(object sender, EventArgs e)
         {
             label1.Location = new System.Drawing.Point(panel_AutoLoadingDetails.Location.X + (panel_AutoLoadingDetails.Width / 2) - label1.Width / 2, -1);
         }
 
-        private void dataGridView_VOBCDeviceDetails_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-        private void toolStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
+        /// <summary>
+        /// “关于”菜单栏
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void 关于ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             About about = new About();
             about.StartPosition = FormStartPosition.CenterParent;
             about.ShowDialog();
         }
-
+        /// <summary>
+        /// "自动部署详细信息"调整大小
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void panel_AutoLoadingDetails_SizeChanged(object sender, EventArgs e)
         {
             //panel_AutoLoadingDetails
 
             label1.Location = new System.Drawing.Point(panel_AutoLoadingDetails.Location.X + (panel_AutoLoadingDetails.Width / 2) - label1.Width/2, -1);
         }
-
+        /// <summary>
+        /// 双击选中整行
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dataGrid_VOBC_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
 
@@ -1051,14 +1082,11 @@ namespace RemoteDeploy
 
         }
 
-        private void dataGrid_VOBC_DoubleClick(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow row in curruntDataGridView.SelectedRows)
-            {
-                //TODO:双击dataGrid_VOBC空白处，选中所有已选中行内的Cell
-            }
-        }
-
+        /// <summary>
+        /// 判断是否建链超时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timer2_Tick(object sender, EventArgs e)
         {
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
@@ -1077,7 +1105,11 @@ namespace RemoteDeploy
             timer2.Stop();
             timer2.Enabled = false;
         }
-
+        /// <summary>
+        /// 执行后台线程工作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
             VOBCProduct product = e.Argument as VOBCProduct;
@@ -1087,7 +1119,11 @@ namespace RemoteDeploy
                 device.RunDeploy(deployConfigCheck);
             }
         }
-
+        /// <summary>
+        /// VOBC表单元格单击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void dataGrid_VOBC_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             
@@ -1105,7 +1141,14 @@ namespace RemoteDeploy
             }
         }
 
-        private void timer3_Tick(object sender, EventArgs e)
+        private void 打开日志文件所在目录ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(System.Windows.Forms.Application.StartupPath + "\\log");
+        }
+
+        
+
+        private void rtbReportView_TextChanged(object sender, EventArgs e)
         {
 
         }

@@ -10,6 +10,9 @@ using System.Text;
 using System.Windows.Forms;
 namespace TCT.ShareLib.LogManager
 {
+    /// <summary>
+    /// 日志管理类
+    /// </summary>
     public class LogManager
     {
         /// <summary>

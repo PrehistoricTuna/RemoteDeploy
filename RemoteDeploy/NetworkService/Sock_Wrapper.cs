@@ -8,6 +8,9 @@ using System.Threading;
 
 namespace RemoteDeploy.NetworkService
 {
+    /// <summary>
+    /// Socket打包类
+    /// </summary>
     public class Socket_wrapper
     {
         //委托

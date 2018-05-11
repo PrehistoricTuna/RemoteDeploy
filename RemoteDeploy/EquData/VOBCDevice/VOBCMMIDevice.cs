@@ -10,8 +10,15 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// VOBCMMI设备类
+    /// </summary>
     public class VOBCMMIDevice:VOBCDevice
     {
+        /// <summary>
+        /// VOBCMMI设备构造器
+        /// </summary>
+        /// <param name="product">该设备所属的产品</param>
         public VOBCMMIDevice(IProduct product)
             : base(product)
         {

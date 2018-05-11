@@ -30,6 +30,7 @@ namespace RemoteDeploy.EquData
         private Socket_TCPClient m_cTcpClient = null;
         private WindowReport report = new WindowReport();
         private bool m_skipFlag = false;
+        private bool m_timeout = false;
         public DeployConfiState DeployConfigCheck = new DeployConfiState();
         public bool InProcess = false;
         #endregion
@@ -112,13 +113,24 @@ namespace RemoteDeploy.EquData
             get { return m_skipFlag; }
             set { m_skipFlag = value; }
         }
-
+        /// <summary>
+        /// 心跳维持超时标志
+        /// </summary>
+        public bool Timeout
+        {
+            get { return m_timeout; }
+            set { m_timeout = value; }
+        }
         public Socket_TCPClient CTcpClient
         {
             get { return m_cTcpClient; }
             set { m_cTcpClient = value; }
         }
 
+        /// <summary>
+        /// 部署处理函数
+        /// </summary>
+        /// <returns>返回值rtnValue或rtnValue与需要部署的子子系统设备数的比值</returns>
         public int DeployProcess()
         {
             int rtnValue = 0;

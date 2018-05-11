@@ -5,6 +5,9 @@ using System.Text;
 
 namespace RemoteDeploy.EquStateData
 {
+    /// <summary>
+    /// 状态数据抽象类
+    /// </summary>
     public abstract class IStateData
     {
         private bool m_bIsOnline = false;

@@ -27,5 +27,10 @@ namespace RemoteDeploy
             DialogResult = DialogResult.Cancel;
             Dispose();
         }
+
+        private void Confirm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -19,5 +19,6 @@ namespace RemoteDeploy.Command
         /// </summary>
         /// <returns>执行是否成功</returns>
         public abstract bool Exec();
+
     }
 }

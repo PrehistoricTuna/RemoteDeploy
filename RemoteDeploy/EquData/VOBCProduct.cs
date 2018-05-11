@@ -20,6 +20,7 @@ using RemoteDeploy.Observer;
 using System.Data.OleDb;
 using System.Globalization;
 using System.Net.NetworkInformation;
+using System.Timers;
 
 namespace RemoteDeploy.EquData
 {
@@ -49,6 +50,10 @@ namespace RemoteDeploy.EquData
         private List<VobcCheckFile> m_checkFileList = new List<VobcCheckFile>();
 
         private int skipCountMax = 15;
+
+        private System.Timers.Timer timerHB = new System.Timers.Timer();
+
+        public bool timerEnable = false;
 
         #endregion
 
@@ -375,26 +380,26 @@ namespace RemoteDeploy.EquData
         /// 检查VOBC产品是否全部更新成功
         /// </summary>
         /// <returns></returns>
-        public bool IsFileUpdateResultChecked()
-        {
-            //记录日志
-            LogManager.InfoLog.LogProcInfo("VOBCProduct", "IsFileChecked", "检查VOBC产品：" + m_productID + "的部署文件是否全部更新成功");
+        //public bool IsFileUpdateResultChecked()
+        //{
+        //    //记录日志
+        //    LogManager.InfoLog.LogProcInfo("VOBCProduct", "IsFileChecked", "检查VOBC产品：" + m_productID + "的部署文件是否全部更新成功");
 
-            //返回值定义
-            bool rtnValue = true;
+        //    //返回值定义
+        //    bool rtnValue = true;
 
-            //计算校验结果
-            foreach (string type in base.CSelectedDeviceType)
-            {
-                rtnValue &= CheckUpdateResultTypeFile(type);
-            }
+        //    //计算校验结果
+        //    foreach (string type in base.CSelectedDeviceType)
+        //    {
+        //        rtnValue &= CheckUpdateResultTypeFile(type);
+        //    }
 
-            //记录日志
-            LogManager.InfoLog.LogProcInfo("VOBCProduct", "IsFileChecked", "VOBC产品" + m_productID + "的部署文件校验结果为" + rtnValue.ToString());
+        //    //记录日志
+        //    LogManager.InfoLog.LogProcInfo("VOBCProduct", "IsFileChecked", "VOBC产品" + m_productID + "的部署文件校验结果为" + rtnValue.ToString());
 
-            return rtnValue;
+        //    return rtnValue;
 
-        }
+        //}
 
         /// <summary>
         /// 等待VOBC子子系统烧录结果
@@ -414,6 +419,7 @@ namespace RemoteDeploy.EquData
                     Report.ReportWindow("VOBC设备" + m_productID + "更新失败！");
                     SkipFlag = true;
                     InProcess = false;
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, "更新失败");
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                     //CDeviceDataFactory.Instance.VobcContainer.dataModify.ColorEvent();
                     //DataModify.ColorEventHandler
@@ -445,9 +451,14 @@ namespace RemoteDeploy.EquData
                 VOBCCommand resetCommand = new VOBCCommand(m_ip, Convert.ToInt32(m_port), m_productID, vobcCommandType.systemReset);
                 CommandQueue.instance.m_CommandQueue.Enqueue(resetCommand);
 
+                //该产品已完成部署就停止并禁用心跳计时器
+                timerHB.Close();
+                timerEnable = false;
+
                 //刷新界面日志信息
                 Report.ReportWindow("VOBC设备" + m_productID + "更新成功！");
                 InProcess = false;
+                CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, "更新成功");
                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
             }
             else
@@ -635,7 +646,7 @@ namespace RemoteDeploy.EquData
         /// <summary>
         /// ATPWrite文件生成
         /// </summary>
-        /// <param name="dtNvram"></param>
+        /// <param name="dtNvram">dtNvram数据表</param>
         private void ATPWrite(System.Data.DataTable dtNvram)
         {
             LogManager.InfoLog.LogProcInfo("VOBCProduct", "ATPWrite", "开始写入ATPWrite文件");
@@ -913,6 +924,52 @@ namespace RemoteDeploy.EquData
                 w.Close();
                 fs.Close();
             }
+        }
+
+        //心跳计时器初始化
+        public void HeartBeatTimerInit()
+        {
+            timerHB.Dispose();
+            timerHB = new System.Timers.Timer(15000);
+            timerHB.AutoReset = false;
+            timerHB.Start();
+            timerHB.Elapsed += new System.Timers.ElapsedEventHandler(timerHB_Elapsed);
+        }
+
+        //心跳维持超时事件
+        private void timerHB_Elapsed(object sender, EventArgs e)
+        {
+            //断开连接并释放资源
+            CTcpClient.Socket_TCPClient_Dispose();
+
+            //断链后初始化计时器允许标志
+            timerEnable = false;
+
+            //设置当前产品全部设备状态为故障
+            foreach (IDevice device in CBelongsDevice)
+            {
+                device.State = "故障";
+            }
+
+            //设置标志位
+            SkipFlag = true;
+            InProcess = false;
+
+            //设置该产品通信状态为中断
+            CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, "中断");
+            CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(Ip, "与下位机通信中断超时");
+
+            //向消息窗口汇报
+            Report.ReportWindow(ProductID + "超过通信中断判定时间未收到心跳信息，断开连接！请重新开始部署");
+
+            //记录日志
+            LogManager.InfoLog.LogProcInfo("VOBCCommand", "TcpVobc_EBackData", ProductID + "超过通信中断判定时间未收到心跳信息，断开连接！");
+        }
+
+        //
+        public void TimerClose()
+        {
+            timerHB.Close();
         }
 
         [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]

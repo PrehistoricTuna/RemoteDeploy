@@ -8,17 +8,29 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// CcDevice类
+    /// </summary>
     public class CcDevice : ZCDevice
     {
         private string m_CcCorePath = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\CC\\vxWorks";
         private string m_CcDataPath = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\CCOZ.FS";
         private string m_CcConfig1Path = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\CC1.CFG";
         private string m_CcConfig2Path = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\CC2.CFG";
+
+        /// <summary>
+        /// Cc设备的构造器
+        /// </summary>
+        /// <param name="product">该设备所属的产品</param>
         public CcDevice(IProduct product)
             : base(product)
         {
             LogManager.InfoLog.LogProcInfo("CcDevice", "CcDevice", "创建ZC产品" + product.ProductID + "Cc设备");
         }
+
+        /// <summary>
+        /// 重写的执行部署函数
+        /// </summary>
         public override void DeployExec()
         {
 

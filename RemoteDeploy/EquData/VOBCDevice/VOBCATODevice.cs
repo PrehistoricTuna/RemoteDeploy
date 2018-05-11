@@ -11,8 +11,15 @@ using System.Threading;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// VOBCATO设备类
+    /// </summary>
     public class VOBCATODevice:VOBCDevice
     {
+        /// <summary>
+        /// VOBCATO设备构造器
+        /// </summary>
+        /// <param name="product">该设备所属的产品</param>
         public VOBCATODevice(IProduct product)
             : base(product)
         {

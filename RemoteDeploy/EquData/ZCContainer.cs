@@ -7,6 +7,9 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// ZC容器类
+    /// </summary>
     public class ZCContainer:IProContainer
     {
         private string m_ZCMIp = "";
@@ -16,10 +19,17 @@ namespace RemoteDeploy.EquData
             get { return m_ZCMIp; }
             set { m_ZCMIp = value; }
         }
+        /// <summary>
+        /// ZC容器
+        /// </summary>
         public ZCContainer()
         {
             Name =EmContainerType.ZC;
         }
+        /// <summary>
+        /// 加载xml文件
+        /// </summary>
+        /// <param name="node">xml文档中的单个节点</param>
         public override void LoadXml(XmlNode node)
         {
             m_ZCMIp = node.Attributes["ZCMIp"].Value;
@@ -62,6 +72,13 @@ namespace RemoteDeploy.EquData
             ///通知数据变化
             base.dataModify.Modify();
         }
+        /// <summary>
+        /// 设置ZC设备的处理状态
+        /// </summary>
+        /// <param name="curRate">当前占比</param>
+        /// <param name="totalRate">总占比</param>
+        /// <param name="info">信息</param>
+        /// <param name="ip">ip地址</param>
         public void SetZCProc(int curRate, int totalRate, string info, string ip)
         {
             SetProductZCDeviceProcState(ip, curRate.ToString() + "/" + totalRate.ToString(), info);

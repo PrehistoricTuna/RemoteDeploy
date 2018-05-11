@@ -8,14 +8,26 @@ using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// Comm设备类
+    /// </summary>
     public class CommDevice : ZCDevice
     {
         private string m_CommCorePath = System.Windows.Forms.Application.StartupPath + "\\Config\\ZCConfig\\COMM\\vxWorks";
+
+        /// <summary>
+        /// Comm设备的构造函数
+        /// </summary>
+        /// <param name="product">该设备所属的产品</param>
         public CommDevice(IProduct product)
             : base(product)
         {
             LogManager.InfoLog.LogProcInfo("CommDevice", "CommDevice", "创建ZC产品" + product.ProductID + "COMM设备");
         }
+
+        /// <summary>
+        /// 重写DeployExec函数
+        /// </summary>
         public override void  DeployExec()
         {
             

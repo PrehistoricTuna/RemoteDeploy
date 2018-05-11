@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{818682D9-9202-4BE3-9547-966FC073ACE5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RemoteDeploy</RootNamespace>
+    <AssemblyName>RemoteDeploy</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoBurnInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\AutoBurnInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="ProgressODoom, Version=1.0.6691.18252, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\ProgressODoom.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>Lib\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CMyException.cs" />
+    <Compile Include="Command\DeployCommand.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\InitCommand.cs" />
+    <Compile Include="Command\VOBCCommand.cs" />
+    <Compile Include="Common\CommonConstValue.cs" />
+    <Compile Include="Common\CommonEnum.cs" />
+    <Compile Include="Common\CommonMethod.cs" />
+    <Compile Include="Common\ExcelIO.cs" />
+    <Compile Include="Confirm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Confirm.Designer.cs">
+      <DependentUpon>Confirm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ControlDispatcher\CommandQueue.cs" />
+    <Compile Include="ControlDispatcher\IControlDispatcher.cs" />
+    <Compile Include="CShareLib.cs" />
+    <Compile Include="DataPack\CRC.cs" />
+    <Compile Include="DataPack\DataAnalysis.cs" />
+    <Compile Include="DataPack\DataPack.cs" />
+    <Compile Include="DataPack\FFFE.cs" />
+    <Compile Include="EquData\CcDevice.cs" />
+    <Compile Include="EquData\CommDevice.cs" />
+    <Compile Include="EquData\ZCProduct.cs" />
+    <Compile Include="EquData\ZCPU13Device.cs" />
+    <Compile Include="EquData\ZCPU24Device.cs" />
+    <Compile Include="LogHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LogHistory.Designer.cs">
+      <DependentUpon>LogHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\VOBC\VOBCUpdateFileState.cs" />
+    <Compile Include="Models\VOBC\VobcCheckFile.cs" />
+    <Compile Include="Models\VOBC\VOBCStateInfoClass.cs" />
+    <Compile Include="EquData\CDeviceDataFactory.cs" />
+    <Compile Include="EquData\DataType.cs" />
+    <Compile Include="EquData\IContainer.cs" />
+    <Compile Include="EquData\IDevice.cs" />
+    <Compile Include="EquData\IProduct.cs" />
+    <Compile Include="EquData\IProjectConsole.cs" />
+    <Compile Include="EquData\HLHTLineConsole.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCATODevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCATPDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCCCOVDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCCOMDevice.cs" />
+    <Compile Include="EquData\VOBCContainer.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCMMIDevice.cs" />
+    <Compile Include="EquData\VOBCProduct.cs" />
+    <Compile Include="EquData\ZCContainer.cs" />
+    <Compile Include="EquData\ZCDevice.cs" />
+    <Compile Include="EquStateData\IStateData.cs" />
+    <Compile Include="Log\EmLogType.cs" />
+    <Compile Include="Log\LogAlarmContent.cs" />
+    <Compile Include="Log\LogCommunicationContent.cs" />
+    <Compile Include="Log\LogConfigurationContent.cs" />
+    <Compile Include="Log\LogManager.cs" />
+    <Compile Include="Log\LogPerformanceContent.cs" />
+    <Compile Include="Log\LogProcContent.cs" />
+    <Compile Include="MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NetworkService\AutoBurnPush.cs" />
+    <Compile Include="NetworkService\Class1.cs" />
+    <Compile Include="NetworkService\Socket_TCPClient.cs" />
+    <Compile Include="NetworkService\Sock_Wrapper.cs" />
+    <Compile Include="NetworkService\Udp.cs" />
+    <Compile Include="Observer\FormObserver.cs" />
+    <Compile Include="Observer\IObserver.cs" />
+    <Compile Include="Observer\ISubject.cs" />
+    <Compile Include="Observer\DataModify.cs" />
+    <Compile Include="Observer\LogObserver.cs" />
+    <Compile Include="Observer\WindowReport.cs" />
+    <Compile Include="ProcState\IProcState.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SendRecv\Recv\Recv.cs" />
+    <Compile Include="SendRecv\SendRecv.cs" />
+    <Compile Include="SendRecv\Send\Send.cs" />
+    <Compile Include="SqliteHelper.cs" />
+    <Compile Include="TFTP\FTP.cs" />
+    <Compile Include="TFTP\TFTP_Client.cs" />
+    <Compile Include="View\DataGridViewCheckBoxHeaderCell.cs" />
+    <EmbeddedResource Include="About.resx">
+      <DependentUpon>About.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Confirm.resx">
+      <DependentUpon>Confirm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LogHistory.resx">
+      <DependentUpon>LogHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Resources\Red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Lime.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Orange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\Debug\Config\Icon\Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Red1.png" />
+    <None Include="Resources\Green.png" />
+    <None Include="Resources\DarkOrange.png" />
+    <Content Include="Lib\ProgressODoom.dll" />
+    <Content Include="Lib\SQLite.Interop.dll" />
+    <Content Include="Lib\System.Data.SQLite.dll" />
+    <Content Include="Resources\Gray.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -12,6 +12,8 @@ namespace RemoteDeploy.NetworkService
     /// 自动烧录推送
     /// </summary>
     [CallbackBehavior(ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false, IncludeExceptionDetailInFaults = true)]
+
+    ///自动烧录推送类
     public class AutoBurnPush:Ipush
     {
         private string ip = "";
@@ -30,7 +32,11 @@ namespace RemoteDeploy.NetworkService
 
 
         }
-
+        /// <summary>
+        /// 自动烧录推送方法
+        /// </summary>
+        /// <param name="remoteIp">远程部署的ip</param>
+        /// <param name="setFuc">封装处理的设置方法</param>
         public AutoBurnPush(string remoteIp, Action<int, int, string, string> setFuc)
         {
             UpdateStatusAct = setFuc;

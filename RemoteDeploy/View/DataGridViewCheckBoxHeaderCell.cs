@@ -36,6 +36,20 @@ namespace RemoteDeploy.View
             System.Windows.Forms.VisualStyles.CheckBoxState.UncheckedNormal;
         public event DataGridViewCheckBoxHeaderEventHander OnCheckBoxClicked;
 
+        /// <summary>
+        /// 重写绘图方法
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="clipBounds"></param>
+        /// <param name="cellBounds"></param>
+        /// <param name="rowIndex"></param>
+        /// <param name="dataGridViewElementState"></param>
+        /// <param name="value"></param>
+        /// <param name="formattedValue"></param>
+        /// <param name="errorText"></param>
+        /// <param name="cellStyle"></param>
+        /// <param name="advancedBorderStyle"></param>
+        /// <param name="paintParts"></param>
         protected override void Paint(
             Graphics graphics,
             System.Drawing.Rectangle clipBounds,
@@ -76,6 +90,10 @@ namespace RemoteDeploy.View
             (graphics, checkBoxLocation, _cbState);
         }
 
+        /// <summary>
+        /// 重写鼠标点击方法
+        /// </summary>
+        /// <param name="e">处理事件</param>
         protected override void OnMouseClick(DataGridViewCellMouseEventArgs e)
         {
             System.Drawing.Point p = new System.Drawing.Point(e.X + _cellLocation.X, e.Y + _cellLocation.Y);

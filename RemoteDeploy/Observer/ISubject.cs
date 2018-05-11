@@ -14,6 +14,9 @@ namespace RemoteDeploy.Observer
         public event SubjectEventHandler SubjectEvent;
         public delegate void ReportEventHandler(string report);
         public event ReportEventHandler ReportEvent;
+        /// <summary>
+        /// 数据刷新
+        /// </summary>
         protected void Notify()
         {
             if (this.SubjectEvent != null)
@@ -21,6 +24,10 @@ namespace RemoteDeploy.Observer
                 this.SubjectEvent();
             }
         }
+        /// <summary>
+        /// 界面打印
+        /// </summary>
+        /// <param name="report"></param>
         protected void Report(string report)
         {
             if (this.ReportEvent != null)

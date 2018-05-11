@@ -121,6 +121,7 @@ namespace RemoteDeploy.EquData
             return true;
         }
         public static readonly CDeviceDataFactory Instance = new CDeviceDataFactory();///定义加载设备配置数据单例
+      
         public VOBCProduct GetProductByIpPort(string ip, int port)
         {
             foreach (VOBCProduct pro in VobcContainer)

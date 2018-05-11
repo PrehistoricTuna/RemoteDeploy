@@ -9,6 +9,9 @@ using AutoBurnInterface;
 
 namespace RemoteDeploy.EquData
 {
+    /// <summary>
+    /// ZC设备类
+    /// </summary>
     public class ZCDevice:IDevice
     {
         private BurnDevice m_burnDeviceType = (BurnDevice)(-1);
@@ -28,6 +31,10 @@ namespace RemoteDeploy.EquData
             m_deviceState.SoftVersion = xmlNode.Attributes[CShareLib.XML_DEVICE_STATE].InnerText;
             InitDeviceBurnType(m_deviceName);
         }
+        /// <summary>
+        /// 初始化设备烧录类型
+        /// </summary>
+        /// <param name="deviceName"></param>
         private void InitDeviceBurnType(string deviceName)
         {
             switch (deviceName)

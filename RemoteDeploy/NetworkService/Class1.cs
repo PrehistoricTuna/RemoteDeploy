@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace RemoteDeploy.NetworkService
 {
+    /// <summary>
+    /// tcp连接类
+    /// </summary>
     class Class1
     {
             static TcpClient tcp_pc = new TcpClient();

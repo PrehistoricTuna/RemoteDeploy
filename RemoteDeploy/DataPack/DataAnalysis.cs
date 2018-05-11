@@ -107,16 +107,7 @@ namespace RemoteDeploy.DataPack
         /// </summary>
         public static VOBCUpdateFileState _updateFileState = new VOBCUpdateFileState();
 
-        /// <summary>
-        /// 更新成功的文件数量计数
-        /// </summary>
         private static int updateSuccessFileCount = 0;
-
-        private static Timer timerHB = new Timer();
-
-        public static bool timeout = false;
-
-        private static bool timerEnable = false;
 
         #endregion
 
@@ -125,15 +116,10 @@ namespace RemoteDeploy.DataPack
         /// <summary>
         /// 数据解析
         /// </summary>
-        /// <param name="recvServerData"></param>
-        public static void VOBCDataAnalysis(byte[] Data,Socket_TCPClient client)
+        /// <param name="recvServerData">接收到的产品数据</param>
+        public static void VOBCDataAnalysis(byte[] Data, Socket_TCPClient client)
         {
             VOBCProduct vobc = CDeviceDataFactory.Instance.GetProductByIpPort(client.ServerIP, client.ServerPort);
-
-            if(timeout == true)
-            {
-
-            }
 
             try
             {
@@ -143,11 +129,9 @@ namespace RemoteDeploy.DataPack
                 //遍历集合中数据进行处理
                 foreach (byte[] recvServerData in dataList)
                 {
-
                     //获取TCP客户端连接对象（服务端）的IP和端口
-                    IPEndPoint IPPort = client.clientSocket.RemoteEndPoint as IPEndPoint;
-                    string serverIP = Convert.ToString(IPPort.Address);
-                    int serverPort = IPPort.Port;
+                    string serverIP = client.ServerIP;
+                    int serverPort = client.ServerPort;
 
                     //非空验证 防止异常出现
                     if (recvServerData == null)
@@ -157,8 +141,8 @@ namespace RemoteDeploy.DataPack
                         return;
                     }
                     /*①非空验证 防止异常出现 
-                        *②CRC验证
-                        */
+                     *②CRC验证
+                     */
                     else if (recvServerData != null && recvServerData.Length > 0)
                     {
                         //CRC校验结果
@@ -179,9 +163,10 @@ namespace RemoteDeploy.DataPack
                         //心跳帧
                         if (recvServerData[iter] == vobcResponseFrame_Heart)
                         {
-                            if (timerEnable)
+                            //如果处于允许启用超时计时器阶段，则开始计时
+                            if (vobc.timerEnable)
                             {
-                                HeartBeatTimerInit();
+                                vobc.HeartBeatTimerInit();
                             }
                         }
                         //建链回复帧
@@ -203,16 +188,22 @@ namespace RemoteDeploy.DataPack
                                 item.SetProductState(serverIP, "正常");
 
                                 //启用并开始心跳超时计时器
-                                timerEnable = true;
-                                HeartBeatTimerInit();
+                                vobc.timerEnable = true;
+                                vobc.HeartBeatTimerInit();
                             }
                             else if (recvServerData[iter] == CommonConstValue.constValueHEXAA)
                             {
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
                                 item.SetProductState(serverIP, "故障");
+                                item.SetProductFailReason(serverIP, "下位机拒绝建链请求");
                             }
                             else
                             {
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
                                 item.SetProductState(serverIP, "故障");
+                                item.SetProductFailReason(serverIP, "下位机回复非法值");
                             }
                         }
                         //VOBC状态信息回复帧
@@ -271,6 +262,13 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceFileState(serverIP,
                                 (recvServerData[iter] == CommonConstValue.constValueHEX55 ? true : false));
 
+                            if (recvServerData[iter] != CommonConstValue.constValueHEX55)
+                            {
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, "下位机拒绝文件上传请求");
+                            }
+
                         }
                         //文件校验请求回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_FileCheck)
@@ -311,7 +309,12 @@ namespace RemoteDeploy.DataPack
                             LogManager.InfoLog.LogProcInfo("DataAnalysis", "文件校验请求接收回复帧", "接收到文件校验结果信息");
                             //回执检查状态                         
                             CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceCheckState(serverIP, _updateFileState.VeriResult);
-
+                            if (_updateFileState.VeriResult == false)
+                            {
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, "文件校验未通过");
+                            }
                         }
                         //文件更新请求回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_FileUpdateStart)
@@ -330,9 +333,8 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
                             //禁用并停止心跳超时计时器
-                            timerEnable = false;
-                            timerHB.Stop();
-                            timerHB.Close();
+                            vobc.timerEnable = false;
+                            vobc.TimerClose();
                         }
                         //远程重启回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_Restart)
@@ -397,71 +399,112 @@ namespace RemoteDeploy.DataPack
                         //文件更新成功汇报帧
                         else if (recvServerData[iter] == vobcResponseFrame_UpdateFinish)
                         {
+                            int updateFileCount = 0;
+
                             //记录日志
                             LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到文件更新完成回复帧");
 
                             //获取更新子子系统类型
                             Common.vobcSystemType sysType = getVobcSystemType(recvServerData, (iter + 1));
 
-                            ////获取更新的文件类型
-                            //Common.vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
+                            //获取更新的文件类型
+                            Common.vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
 
-                            ////计算更新文件数量
-                            //int updateFileCount = 0;
-                            //for (int i = 0; i < vobc.CheckFileList.Count; i++)
-                            //{
-                            //    updateFileCount += vobc.CheckFileList[i].vobcFilePathList.Count;
-                            //}
+                            //根据类型实例化该设备
+                            IDevice device = vobc.CBelongsDevice.Find(y => y.DeviceName == CommonMethod.GetStringByType(sysType));
 
-                            ////更新文件总数对比已校验更新文件数量
-                            //if (updateFileCount > updateSuccessFileCount)
-                            //{
-                            //    //递增
-                            //    updateSuccessFileCount++;
+                            //获取该设备在部署下达时需要部署的文件总数
+                            updateFileCount = GetUpdateFileCountByType(sysType);
 
-                            //    //判定子子系统类型
-                            //    switch ((recvServerData[(iter + 1)]))
-                            //    {
-                            //        case 0x01:
-                            //        case 0x02:
-                            //        case 0x03:
-                            //            SetVOBCATPcompleteState(recvServerData, fileType, iter + 3);
-                            //            break;
-                            //        case 0x04:
-                            //        case 0x05:
-                            //            SetVOBCATOcompleteState(recvServerData, fileType, iter + 3);
-                            //            break;
-                            //        case 0x06:
-                            //        case 0x07:
-                            //            SetVOBCCOMcompleteState(recvServerData, fileType, iter + 3);
-                            //            break;
-                            //        case 0x08:
-                            //            SetVOBCMMIcompleteState(recvServerData, fileType, iter + 3);
-                            //            break;
-                            //        case 0x09:
-                            //            SetVOBCCCOVcompleteState(recvServerData, fileType, iter + 3);
-                            //            break;
-                            //        default:
-                            //            //TODO  不处理
-                            //            break;
-                            //    }
-                            //}
-                            ////全部更新完成 重置计数器并回传设置更新状态
-                            //else
-                            //{
-                            //    //重置
-                            //    updateSuccessFileCount = 0;
-
-                            //}
-
-                            //设置更新状态
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
-
-                            //当出现更新失败的设备时直接提示整车状态为更新失败
-                            if (recvServerData[iter + 3] == CommonConstValue.constValueHEXAA)
+                            if (recvServerData[iter + 3] == CommonConstValue.constValueHEX55)
                             {
+                                device.UpdateSuccessFileCount++;
+                                if (device.UpdateSuccessFileCount == updateFileCount)
+                                {
+                                    //设置更新状态成功
+                                    CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
+
+                                    //本设备更新完成，清空更新成功文件计数
+                                    device.UpdateSuccessFileCount = 0;
+                                }
+                            }
+                            else
+                            {
+                                //设置更新状态失败
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
+
+                                //本设备存在更新失败文件，清空更新成功文件计数
+                                device.UpdateSuccessFileCount = 0;
+
+                                //设置标志位并将产品状态设为更新失败
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
                             }
+                                //根据子系统获取该设备更新文件总数
+                                //检查是否成功
+                                //成功则该设备成功文件数+1 //否则设置本产品更新失败
+                                //如果成功文件数等于更新文件总数则设置该设备设置状态更新成功
+
+
+                                ////计算更新文件数量
+                                //int updateFileCount = 0;
+                                //for (int i = 0; i < vobc.CheckFileList.Count; i++)
+                                //{
+                                //    updateFileCount += vobc.CheckFileList[i].vobcFilePathList.Count;
+                                //}
+
+                                ////更新文件总数对比已校验更新文件数量
+                                //if (updateFileCount > updateSuccessFileCount)
+                                //{
+                                //    //递增
+                                //    updateSuccessFileCount++;
+
+                                //    //判定子子系统类型
+                                //    switch ((recvServerData[(iter + 1)]))
+                                //    {
+                                //        case 0x01:
+                                //        case 0x02:
+                                //        case 0x03:
+                                //            SetVOBCATPcompleteState(recvServerData, fileType, iter + 3);
+                                //            break;
+                                //        case 0x04:
+                                //        case 0x05:
+                                //            SetVOBCATOcompleteState(recvServerData, fileType, iter + 3);
+                                //            break;
+                                //        case 0x06:
+                                //        case 0x07:
+                                //            SetVOBCCOMcompleteState(recvServerData, fileType, iter + 3);
+                                //            break;
+                                //        case 0x08:
+                                //            SetVOBCMMIcompleteState(recvServerData, fileType, iter + 3);
+                                //            break;
+                                //        case 0x09:
+                                //            SetVOBCCCOVcompleteState(recvServerData, fileType, iter + 3);
+                                //            break;
+                                //        default:
+                                //            //TODO  不处理
+                                //            break;
+                                //    }
+                                //}
+                                ////全部更新完成 重置计数器并回传设置更新状态
+                                //else
+                                //{
+                                //    //重置
+                                //    updateSuccessFileCount = 0;
+
+                                //}
+
+                            //    //设置更新状态
+                            //    CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
+
+                            ////当出现更新失败的设备时直接提示整车状态为更新失败
+                            //if (recvServerData[iter + 3] == CommonConstValue.constValueHEXAA)
+                            //{
+                            //    vobc.SkipFlag = true;
+                            //    vobc.InProcess = false;
+                            //    CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
+                            //}
                         }
                         //远程复位回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_SystemReset)
@@ -635,7 +678,7 @@ namespace RemoteDeploy.DataPack
         /// <summary>
         /// 获取vobc子系统类型
         /// </summary>
-        /// <param name="recvServerData">数据帧</param>
+        /// <param name="recvServerData">接收产品数据帧</param>
         /// <param name="iter">子系统类型判定数据位索引</param>
         /// <returns>vobc子系统类型</returns>
         private static Common.vobcSystemType getVobcSystemType(byte[] recvServerData, int iter)
@@ -685,7 +728,7 @@ namespace RemoteDeploy.DataPack
         /// <summary>
         /// 获取vobc更新文件类型
         /// </summary>
-        /// <param name="recvServerData">数据帧</param>
+        /// <param name="recvServerData">接收产品数据帧</param>
         /// <param name="iter">更新文件类型判定数据位索引</param>
         /// <returns>更新文件类型</returns>
         private static Common.vobcFileType getVobcFileType(byte[] recvServerData, int iter)
@@ -723,8 +766,8 @@ namespace RemoteDeploy.DataPack
         /// <summary>
         /// 依据输入参数 计算更新百分比
         /// </summary>
-        /// <param name="recvServerData"></param>
-        /// <param name="iter"></param>
+        /// <param name="recvServerData">接收产品数据帧</param>
+        /// <param name="iter">解析索引</param>
         /// <returns></returns>
         private static int getUpdatePersent(byte[] recvServerData, int iter)
         {
@@ -1182,7 +1225,7 @@ namespace RemoteDeploy.DataPack
                 _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovConfigVeriFlag;
             }
 
-        } 
+        }
 
         #endregion
 
@@ -1194,7 +1237,7 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCATPcompleteState(byte[] recvServerData,vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCATPcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
         {
             switch (vobcFType)
             {
@@ -1222,7 +1265,7 @@ namespace RemoteDeploy.DataPack
                 default:
                     //TODO
                     break;
-            }     
+            }
 
         }
 
@@ -1370,23 +1413,74 @@ namespace RemoteDeploy.DataPack
 
         }
 
+        /// <summary>
+        /// 设置VOBCCCOV更新完成状态
+        /// </summary>
+        private static int GetUpdateFileCountByType(vobcSystemType sysType)
+        {
+            int updateFileCount = 0;
+            switch (sysType)
+            {
+                case vobcSystemType.ATP_1:
+                case vobcSystemType.ATP_2:
+                case vobcSystemType.ATP_3:
+                    if (_updateFileState.AtpCoreCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtpDataCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtpNvramCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtpBootCompleteFlag == true)
+                        updateFileCount++;
+                    break;
+                case vobcSystemType.ATO_1:
+                case vobcSystemType.ATO_2:
+                    if (_updateFileState.AtoCoreCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtoDataCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtoNvramCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.AtoBootCompleteFlag == true)
+                        updateFileCount++;
+                    break;
+                case vobcSystemType.COM_1:
+                case vobcSystemType.COM_2:
+                    if (_updateFileState.ComCoreCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.ComBootCompleteFlag == true)
+                        updateFileCount++;
+                    break;
+                case vobcSystemType.MMI:
+                    if (_updateFileState.MmiCoreCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.MmiNvramCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.MmiBootCompleteFlag == true)
+                        updateFileCount++;
+                    break;
+                case vobcSystemType.CCOV:
+                    if (_updateFileState.CcovCoreCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.CcovDataCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.CcovConfigCompleteFlag == true)
+                        updateFileCount++;
+                    if (_updateFileState.CcovBootCompleteFlag == true)
+                        updateFileCount++;
+                    break;
+                default:
+                    break;
+            }
+            return updateFileCount;
+        }
+        
+        
+
         #endregion
 
-        private static void HeartBeatTimerInit()
-        {
-            timerHB.Stop();
-            timerHB.Close();
-            timerHB.Interval = 15000;
-            timerHB.AutoReset = false;
-            timerHB.Start();
-            timerHB.Elapsed += new System.Timers.ElapsedEventHandler(timerHB_Elapsed);
-        }
 
-        private static void timerHB_Elapsed(object sender, EventArgs e)
-        {
-            timeout = true;
-            //CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "待重启");
-        }
+
 
         #endregion
 

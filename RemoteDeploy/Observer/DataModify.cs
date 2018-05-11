@@ -13,10 +13,16 @@ namespace RemoteDeploy.Observer
     {
         public delegate void ColorEventHandler();
         public event ColorEventHandler ColorEvent;
+        /// <summary>
+        /// 通知刷新界面
+        /// </summary>
         public void Modify()
         {
             Notify();
         }
+        /// <summary>
+        /// 刷新颜色
+        /// </summary>
         public void Color()
         {
             if (this.ColorEvent != null)

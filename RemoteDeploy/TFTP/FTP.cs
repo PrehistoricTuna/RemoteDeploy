@@ -656,7 +656,7 @@ namespace RemoteDeploy.TFTP
         /// <returns></returns>
         public static string[] GetFilesDetailList()
         {
-            string[] downloadFiles;
+            
             try
             {
                 
@@ -683,7 +683,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                downloadFiles = null;
+                
                 throw ex;
             }
         }
@@ -694,7 +694,7 @@ namespace RemoteDeploy.TFTP
         /// <returns></returns>
         public static string[] GetFileList(string mask)
         {
-            string[] downloadFiles;
+            
             StringBuilder result = new StringBuilder();
             FtpWebRequest reqFTP;
             try
@@ -733,7 +733,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                downloadFiles = null;
+                
                 throw ex;
             }
         }

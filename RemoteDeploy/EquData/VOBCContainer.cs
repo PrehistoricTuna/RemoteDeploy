@@ -269,6 +269,12 @@ namespace RemoteDeploy.EquData
 
         }
 
+        /// <summary>
+        /// 设置产品的VOBC设备的状态函数
+        /// </summary>
+        /// <param name="ip">ip地址</param>
+        /// <param name="systype">VOBC子系统标识</param>
+        /// <param name="updateState">更新状态</param>
         public void SetProductVOBCDeviceState(string ip,
             vobcSystemType systype, int updateState)
         {
@@ -304,7 +310,7 @@ namespace RemoteDeploy.EquData
                     base.dataModify.Modify();
 
                     //记录日志
-                    LogManager.InfoLog.LogProcInfo("IProContainer", "SetProductVOBCDeviceProcState", "设置IP为" + ip + "的产品" + product.ProductID + "中的设备" + device.DeviceName + "的烧录状态为成功");
+                    LogManager.InfoLog.LogProcInfo("IProContainer", "SetProductVOBCDeviceProcState", "设置IP为" + ip + "的产品" + product.ProductID + "中的设备" + device.DeviceName + "的烧录状态为" + device.State);
                 }
                 else
                 {

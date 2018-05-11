@@ -55,8 +55,12 @@ namespace RemoteDeploy.Command
         #endregion
 
         /// <summary>
-        /// 构造函数
+        /// VOBC命令函数
         /// </summary>
+        /// <param name="serverIP">产品IP</param>
+        /// <param name="serverPort">产品端口</param>
+        /// <param name="vobcID">VOBCID</param>
+        /// <param name="commandT">VOBC指令类型</param>
         public VOBCCommand(string serverIP, int serverPort,
             string vobcID, vobcCommandType commandT)
         {
@@ -65,6 +69,14 @@ namespace RemoteDeploy.Command
             vobcDevID = vobcID;
             vobcCommandT = commandT;
         }
+        /// <summary>
+        /// VOBC命令函数
+        /// </summary>
+        /// <param name="serverIP">产品IP</param>
+        /// <param name="serverPort">产品端口</param>
+        /// <param name="vobcID">VOBCID</param>
+        /// <param name="commandT">VOBC指令类型</param>
+        /// <param name="pathList">路径集</param>
         public VOBCCommand(string serverIP, int serverPort,
     string vobcID, vobcCommandType commandT, Dictionary<string, string> pathList)
         {
@@ -74,6 +86,14 @@ namespace RemoteDeploy.Command
             vobcCommandT = commandT;
             vobcPathList = pathList;
         }
+        /// <summary>
+        /// VOBC指令函数
+        /// </summary>
+        /// <param name="serverIP">产品IP</param>
+        /// <param name="serverPort">产品端口</param>
+        /// <param name="vobcID">VOBCID</param>
+        /// <param name="commandT">VOBC指令类型</param>
+        /// <param name="checkFile">VOBC文件校验信息实体</param>
         public VOBCCommand(string serverIP, int serverPort,
 string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
         {
@@ -87,7 +107,7 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
         /// <summary>
         /// 执行主函数
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回执行结果</returns>
         public override bool Exec()
         {
 
@@ -310,21 +330,14 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
             return execResult;
 
         }
-
+        /// <summary>
+        /// TCPVOBC数据回调
+        /// </summary>
+        /// <param name="receData">回调数据</param>
         void TcpVobc_EBackData(byte[] receData)
         {
             VOBCProduct pro = CDeviceDataFactory.Instance.GetProductByIpPort(vobcServerIP, vobcServerPort);
             DataAnalysis.VOBCDataAnalysis(receData, pro.CTcpClient);
-            if (DataAnalysis.timeout == true)
-            {
-                pro.CTcpClient.Socket_TCPClient_Dispose();
-                IProContainer item = CDeviceDataFactory.Instance.ProjectConsole.Projducts.Find(tar =>
-                                tar is VOBCContainer);
-                item.SetProductState(pro.CTcpClient.ServerIP, "故障");
-                //pro.Ip
-                LogManager.InfoLog.LogProcInfo("VOBCCommand", "TcpVobc_EBackData", "超过通信中断判定时间未收到心跳信息，断开连接！");
-                pro.Report.ReportWindow("超过通信中断判定时间未收到心跳信息，断开连接！");
-            }
                
             if(pro != null)
             {

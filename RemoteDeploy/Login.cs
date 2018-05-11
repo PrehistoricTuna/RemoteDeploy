@@ -10,44 +10,60 @@ using System.Data.SQLite;
 
 namespace RemoteDeploy
 {
-    public delegate void ChangeButtonState(bool topmost);
+   
     public partial class Login : Form
     {
         //数据库操作指令
         public static string SQLQuery = "";
 
-        //登录状态改变后触发事件
-        public event ChangeButtonState ChangeState;
+   
+        public enum UserType
+        {
+            none,
+            manager,
+            maintainer
+        }
+     
 
-        //全局变量-用户名
-        public static string username;
-
-        //全局变量-用户类型
-        public static string usertype;
 
         public Login()
         {
             InitializeComponent();
-            
+            //用户类型设定
             comboBox_UserType.Items.Add("超级管理员");
             comboBox_UserType.Items.Add("维护员");
             comboBox_UserType.SelectedIndex = comboBox_UserType.Items.IndexOf("维护员");
+           
         }
-       
-       
-       /// <summary>
-       /// 登录
-       /// </summary>
-       /// <param name="sender"></param>
-       /// <param name="e"></param>
+        
+
+        public  UserType getusertype()
+        {
+           
+            if (comboBox_UserType.Text == "超级管理员")
+            {
+                return UserType.manager;
+            }
+            if (comboBox_UserType.SelectedItem.ToString() == "维护员")
+            {
+                return UserType.maintainer;
+            }
+            return UserType.none;
+
+        }
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             String name = textBox_Name.Text;
             String password = textBox_Password.Text;
             String type = comboBox_UserType.Text;
 
-            username = textBox_Name.Text;
-            usertype = comboBox_UserType.Text;
+            MainWindow.username = textBox_Name.Text;
+
 
             //用户名为空
             if (name.Equals(""))
@@ -74,11 +90,8 @@ namespace RemoteDeploy
             //登录成功
             if (i == true)
             {
-                
-                    this.Close();
-                    MessageBox.Show("登陆成功");
-                    ChangeState(true);
-               
+                this.DialogResult = DialogResult.OK;
+                this.Close();
             }
             //登录失败
             else
@@ -136,12 +149,10 @@ namespace RemoteDeploy
             {
                 SQLQuery = "SELECT * FROM ManagerPsd";
             }
+            
         }
 
-        private void textBox_Password_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+      
 
     }
 }
