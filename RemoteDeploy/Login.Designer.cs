@@ -84,11 +84,13 @@
             // comboBox_UserType
             // 
             this.comboBox_UserType.FormattingEnabled = true;
+            this.comboBox_UserType.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.comboBox_UserType.Location = new System.Drawing.Point(108, 129);
             this.comboBox_UserType.Name = "comboBox_UserType";
             this.comboBox_UserType.Size = new System.Drawing.Size(121, 20);
             this.comboBox_UserType.TabIndex = 5;
             this.comboBox_UserType.SelectedIndexChanged += new System.EventHandler(this.comboBox_UserType_SelectedIndexChanged);
+            this.comboBox_UserType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // button1
             // 

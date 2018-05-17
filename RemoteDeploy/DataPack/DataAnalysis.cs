@@ -440,6 +440,7 @@ namespace RemoteDeploy.DataPack
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                                 //根据子系统获取该设备更新文件总数
                                 //检查是否成功
@@ -633,9 +634,10 @@ namespace RemoteDeploy.DataPack
             while (Data.Length > dataIndex)
             {
                 //取数据长度
-                string le = Convert.ToString(Data[dataIndex + 0], 16).PadLeft(2, '0') + Convert.ToString(Data[dataIndex + 1], 16).PadLeft(2, '0');
-                Int32 dataLength = Convert.ToInt32(le, 16);
-
+                
+               // string le = Convert.ToString(Data[dataIndex + 0], 16).PadLeft(2, '0') + Convert.ToString(Data[dataIndex + 1], 16).PadLeft(2, '0');
+                //Int32 dataLength = Convert.ToInt32(le, 16);
+                Int32 dataLength = BytesToInt16(Data, dataIndex);
                 //截取一包数据
                 byte[] tmpData = Data.Skip(dataIndex).Take(dataLength + 2).ToArray();
 
@@ -1474,12 +1476,25 @@ namespace RemoteDeploy.DataPack
             }
             return updateFileCount;
         }
-        
-        
+
+
 
         #endregion
 
+        public static Int16 BytesToInt16(byte[] value, Int32 startIndex)
+        {
+            if (value.Length < (startIndex + 2))
+            {
+                throw new OverflowException();
+            }
 
+            Int16 tmpData = 0;
+
+            tmpData |= (Int16)(value[startIndex] << 8);
+            tmpData |= (Int16)value[startIndex + 1];
+
+            return tmpData;
+        }
 
 
         #endregion

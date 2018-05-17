@@ -132,7 +132,7 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                     }
                     else
                     {
-                        pro.CTcpClient.Socket_TCPClient_Dispose();
+                        //pro.CTcpClient.Socket_TCPClient_Dispose();
                         //实例化TCP客户端类
                         pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
                         //TCP客户端代码 正式环境使用

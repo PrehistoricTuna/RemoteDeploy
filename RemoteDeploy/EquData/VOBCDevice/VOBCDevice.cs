@@ -119,8 +119,8 @@ namespace RemoteDeploy.EquData
                 #endregion
 
                 //设备预检
-                string preCheckResult = String.Empty;//Modified @ 4.28，待改回
-                //string preCheckResult = PreCheck(vobc.VobcStateInfo);
+                //string preCheckResult = String.Empty;//Modified @ 4.28，待改回
+                string preCheckResult = PreCheck(vobc.VobcStateInfo);
 
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
@@ -183,6 +183,7 @@ namespace RemoteDeploy.EquData
             {
                 LogManager.InfoLog.LogProcInfo("VOBCDevice", "RunDeploy", base.BelongProduct.ProductID + "部署过程失败：生成配置文件前的相关环节失败或未收到允许上传的回复");
                 vobc.Report.ReportWindow("更新失败：生成配置文件前的相关环节失败或未收到允许上传的回复");
+                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
             }
 
         }

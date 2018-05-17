@@ -145,7 +145,7 @@ namespace RemoteDeploy.NetworkService
                     //可用资源大于0 读取数据
                     if (clientSocket.Available > 0)
                     {
-                        //数据接收
+                        //数据接收，Receive为阻塞型
                         int receiveNumber = clientSocket.Receive(bytReceive, 0, bytReceive.Length, 0);
 
                         if (receiveNumber > 0)
@@ -168,6 +168,11 @@ namespace RemoteDeploy.NetworkService
                             }
                         }
                     }
+                    SpinWait.SpinUntil(() => false, 1);
+                    //else
+                    //{
+                        //SpinWait.SpinUntil(() => false, 1);
+                    //}
                 }
 
             }

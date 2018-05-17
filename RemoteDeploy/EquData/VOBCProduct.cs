@@ -245,7 +245,7 @@ namespace RemoteDeploy.EquData
                 }
                 else
                 {
-                    Thread.Sleep(500);
+                    Thread.Sleep(3000);
                 }
             } while (online == true);
 
@@ -408,7 +408,7 @@ namespace RemoteDeploy.EquData
         {
             
             //foreach(vobcSystemType type in GetVobcSystemListByType(vobcSystemType sType))
-                //如有任一子设备更新失败则认为该产品全部更新失败，因此反向判断：回复的VOBC产品下的子子系统更新结果存在失败的，更新失败 Modified @ 4.25
+            //如有任一子设备更新失败则认为该产品全部更新失败，因此反向判断：回复的VOBC产品下的子子系统更新结果存在失败的，更新失败 Modified @ 4.25
             if (this.CSelectedDevice.FindAll(tar => tar.State == "更新失败").Count > 0)
             {
                 //记录部署失败日志信息

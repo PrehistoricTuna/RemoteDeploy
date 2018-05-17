@@ -62,6 +62,9 @@ namespace RemoteDeploy
 
         private Dictionary<BackgroundWorker, IProduct> wokerList = new Dictionary<BackgroundWorker, IProduct>();
 
+        //心跳线程
+        private Thread thread_heart = null;
+        
         //enum类型的usertype
         public Login.UserType usertypestat;
         #endregion
@@ -153,7 +156,7 @@ namespace RemoteDeploy
 
                 //启用状态查看按钮
                 tsbStateUpdate.Enabled = true;
-
+                
                 //Thread.Sleep(50000);
                 //test_Click(null, e);
             }
@@ -389,23 +392,23 @@ namespace RemoteDeploy
             tsbStateUpdate.Enabled = true;
         }
 
-        //timer计时器事件  执行心跳帧发送
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            
-            foreach(VOBCProduct product in CDeviceDataFactory.Instance.VobcContainer)
-            {
-                if(product.CTcpClient != null)
-                {
-                    if (product.CTcpClient.clientSocket != null)
-                    {
-                        LogManager.InfoLog.LogCommunicationInfo("MainWindow", "timer1_Tick", "发送VOBC" + product.ProductID + "心跳帧");
-                        product.CTcpClient.Me_SendMessage(DataPack.DataPack.PackHeartbeatRequest());
-                    }
-                }
-            }
+        ////timer计时器事件 执行心跳帧发送
+        //private void timer1_Tick(object sender, EventArgs e)
+        //{
 
-        }
+        //    foreach (VOBCProduct product in CDeviceDataFactory.Instance.VobcContainer)
+        //    {
+        //        if (product.CTcpClient != null)
+        //        {
+        //            if (product.CTcpClient.clientSocket != null)
+        //            {
+        //                LogManager.InfoLog.LogCommunicationInfo("MainWindow", "timer1_Tick", "发送VOBC" + product.ProductID + "心跳帧");
+        //                product.CTcpClient.Me_SendMessage(DataPack.DataPack.PackHeartbeatRequest());
+        //            }
+        //        }
+        //    }
+
+        //}
 
         /// <summary>
         /// 窗体关闭事件
@@ -414,6 +417,7 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            thread_heart.Abort();
             foreach (VOBCProduct product in CDeviceDataFactory.Instance.VobcContainer)
             {
                 if (product.CTcpClient != null)
@@ -430,13 +434,14 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void linkEstab_Click(object sender, EventArgs e)
         {
-            timer1.Enabled = true;
-
+            //timer1.Enabled = false;
+            
             //遍历用户选择的需要建立链接的产品对象信息
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
-            {
+            {               
                 //获取产品实例对象
                 IProduct product = container[oneProduct.Index] as IProduct;
+                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, "");
                 //if (product.CTcpClient != null)
                 //{
                 //    product.CTcpClient.Socket_TCPClient_Dispose();
@@ -666,7 +671,28 @@ namespace RemoteDeploy
         #endregion
 
         #region 函数实现
-
+        /// <summary>
+        /// 执行心跳发送方法
+        /// </summary>
+        public void HeartBeatSend()
+        {
+            while (true)
+            {
+                foreach (VOBCProduct product in CDeviceDataFactory.Instance.VobcContainer)
+                {
+                    if (product.CTcpClient != null)
+                    {
+                        if (product.CTcpClient.clientSocket != null)
+                        {
+                            LogManager.InfoLog.LogCommunicationInfo("MainWindow", "HeartBeatSend", "发送VOBC" + product.ProductID + "心跳帧");
+                            product.CTcpClient.Me_SendMessage(DataPack.DataPack.PackHeartbeatRequest());
+                        }
+                    }
+                }
+                Thread.Sleep(5000);
+            }
+            
+        }
         /// <summary>
         /// 初始化操作
         /// </summary>
@@ -725,6 +751,7 @@ namespace RemoteDeploy
             check.UseColumnTextForButtonValue = true;
             check.Width = 50;
             dataGrid_VOBC.Columns.Add(check);
+
             ///初始化控件列信息
             InitDataGridViewColumns();
 
@@ -750,6 +777,10 @@ namespace RemoteDeploy
                     observer.AddReport(product.Report);
                 }
             }
+
+            //初始化并开始心跳线程，执行心跳发送方法
+            thread_heart = new Thread(new ThreadStart(HeartBeatSend));
+            thread_heart.Start();
         }
 
         /// <summary>
