@@ -5,6 +5,7 @@ using System.Text;
 using RemoteDeploy.Command;
 using RemoteDeploy.ControlDispatcher;
 using System.IO;
+using System.Windows;
 using RemoteDeploy.Common;
 using RemoteDeploy.Models.VOBC;
 using TCT.ShareLib.LogManager;
@@ -50,13 +51,27 @@ namespace RemoteDeploy.EquData
 
             if (base.BelongProduct.ProductID.Contains("TC1"))
             {
-                //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
-                File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Red\\config.ini", m_ccovIniPath.Key, true);
+                try
+                {
+                    //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
+                    File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Red\\config.ini", m_ccovIniPath.Key, true);
+                }
+                catch
+                {
+                    MessageBox.Show("请检查CCOV配置文件路径");
+                }
             }
             else if (base.BelongProduct.ProductID.Contains("TC2"))
             {
-                //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
-                File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Blue\\config.ini", m_ccovIniPath.Key, true);
+                try
+                {
+                    //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
+                    File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Blue\\config.ini", m_ccovIniPath.Key, true);
+                }
+                catch
+                {
+                    MessageBox.Show("请检查CCOV配置文件路径");
+                }
             }
             else
             {
