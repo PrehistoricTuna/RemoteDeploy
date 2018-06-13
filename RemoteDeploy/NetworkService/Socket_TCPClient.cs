@@ -7,6 +7,7 @@ using System.Net;
 using System.Threading;
 using System.Runtime.InteropServices;
 using TCT.ShareLib.LogManager;
+using System.Windows;
 
 namespace RemoteDeploy.NetworkService
 {
@@ -103,7 +104,7 @@ namespace RemoteDeploy.NetworkService
 
                 //连接服务端
                 clientSocket.Connect(serverIpep);
-
+                //MessageBox.Show("111111111111111111111");
                 //通过进行获取TCP连接  
                 communicateThread = new Thread(Me_ReceiveMessage);
                 communicateThread.IsBackground = true;
@@ -159,6 +160,8 @@ namespace RemoteDeploy.NetworkService
                                 msg += " " + Convert.ToString(item, 16).PadLeft(2, '0');
                             }
 
+                            msg += "[" + serverIP + ":" + serverPort + "]";
+
                             LogManager.InfoLog.LogCommunicationInfo("Socket_TCPClient", "Me_ReceiveMessage", msg);
 
                             //回调函数被注册 返回回调信息
@@ -168,11 +171,10 @@ namespace RemoteDeploy.NetworkService
                             }
                         }
                     }
-                    SpinWait.SpinUntil(() => false, 1);
-                    //else
-                    //{
-                        //SpinWait.SpinUntil(() => false, 1);
-                    //}
+                    else
+                    {
+                        SpinWait.SpinUntil(() => false, 1);
+                    }
                 }
 
             }
@@ -197,6 +199,16 @@ namespace RemoteDeploy.NetworkService
 
                 //执行发送数据操作
                 int SendBack = clientSocket.Send(sendData);
+                
+                string msg = string.Empty;
+                foreach (byte item in sendData)
+                {
+                    msg += " " + Convert.ToString(item, 16).PadLeft(2, '0');
+                }
+
+                msg += "[" + serverIP + ":" + serverPort + "]";
+
+                LogManager.InfoLog.LogCommunicationInfo("Socket_TCPClient", "Me_SendMessage", msg);
 
                 //反馈处理结果（发送发回值如果与待发送数据长度一致 代表发送成功）
                 reResult = (SendBack == sendData.Length) ? true : false;

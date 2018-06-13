@@ -47,6 +47,7 @@
             this.tsbStop = new System.Windows.Forms.ToolStripButton();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.panel_Container = new System.Windows.Forms.Panel();
+            this.buttonCheck = new System.Windows.Forms.Button();
             this.button_OK = new System.Windows.Forms.Button();
             this.tabControl_Container = new System.Windows.Forms.TabControl();
             this.tabPage_VOBC = new System.Windows.Forms.TabPage();
@@ -116,7 +117,6 @@
             this.权限ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.日志ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.历史查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.版本查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
@@ -127,7 +127,6 @@
             this.dataGridViewCheckBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn4 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn5 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -154,10 +153,11 @@
             this.dataGridViewTextBoxColumn19 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn14 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn20 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewTextBoxColumn21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn22 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn23 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
             this.panel_All.SuspendLayout();
             this.panel_Buttons.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -190,7 +190,7 @@
             this.panel_All.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_All.Location = new System.Drawing.Point(0, 0);
             this.panel_All.Name = "panel_All";
-            this.panel_All.Size = new System.Drawing.Size(1347, 711);
+            this.panel_All.Size = new System.Drawing.Size(1370, 711);
             this.panel_All.TabIndex = 0;
             // 
             // panel_Buttons
@@ -202,7 +202,7 @@
             this.panel_Buttons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Buttons.Location = new System.Drawing.Point(0, 0);
             this.panel_Buttons.Name = "panel_Buttons";
-            this.panel_Buttons.Size = new System.Drawing.Size(1347, 711);
+            this.panel_Buttons.Size = new System.Drawing.Size(1370, 711);
             this.panel_Buttons.TabIndex = 0;
             // 
             // toolStrip1
@@ -212,9 +212,9 @@
             this.tsbStateUpdate,
             this.tsbDeploy,
             this.tsbStop});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 25);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1345, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1368, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -224,7 +224,7 @@
             this.linkEstab.Image = ((System.Drawing.Image)(resources.GetObject("linkEstab.Image")));
             this.linkEstab.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.linkEstab.Name = "linkEstab";
-            this.linkEstab.Size = new System.Drawing.Size(60, 22);
+            this.linkEstab.Size = new System.Drawing.Size(57, 22);
             this.linkEstab.Text = "建立链接";
             this.linkEstab.Click += new System.EventHandler(this.linkEstab_Click);
             // 
@@ -234,7 +234,7 @@
             this.tsbStateUpdate.Image = ((System.Drawing.Image)(resources.GetObject("tsbStateUpdate.Image")));
             this.tsbStateUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbStateUpdate.Name = "tsbStateUpdate";
-            this.tsbStateUpdate.Size = new System.Drawing.Size(60, 22);
+            this.tsbStateUpdate.Size = new System.Drawing.Size(57, 22);
             this.tsbStateUpdate.Text = "状态查看";
             this.tsbStateUpdate.Click += new System.EventHandler(this.tsbStateUpdate_Click);
             // 
@@ -244,8 +244,8 @@
             this.tsbDeploy.Image = ((System.Drawing.Image)(resources.GetObject("tsbDeploy.Image")));
             this.tsbDeploy.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbDeploy.Name = "tsbDeploy";
-            this.tsbDeploy.Size = new System.Drawing.Size(36, 22);
-            this.tsbDeploy.Text = "部署";
+            this.tsbDeploy.Size = new System.Drawing.Size(57, 22);
+            this.tsbDeploy.Text = "开始部署";
             this.tsbDeploy.Click += new System.EventHandler(this.tsbDeploy_Click);
             // 
             // tsbStop
@@ -254,15 +254,15 @@
             this.tsbStop.Image = ((System.Drawing.Image)(resources.GetObject("tsbStop.Image")));
             this.tsbStop.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsbStop.Name = "tsbStop";
-            this.tsbStop.Size = new System.Drawing.Size(36, 22);
-            this.tsbStop.Text = "停止";
+            this.tsbStop.Size = new System.Drawing.Size(57, 22);
+            this.tsbStop.Text = "停止部署";
             this.tsbStop.Click += new System.EventHandler(this.tsbStop_Click);
             // 
             // splitContainer
             // 
-            this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.splitContainer.Location = new System.Drawing.Point(0, 52);
             this.splitContainer.Margin = new System.Windows.Forms.Padding(2);
@@ -281,28 +281,40 @@
             this.splitContainer.Panel2.Controls.Add(this.panel_Operations);
             this.splitContainer.Panel2.Controls.Add(this.panel_Functions);
             this.splitContainer.Panel2MinSize = 15;
-            this.splitContainer.Size = new System.Drawing.Size(1345, 657);
-            this.splitContainer.SplitterDistance = 345;
+            this.splitContainer.Size = new System.Drawing.Size(1368, 657);
+            this.splitContainer.SplitterDistance = 350;
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
             // panel_Container
             // 
-            this.panel_Container.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_Container.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Container.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel_Container.Controls.Add(this.buttonCheck);
             this.panel_Container.Controls.Add(this.button_OK);
             this.panel_Container.Controls.Add(this.tabControl_Container);
             this.panel_Container.Location = new System.Drawing.Point(3, 103);
             this.panel_Container.Name = "panel_Container";
-            this.panel_Container.Size = new System.Drawing.Size(337, 554);
+            this.panel_Container.Size = new System.Drawing.Size(342, 554);
             this.panel_Container.TabIndex = 0;
+            // 
+            // buttonCheck
+            // 
+            this.buttonCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonCheck.Location = new System.Drawing.Point(159, 523);
+            this.buttonCheck.Name = "buttonCheck";
+            this.buttonCheck.Size = new System.Drawing.Size(75, 23);
+            this.buttonCheck.TabIndex = 6;
+            this.buttonCheck.Text = "查看选中行";
+            this.buttonCheck.UseVisualStyleBackColor = true;
+            this.buttonCheck.Click += new System.EventHandler(this.buttonCheck_Click);
             // 
             // button_OK
             // 
             this.button_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_OK.Location = new System.Drawing.Point(254, 523);
+            this.button_OK.Location = new System.Drawing.Point(259, 523);
             this.button_OK.Name = "button_OK";
             this.button_OK.Size = new System.Drawing.Size(75, 23);
             this.button_OK.TabIndex = 5;
@@ -312,9 +324,9 @@
             // 
             // tabControl_Container
             // 
-            this.tabControl_Container.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl_Container.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl_Container.Controls.Add(this.tabPage_VOBC);
             this.tabControl_Container.Controls.Add(this.tabPage_ZC);
             this.tabControl_Container.Controls.Add(this.tabPage_DSU);
@@ -322,17 +334,17 @@
             this.tabControl_Container.Location = new System.Drawing.Point(3, 3);
             this.tabControl_Container.Name = "tabControl_Container";
             this.tabControl_Container.SelectedIndex = 0;
-            this.tabControl_Container.Size = new System.Drawing.Size(333, 518);
+            this.tabControl_Container.Size = new System.Drawing.Size(338, 518);
             this.tabControl_Container.TabIndex = 1;
             this.tabControl_Container.SelectedIndexChanged += new System.EventHandler(this.tabControl_Container_SelectedIndexChanged);
             // 
             // tabPage_VOBC
             // 
             this.tabPage_VOBC.Controls.Add(this.dataGrid_VOBC);
-            this.tabPage_VOBC.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_VOBC.Location = new System.Drawing.Point(4, 21);
             this.tabPage_VOBC.Name = "tabPage_VOBC";
             this.tabPage_VOBC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_VOBC.Size = new System.Drawing.Size(325, 492);
+            this.tabPage_VOBC.Size = new System.Drawing.Size(330, 493);
             this.tabPage_VOBC.TabIndex = 0;
             this.tabPage_VOBC.Text = "VOBC";
             this.tabPage_VOBC.UseVisualStyleBackColor = true;
@@ -368,7 +380,7 @@
             this.dataGrid_VOBC.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGrid_VOBC.RowTemplate.Height = 23;
             this.dataGrid_VOBC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGrid_VOBC.Size = new System.Drawing.Size(319, 486);
+            this.dataGrid_VOBC.Size = new System.Drawing.Size(324, 487);
             this.dataGrid_VOBC.TabIndex = 0;
             this.dataGrid_VOBC.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_VOBC_CellContentClick);
             this.dataGrid_VOBC.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_VOBC_CellDoubleClick);
@@ -432,10 +444,10 @@
             // tabPage_ZC
             // 
             this.tabPage_ZC.Controls.Add(this.dataGrid_ZC);
-            this.tabPage_ZC.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_ZC.Location = new System.Drawing.Point(4, 21);
             this.tabPage_ZC.Name = "tabPage_ZC";
             this.tabPage_ZC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_ZC.Size = new System.Drawing.Size(325, 492);
+            this.tabPage_ZC.Size = new System.Drawing.Size(330, 493);
             this.tabPage_ZC.TabIndex = 1;
             this.tabPage_ZC.Text = "ZC";
             this.tabPage_ZC.UseVisualStyleBackColor = true;
@@ -443,9 +455,9 @@
             // dataGrid_ZC
             // 
             this.dataGrid_ZC.AllowUserToAddRows = false;
-            this.dataGrid_ZC.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGrid_ZC.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGrid_ZC.BackgroundColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
@@ -471,7 +483,7 @@
             this.dataGrid_ZC.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGrid_ZC.RowTemplate.Height = 23;
             this.dataGrid_ZC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGrid_ZC.Size = new System.Drawing.Size(319, 486);
+            this.dataGrid_ZC.Size = new System.Drawing.Size(325, 487);
             this.dataGrid_ZC.TabIndex = 1;
             // 
             // Column_ZCArea
@@ -525,10 +537,10 @@
             // tabPage_DSU
             // 
             this.tabPage_DSU.Controls.Add(this.dataGrid_DSU);
-            this.tabPage_DSU.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_DSU.Location = new System.Drawing.Point(4, 21);
             this.tabPage_DSU.Name = "tabPage_DSU";
             this.tabPage_DSU.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_DSU.Size = new System.Drawing.Size(325, 492);
+            this.tabPage_DSU.Size = new System.Drawing.Size(330, 493);
             this.tabPage_DSU.TabIndex = 2;
             this.tabPage_DSU.Text = "DSU";
             this.tabPage_DSU.UseVisualStyleBackColor = true;
@@ -536,9 +548,9 @@
             // dataGrid_DSU
             // 
             this.dataGrid_DSU.AllowUserToAddRows = false;
-            this.dataGrid_DSU.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGrid_DSU.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGrid_DSU.BackgroundColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
@@ -559,7 +571,7 @@
             this.dataGrid_DSU.RowHeadersVisible = false;
             this.dataGrid_DSU.RowTemplate.Height = 23;
             this.dataGrid_DSU.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGrid_DSU.Size = new System.Drawing.Size(319, 486);
+            this.dataGrid_DSU.Size = new System.Drawing.Size(325, 487);
             this.dataGrid_DSU.TabIndex = 1;
             // 
             // Column_DSUArea
@@ -591,10 +603,10 @@
             // tabPage_CI
             // 
             this.tabPage_CI.Controls.Add(this.dataGrid_CI);
-            this.tabPage_CI.Location = new System.Drawing.Point(4, 22);
+            this.tabPage_CI.Location = new System.Drawing.Point(4, 21);
             this.tabPage_CI.Name = "tabPage_CI";
             this.tabPage_CI.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_CI.Size = new System.Drawing.Size(325, 492);
+            this.tabPage_CI.Size = new System.Drawing.Size(330, 493);
             this.tabPage_CI.TabIndex = 3;
             this.tabPage_CI.Text = "CI";
             this.tabPage_CI.UseVisualStyleBackColor = true;
@@ -602,9 +614,9 @@
             // dataGrid_CI
             // 
             this.dataGrid_CI.AllowUserToAddRows = false;
-            this.dataGrid_CI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGrid_CI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGrid_CI.BackgroundColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
@@ -625,7 +637,7 @@
             this.dataGrid_CI.RowHeadersVisible = false;
             this.dataGrid_CI.RowTemplate.Height = 23;
             this.dataGrid_CI.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGrid_CI.Size = new System.Drawing.Size(319, 486);
+            this.dataGrid_CI.Size = new System.Drawing.Size(325, 487);
             this.dataGrid_CI.TabIndex = 1;
             // 
             // Column_CIArea
@@ -656,13 +668,13 @@
             // 
             // panel_BurningSet
             // 
-            this.panel_BurningSet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_BurningSet.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_BurningSet.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel_BurningSet.Controls.Add(this.panel_CheckBoxs);
             this.panel_BurningSet.Location = new System.Drawing.Point(3, 3);
             this.panel_BurningSet.Name = "panel_BurningSet";
-            this.panel_BurningSet.Size = new System.Drawing.Size(337, 94);
+            this.panel_BurningSet.Size = new System.Drawing.Size(342, 94);
             this.panel_BurningSet.TabIndex = 0;
             // 
             // panel_CheckBoxs
@@ -675,7 +687,7 @@
             this.panel_CheckBoxs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_CheckBoxs.Location = new System.Drawing.Point(0, 0);
             this.panel_CheckBoxs.Name = "panel_CheckBoxs";
-            this.panel_CheckBoxs.Size = new System.Drawing.Size(335, 92);
+            this.panel_CheckBoxs.Size = new System.Drawing.Size(340, 92);
             this.panel_CheckBoxs.TabIndex = 4;
             // 
             // checkBox_ini
@@ -735,14 +747,14 @@
             // 
             // panel_AutoLoadingDetails
             // 
-            this.panel_AutoLoadingDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_AutoLoadingDetails.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_AutoLoadingDetails.AutoSize = true;
             this.panel_AutoLoadingDetails.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel_AutoLoadingDetails.Controls.Add(this.label1);
             this.panel_AutoLoadingDetails.Location = new System.Drawing.Point(4, 102);
             this.panel_AutoLoadingDetails.Name = "panel_AutoLoadingDetails";
-            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1024, 33);
+            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1058, 33);
             this.panel_AutoLoadingDetails.TabIndex = 5;
             this.panel_AutoLoadingDetails.SizeChanged += new System.EventHandler(this.panel_AutoLoadingDetails_SizeChanged);
             // 
@@ -758,20 +770,23 @@
             // 
             // panel_Datagridview_Details
             // 
-            this.panel_Datagridview_Details.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_Datagridview_Details.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Datagridview_Details.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel_Datagridview_Details.Controls.Add(this.dataGridView_VOBCDeviceDetails);
             this.panel_Datagridview_Details.Location = new System.Drawing.Point(4, 132);
             this.panel_Datagridview_Details.Name = "panel_Datagridview_Details";
-            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1024, 491);
+            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1058, 491);
             this.panel_Datagridview_Details.TabIndex = 1;
             // 
             // dataGridView_VOBCDeviceDetails
             // 
             this.dataGridView_VOBCDeviceDetails.AllowUserToAddRows = false;
             this.dataGridView_VOBCDeviceDetails.AllowUserToResizeRows = false;
+            this.dataGridView_VOBCDeviceDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView_VOBCDeviceDetails.BackgroundColor = System.Drawing.Color.White;
             dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
@@ -798,7 +813,6 @@
             this.Column_AdditionalInformation,
             this.Column_NetState,
             this.Column_RestartState});
-            this.dataGridView_VOBCDeviceDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridView_VOBCDeviceDetails.Location = new System.Drawing.Point(0, 0);
             this.dataGridView_VOBCDeviceDetails.Name = "dataGridView_VOBCDeviceDetails";
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -812,7 +826,7 @@
             this.dataGridView_VOBCDeviceDetails.RowHeadersVisible = false;
             this.dataGridView_VOBCDeviceDetails.RowTemplate.Height = 23;
             this.dataGridView_VOBCDeviceDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(1022, 489);
+            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(1007, 489);
             this.dataGridView_VOBCDeviceDetails.TabIndex = 0;
             // 
             // Column_Area
@@ -951,19 +965,19 @@
             this.panel_Operations.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel_Operations.Location = new System.Drawing.Point(0, 624);
             this.panel_Operations.Name = "panel_Operations";
-            this.panel_Operations.Size = new System.Drawing.Size(996, 31);
+            this.panel_Operations.Size = new System.Drawing.Size(1014, 31);
             this.panel_Operations.TabIndex = 3;
             // 
             // panel_Functions
             // 
-            this.panel_Functions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel_Functions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel_Functions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel_Functions.Controls.Add(this.rtbReportView);
             this.panel_Functions.Cursor = System.Windows.Forms.Cursors.Default;
             this.panel_Functions.Location = new System.Drawing.Point(3, 3);
             this.panel_Functions.Name = "panel_Functions";
-            this.panel_Functions.Size = new System.Drawing.Size(1119, 94);
+            this.panel_Functions.Size = new System.Drawing.Size(1153, 94);
             this.panel_Functions.TabIndex = 2;
             // 
             // rtbReportView
@@ -975,7 +989,7 @@
             this.rtbReportView.Location = new System.Drawing.Point(0, 0);
             this.rtbReportView.Name = "rtbReportView";
             this.rtbReportView.ReadOnly = true;
-            this.rtbReportView.Size = new System.Drawing.Size(1117, 92);
+            this.rtbReportView.Size = new System.Drawing.Size(1151, 92);
             this.rtbReportView.TabIndex = 0;
             this.rtbReportView.Text = "";
             // 
@@ -987,7 +1001,7 @@
             this.帮助ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1345, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1368, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -998,64 +1012,57 @@
             this.注销ToolStripMenuItem,
             this.权限ToolStripMenuItem});
             this.用户ToolStripMenuItem.Name = "用户ToolStripMenuItem";
-            this.用户ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.用户ToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.用户ToolStripMenuItem.Text = "用户";
             // 
             // 登录ToolStripMenuItem
             // 
             this.登录ToolStripMenuItem.Name = "登录ToolStripMenuItem";
-            this.登录ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.登录ToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
             this.登录ToolStripMenuItem.Text = "登录";
             this.登录ToolStripMenuItem.Click += new System.EventHandler(this.登录ToolStripMenuItem_Click);
             // 
             // 注销ToolStripMenuItem
             // 
             this.注销ToolStripMenuItem.Name = "注销ToolStripMenuItem";
-            this.注销ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.注销ToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
             this.注销ToolStripMenuItem.Text = "注销";
             this.注销ToolStripMenuItem.Click += new System.EventHandler(this.注销ToolStripMenuItem_Click);
             // 
             // 权限ToolStripMenuItem
             // 
             this.权限ToolStripMenuItem.Name = "权限ToolStripMenuItem";
-            this.权限ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.权限ToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
             this.权限ToolStripMenuItem.Text = "退出";
             this.权限ToolStripMenuItem.Click += new System.EventHandler(this.权限ToolStripMenuItem_Click);
             // 
             // 日志ToolStripMenuItem
             // 
             this.日志ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.历史查询ToolStripMenuItem,
-            this.版本查询ToolStripMenuItem});
+            this.历史查询ToolStripMenuItem});
             this.日志ToolStripMenuItem.Name = "日志ToolStripMenuItem";
-            this.日志ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.日志ToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.日志ToolStripMenuItem.Text = "日志";
             // 
             // 历史查询ToolStripMenuItem
             // 
             this.历史查询ToolStripMenuItem.Name = "历史查询ToolStripMenuItem";
-            this.历史查询ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.历史查询ToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.历史查询ToolStripMenuItem.Text = "历史查询";
             this.历史查询ToolStripMenuItem.Click += new System.EventHandler(this.历史查询ToolStripMenuItem_Click);
-            // 
-            // 版本查询ToolStripMenuItem
-            // 
-            this.版本查询ToolStripMenuItem.Name = "版本查询ToolStripMenuItem";
-            this.版本查询ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.版本查询ToolStripMenuItem.Text = "版本查询";
             // 
             // 帮助ToolStripMenuItem
             // 
             this.帮助ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.关于ToolStripMenuItem});
             this.帮助ToolStripMenuItem.Name = "帮助ToolStripMenuItem";
-            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.帮助ToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
             this.帮助ToolStripMenuItem.Text = "帮助";
             // 
             // 关于ToolStripMenuItem
             // 
             this.关于ToolStripMenuItem.Name = "关于ToolStripMenuItem";
-            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            this.关于ToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
             this.关于ToolStripMenuItem.Text = "关于";
             this.关于ToolStripMenuItem.Click += new System.EventHandler(this.关于ToolStripMenuItem_Click);
             // 
@@ -1113,11 +1120,6 @@
             this.dataGridViewCheckBoxColumn5.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewCheckBoxColumn5.HeaderText = "MMI";
             this.dataGridViewCheckBoxColumn5.Name = "dataGridViewCheckBoxColumn5";
-            // 
-            // dataGridViewButtonColumn1
-            // 
-            this.dataGridViewButtonColumn1.HeaderText = "查看";
-            this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
             // 
             // dataGridViewTextBoxColumn4
             // 
@@ -1312,6 +1314,14 @@
             this.dataGridViewTextBoxColumn20.Visible = false;
             this.dataGridViewTextBoxColumn20.Width = 90;
             // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewImageColumn1.HeaderText = "结果";
+            this.dataGridViewImageColumn1.Image = global::RemoteDeploy.Properties.Resources.Gray;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.ReadOnly = true;
+            // 
             // dataGridViewTextBoxColumn21
             // 
             this.dataGridViewTextBoxColumn21.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -1339,22 +1349,21 @@
             this.dataGridViewTextBoxColumn23.Visible = false;
             this.dataGridViewTextBoxColumn23.Width = 74;
             // 
-            // dataGridViewImageColumn1
+            // dataGridViewButtonColumn1
             // 
-            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewImageColumn1.HeaderText = "结果";
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.ReadOnly = true;
+            this.dataGridViewButtonColumn1.HeaderText = "查看";
+            this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1347, 711);
+            this.ClientSize = new System.Drawing.Size(1370, 711);
             this.Controls.Add(this.panel_All);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainWindow";
+            this.Tag = "";
             this.Text = "远程部署工具 – 未登录";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindow_FormClosed);
@@ -1436,7 +1445,6 @@
         private System.Windows.Forms.ToolStripMenuItem 权限ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 日志ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 历史查询ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 版本查询ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 帮助ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 关于ToolStripMenuItem;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -1515,5 +1523,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_AdditionalInformation;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_NetState;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_RestartState;
+        private System.Windows.Forms.Button buttonCheck;
     }
 }

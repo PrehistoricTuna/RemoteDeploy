@@ -67,6 +67,10 @@ namespace RemoteDeploy
         
         //enum类型的usertype
         public Login.UserType usertypestat;
+
+        private int workerCount;
+
+        private bool windowEditable = true;
         #endregion
 
         #region 构造函数
@@ -123,7 +127,7 @@ namespace RemoteDeploy
             }
             catch (Exception ex)
             {
-                throw new MyException(ex.ToString());
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", ex.ToString());
             }
         }
 
@@ -134,9 +138,11 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void backgroundWorkerDeploy_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
-            ResetState();
-
+            workerCount -= 1;
+            if (workerCount == 0)
+            {
+                ResetState();
+            }
         }
         /// <summary>
         /// 重置状态
@@ -145,20 +151,34 @@ namespace RemoteDeploy
         {
             if (container.FindAll(tar => (tar.InProcess == true)).Count == 0)
             {
-                //启用部署按钮
-                tsbDeploy.Enabled = true;
-
-                //禁用停止部署按钮
-                tsbStop.Enabled = false;
-
                 //启用确认选择按钮
                 button_OK.Enabled = true;
 
                 //启用状态查看按钮
                 tsbStateUpdate.Enabled = true;
-                
-                //Thread.Sleep(50000);
-                //test_Click(null, e);
+
+                //启用CheckBox
+                checkBox_core.Enabled = true;
+                checkBox_data.Enabled = true;
+
+                windowEditable = true;
+
+                for (int i = 0; i < curruntDataGridView.Rows.Count; i++)
+                {
+                    for (int j = 0; j < curruntDataGridView.Columns.Count; j++)
+                    {
+                        curruntDataGridView.Rows[i].Cells[j].ReadOnly = false;
+                    }
+                }
+
+                //超级管理员可以勾选引导文件,配置文件，NVRam文件
+                Login login = new Login();
+                if (login.getusertype() == Login.UserType.manager)
+                {
+                    checkBox_bootloader.Enabled = true;
+                    checkBox_ini.Enabled = true;
+                    checkBox_nvram.Enabled = true;
+                }
             }
         }
 
@@ -169,6 +189,7 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void tsbDeploy_Click(object sender, EventArgs e)
         {
+            //已经执行了确认选择
             if (selectConfirmed)
             {
                 bool deviceSelect = false;
@@ -202,6 +223,7 @@ namespace RemoteDeploy
                     }
                     else
                     {
+                        //TODO
                     }
                 }
                 ///判断子系统文件选择框选中状态
@@ -210,51 +232,82 @@ namespace RemoteDeploy
                     System.Windows.Forms.MessageBox.Show("请选择烧录文件或设备!");
                     return;
                 }
-
-                //生成二次确认弹窗
-                Confirm f3 = new Confirm
+                else
                 {
-                    StartPosition = FormStartPosition.CenterParent
-                };
-
-                //弹窗并获取返回值用于传值
-                DialogResult dr = f3.ShowDialog();
-
-                if (dr == DialogResult.Cancel)
-                {
-                    return;
-                }
-                else if (dr == DialogResult.OK)
-                {
-                    //禁用当前按钮
-                    tsbDeploy.Enabled = false;
-
-                    //启用停止按钮
-                    tsbStop.Enabled = true;
-
-                    //禁用确认选择按钮
-                    button_OK.Enabled = false;
-
-                    //禁用状态查看
-                    tsbStateUpdate.Enabled = false; 
-
-                    //后台线程执行部署操作
-                    //backgroundWorkerDeploy.RunWorkerAsync();
-                    wokerList.Clear();
-                    foreach (IProduct pro in container)
+                    //生成二次确认弹窗
+                    Confirm confirForm = new Confirm
                     {
-                        if (pro.CSelectedDevice.Count != 0)
-                        {
-                            pro.InProcess = false;
-                            BackgroundWorker worker = new BackgroundWorker();
-                            worker.DoWork += Worker_DoWork;
-                            worker.RunWorkerCompleted += backgroundWorkerDeploy_RunWorkerCompleted;
-                            wokerList.Add(worker, pro);
-                        }
+                        StartPosition = FormStartPosition.CenterParent
+                    };
+
+                    //弹窗并获取返回值用于传值
+                    DialogResult dr = confirForm.ShowDialog();
+
+                    //判定界面回传的用户操作  用户取消
+                    if (dr == DialogResult.Cancel)
+                    {
+                        return;
                     }
-                    foreach (KeyValuePair<BackgroundWorker, IProduct> pair in wokerList)
+                    else if (dr == DialogResult.OK)
                     {
-                        pair.Key.RunWorkerAsync(pair.Value);
+                        //禁用当前按钮
+                        tsbDeploy.Enabled = false;
+
+                        //启用停止按钮
+                        tsbStop.Enabled = true;
+
+                        //禁用确认选择按钮
+                        button_OK.Enabled = false;
+
+                        //禁用状态查看
+                        tsbStateUpdate.Enabled = false;
+
+                        //禁用CheckBox控件
+                        checkBox_bootloader.Enabled = false;
+                        checkBox_core.Enabled = false;
+                        checkBox_data.Enabled = false;
+                        checkBox_nvram.Enabled = false;
+                        checkBox_ini.Enabled = false;
+
+                        //后台线程执行部署操作
+                        //backgroundWorkerDeploy.RunWorkerAsync();
+
+                        //清空多线程集合
+                        wokerList.Clear();
+                        workerCount = 0;
+
+                        for (int i = 0; i < curruntDataGridView.Rows.Count; i++)
+                        {
+                            for (int j = 0; j < curruntDataGridView.Columns.Count; j++)
+                            {
+                                curruntDataGridView.Rows[i].Cells[j].ReadOnly = true;
+                            }
+                        }                        
+
+                        foreach (IProduct pro in container)
+                        {
+                            if (pro.CSelectedDevice.Count != 0)
+                            {
+                                pro.InProcess = false;
+                                pro.StepOne = true;
+                                windowEditable = false;
+                                BackgroundWorker worker = new BackgroundWorker();
+                                workerCount++;
+                                worker.DoWork += Worker_DoWork;
+                                worker.RunWorkerCompleted += backgroundWorkerDeploy_RunWorkerCompleted;
+                                wokerList.Add(worker, pro);
+                                //清空进度信息
+                                foreach (IDevice device in selectedDevice)
+                                {
+                                    int index = dataGridView_VOBCDeviceDetails.Rows.Add();
+                                    dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Process"].Value = "";
+                                }
+                            }
+                        }
+                        foreach (KeyValuePair<BackgroundWorker, IProduct> pair in wokerList)
+                        {
+                            pair.Key.RunWorkerAsync(pair.Value);
+                        }
                     }
                 }
             }
@@ -263,7 +316,6 @@ namespace RemoteDeploy
                 System.Windows.Forms.MessageBox.Show("请确认选择!");
                 return;
             }
-
 
             
         }
@@ -284,7 +336,8 @@ namespace RemoteDeploy
                     //获取产品实例
                     IProduct product = container[oneProduct.Index] as IProduct;
 
-                    DateTime beginTime = DateTime.Now;
+                    //DateTime beginTime = DateTime.Now;
+
                     while (true)
                     {
 
@@ -293,24 +346,24 @@ namespace RemoteDeploy
                             CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.vobcInfoRequest));
                             break;
                         }
-                        //
+                        
                         else
                         {
                             break;
                         }
-                        /*else
-                        {
-                            Thread.Sleep(1000);
+                        //else
+                        //{
+                        //    Thread.Sleep(1000);
 
-                            //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+                        //    //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
 
-                            TimeSpan span = DateTime.Now - beginTime;
-                            if (span.TotalMilliseconds > 5000)
-                            {
-                                break;
-                            }
+                        //    TimeSpan span = DateTime.Now - beginTime;
+                        //    if (span.TotalMilliseconds > 5000)
+                        //    {
+                        //        break;
+                        //    }
 
-                        }*/
+                        //}
                     }
                 }
             }
@@ -346,7 +399,7 @@ namespace RemoteDeploy
                                 if (deviceName != "")
                                 {
                                     DeviceState state = new DeviceState(item.Value.CommStatus, item.Value.Version,item.Value.FsVersion);
-                                    CDeviceDataFactory.Instance.ZcContainer.SetProductDeviceState(product.Ip, deviceName, state);
+                                    CDeviceDataFactory.Instance.ZcContainer.SetProductDeviceState(product.Ip,Convert.ToInt32(product.Port), deviceName, state);
                                 }
                             }
                             CDeviceDataFactory.Instance.ZcContainer.dataModify.Modify();
@@ -361,21 +414,48 @@ namespace RemoteDeploy
         }
 
         /// <summary>
-        /// 停止按钮 单击事件
+        /// 断链按钮 单击事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void tsbStop_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
+            foreach (DataGridViewRow oneProduct in dataGrid_VOBC.Rows)
             {
                 IProduct product = container[oneProduct.Index] as IProduct;
+                if (product.InProcess == true)
+                {
+                    //发送停止信息帧
+                    CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.stopUpdateFile));
 
-                //发送停止信息帧
-                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.stopUpdateFile));
+                    //发送断链请求帧
+                    CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.cutLink));
 
-                //发送断链请求帧
-                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.cutLink));
+                    product.SkipFlag = true;
+                    product.InProcess = false;
+                    workerCount = 0;
+                    windowEditable = true;
+
+                    for (int i = 0; i < curruntDataGridView.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < curruntDataGridView.Columns.Count; j++)
+                        {
+                            curruntDataGridView.Rows[i].Cells[j].ReadOnly = false;
+                        }
+                    }
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductState(product.Ip, Convert.ToInt32(product.Port), "用户终止");
+                    CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                }
+                else
+                {
+                    if (product != null)
+                    {
+                        //发送断链请求帧
+                        CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.cutLink));
+                        CDeviceDataFactory.Instance.VobcContainer.SetProductState(product.Ip, Convert.ToInt32(product.Port), "中断");
+                    }
+                }
+                
             }
 
             //TODO:判定后台线程工作状态
@@ -386,8 +466,7 @@ namespace RemoteDeploy
             //}
             //APPInit();
             //TODO:尚未确定方案,点击停止后应该发送停止更新请求还是终止FTP传输进程???如果是终止FTP部署则关联上面DoWork进程,如发送停止更新请求(已经在部署之后,CCOV更新或其他过程中),则不需要终止进程,只发送请求停止数据包即可(是否允许停止在数据分析中负责回显).
-            tsbStop.Enabled = false;
-            tsbDeploy.Enabled = true;
+            tsbStateUpdate.Enabled = true;
             button_OK.Enabled = true;
             tsbStateUpdate.Enabled = true;
         }
@@ -441,7 +520,8 @@ namespace RemoteDeploy
             {               
                 //获取产品实例对象
                 IProduct product = container[oneProduct.Index] as IProduct;
-                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, "");
+                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, Convert.ToInt32(product.Port), "");
+                LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "进入部署一阶段");
                 //if (product.CTcpClient != null)
                 //{
                 //    product.CTcpClient.Socket_TCPClient_Dispose();
@@ -545,7 +625,7 @@ namespace RemoteDeploy
                     if (curruntDataGridView.Columns[j].CellType.Name == "DataGridViewCheckBoxCell")
                     {
                         if ((bool)curruntDataGridView.Rows[i].Cells[j].EditedFormattedValue == true)
-                        {
+                        {                            
                             List<IDevice> deviceList = container[i].CBelongsDevice.FindAll((IDevice temp) => temp.DeviceType == curruntDataGridView.Columns[j].HeaderText);
                             container[i].CSelectedDeviceType.Add(curruntDataGridView.Columns[j].HeaderText);
                             selectedDevice.AddRange(deviceList);
@@ -597,7 +677,7 @@ namespace RemoteDeploy
                         string online = zc.AutoBurnPush.IRequest.OnLine();
                         if (online == "")
                         {
-                            CDeviceDataFactory.Instance.ZcContainer.SetProductState(zc.Ip, "正常");
+                            CDeviceDataFactory.Instance.ZcContainer.SetProductState(zc.Ip, Convert.ToInt32(zc.Port), "正常");
                         }
                         else
                         {
@@ -698,29 +778,20 @@ namespace RemoteDeploy
         /// </summary>
         private void APPInit()
         {
-            //禁用确认按钮
-            button_OK.Enabled = false;
+            //确认按钮
+            button_OK.Enabled = true;
 
-            //禁用建链按钮
-            linkEstab.Enabled = false;
+            //建链按钮
+            linkEstab.Enabled = true;
 
-            //禁用状态查看按钮
-            tsbStateUpdate.Enabled = false;
+            //状态查看按钮
+            tsbStateUpdate.Enabled = true;
 
             //禁用部署按钮
             tsbDeploy.Enabled = false;
 
-            //禁用停止按钮
-            tsbStop.Enabled = false;
-
-            //禁用建立链接按钮
-            linkEstab.Enabled = false;
-
-            //禁用状态查看按钮
-            tsbStateUpdate.Enabled = false;
-
-            //禁用确认选择按钮
-            button_OK.Enabled = false;
+            //停止按钮
+            tsbStop.Enabled = true;
 
             //禁用引导文件勾选
             checkBox_bootloader.Enabled = false;
@@ -736,21 +807,21 @@ namespace RemoteDeploy
 
             ///初始化发送接收线程
             Send send = new Send();
-            Recv recv = new Recv();
+            //Recv recv = new Recv();
             send.Init();
-            recv.Init();
+            //recv.Init();
 
             ///初始化线路数据
             CDeviceDataFactory.Instance.LoadXml(System.Windows.Forms.Application.StartupPath + "\\Config\\TopoConfig.xml");
             curruntDataGridView = dataGrid_VOBC;
 
-            DataGridViewButtonColumn check = new DataGridViewButtonColumn();
-            check.HeaderText = "查看";
-            check.Text = "查看";
-            check.Name = "details";
-            check.UseColumnTextForButtonValue = true;
-            check.Width = 50;
-            dataGrid_VOBC.Columns.Add(check);
+            //DataGridViewButtonColumn check = new DataGridViewButtonColumn();
+            //check.HeaderText = "查看";
+            //check.Text = "查看";
+            //check.Name = "details";
+            //check.UseColumnTextForButtonValue = true;
+            //check.Width = 50;
+            //dataGrid_VOBC.Columns.Add(check);
 
             ///初始化控件列信息
             InitDataGridViewColumns();
@@ -882,12 +953,11 @@ namespace RemoteDeploy
                 this.Invoke(new Action(delegate()
                 {
                     rtbReportView.AppendText(reprort + "\n");
-                    SqliteHelper.ExecuteNonQuery("INSERT INTO LogHistory VALUES('" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "','" + reprort + "')", null);
                 }));
             }
             catch (Exception ex)
             {
-                throw new MyException(ex.ToString());
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", ex.ToString());
             }
         }
 
@@ -1000,7 +1070,7 @@ namespace RemoteDeploy
                     checkBox_ini.Enabled = true;
                     checkBox_nvram.Enabled = true;
                 }
-            };
+            }
         }
 
         /// <summary>
@@ -1014,6 +1084,9 @@ namespace RemoteDeploy
 
             //禁用状态查看按钮
             tsbStateUpdate.Enabled = false;
+
+            //禁用部署按钮
+            tsbDeploy.Enabled = false;
 
             //禁用确认选择按钮
             button_OK.Enabled = false;
@@ -1085,25 +1158,32 @@ namespace RemoteDeploy
 
             try
             {
-                if (((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].EditedFormattedValue == true) &&
-                    ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].EditedFormattedValue == true) && 
-                    ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].EditedFormattedValue == true) &&
-                    ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].EditedFormattedValue == true) &&
-                    ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].EditedFormattedValue == true))
+                if (windowEditable)
                 {
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].Value = false;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].Value = false;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].Value = false;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].Value = false;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].Value = false;
+                    if (((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].EditedFormattedValue == true) &&
+                        ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].EditedFormattedValue == true) &&
+                        ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].EditedFormattedValue == true) &&
+                        ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].EditedFormattedValue == true) &&
+                        ((bool)dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].EditedFormattedValue == true))
+                    {
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].Value = false;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].Value = false;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].Value = false;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].Value = false;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].Value = false;
+                    }
+                    else
+                    {
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].Value = true;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].Value = true;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].Value = true;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].Value = true;
+                        dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].Value = true;
+                    }
                 }
                 else
                 {
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCC12"].Value = true;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCCOM"].Value = true;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATP"].Value = true;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCATO"].Value = true;
-                    dataGrid_VOBC.Rows[e.RowIndex].Cells["Column_VOBCMMI"].Value = true;
+                    //什么都不做
                 }
             }
             catch
@@ -1143,8 +1223,13 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            //转换VOBC产品类对象
             VOBCProduct product = e.Argument as VOBCProduct;
+
+            //跳过标志默认为false
             product.SkipFlag = false;
+
+            //开始执行部署
             foreach(VOBCDevice device in product.CSelectedDevice)
             {
                 device.RunDeploy(deployConfigCheck);
@@ -1155,22 +1240,21 @@ namespace RemoteDeploy
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dataGrid_VOBC_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewColumn column = dataGrid_VOBC.Columns[e.ColumnIndex];
-                if (column is DataGridViewButtonColumn)
-                {
-                    selectedDevice.Clear();
-                    VOBCProduct vobc = CDeviceDataFactory.Instance.VobcContainer[e.RowIndex] as VOBCProduct;
-                    selectedDevice.AddRange(vobc.CSelectedDevice);
-                    RefreshDataDetail();
-                    tsbDeploy.Enabled = false;
-                }
-            }
-        }
+        //private void dataGrid_VOBC_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        //{            
+        //    if (e.RowIndex >= 0)
+        //    {
+        //        DataGridViewColumn column = dataGrid_VOBC.Columns[e.ColumnIndex];
+        //        if (column is DataGridViewButtonColumn)
+        //        {
+        //            selectedDevice.Clear();
+        //            VOBCProduct vobc = CDeviceDataFactory.Instance.VobcContainer[e.RowIndex] as VOBCProduct;
+        //            selectedDevice.AddRange(vobc.CSelectedDevice);
+        //            RefreshDataDetail();
+        //            tsbDeploy.Enabled = false;
+        //        }
+        //    }
+        //}
 
         private void 打开日志文件所在目录ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1182,6 +1266,23 @@ namespace RemoteDeploy
         private void rtbReportView_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void buttonCheck_Click(object sender, EventArgs e)
+        {
+            List<IDevice> tempSelectedDevice = selectedDevice;
+            selectedDevice.Clear();
+            foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
+            {
+                IProduct product = container[oneProduct.Index] as IProduct;
+                selectedDevice.AddRange(product.CSelectedDevice);
+                RefreshDataDetail();
+            }
+        }
+
+        private void dataGrid_VOBC_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            
         }
     }
 

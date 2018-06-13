@@ -119,12 +119,26 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">接收到的产品数据</param>
         public static void VOBCDataAnalysis(byte[] Data, Socket_TCPClient client)
         {
+
+            //依据对方IP及端口信息  获取VOBC产品对象
             VOBCProduct vobc = CDeviceDataFactory.Instance.GetProductByIpPort(client.ServerIP, client.ServerPort);
 
             try
             {
                 //若有黏包 拆包处理
                 List<byte[]> dataList = PacketDisassembly(Data);
+
+                //LogManager.InfoLog.LogCommunicationInfo("VOBCDataAnalysis", "VOBCDataAnalysis","----------------------收到通控发来的数据，开始展示--------------------------");
+
+                //LogManager.InfoLog.LogCommunicationInfo("VOBCDataAnalysis", "VOBCDataAnalysis", "原始数据为："+dataPrint(Data, client));
+
+                //foreach (byte[] item in dataList)
+                //{
+                //    LogManager.InfoLog.LogCommunicationInfo("VOBCDataAnalysis", "VOBCDataAnalysis", "原始数据拆包后的数据为："+dataPrint(item, client));
+                //}
+
+
+                //LogManager.InfoLog.LogCommunicationInfo("VOBCDataAnalysis", "VOBCDataAnalysis", "----------------------收到通控发来的数据，结束展示--------------------------");
 
                 //遍历集合中数据进行处理
                 foreach (byte[] recvServerData in dataList)
@@ -185,7 +199,7 @@ namespace RemoteDeploy.DataPack
                             //判定回复的状态
                             if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                             {
-                                item.SetProductState(serverIP, "正常");
+                                item.SetProductState(serverIP, serverPort, "正常");
 
                                 //启用并开始心跳超时计时器
                                 vobc.timerEnable = true;
@@ -195,15 +209,19 @@ namespace RemoteDeploy.DataPack
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                item.SetProductState(serverIP, "故障");
-                                item.SetProductFailReason(serverIP, "下位机拒绝建链请求");
+                                item.SetProductState(serverIP,serverPort, "故障");
+                                item.SetProductFailReason(serverIP, serverPort, "下位机拒绝建链请求");
+                                ///通知刷新背景色
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                             else
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                item.SetProductState(serverIP, "故障");
-                                item.SetProductFailReason(serverIP, "下位机回复非法值");
+                                item.SetProductState(serverIP, serverPort, "故障");
+                                item.SetProductFailReason(serverIP, serverPort, "下位机回复非法值");
+                                ///通知刷新背景色
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                         }
                         //VOBC状态信息回复帧
@@ -220,32 +238,32 @@ namespace RemoteDeploy.DataPack
                             VOBCStateInfoClass vobcInfo = GetVOBCInfo(recvServerData);
 
                             //设置VOBC状态信息
-                            item.SetProductVobcStateInfo(serverIP, vobcInfo);
+                            item.SetProductVobcStateInfo(serverIP, serverPort, vobcInfo);
 
                             //解析后的数据回传界面
                             //ATP信息回传
                             DeviceState deviceState = new DeviceState(vobcInfo.AtpStatus, vobcInfo.AtpSoftVersion, vobcInfo.AtpDataVersion);
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "ATP", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "ATP", deviceState);
 
                             //ATO信息回传
                             deviceState = new DeviceState(vobcInfo.AtoStatus, vobcInfo.AtoSoftVersion, vobcInfo.AtoDataVersion);
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "ATO", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "ATO", deviceState);
 
                             //MMI信息回传
                             deviceState = new DeviceState(vobcInfo.MmiStatus, vobcInfo.MmiSoftVersion, "无");
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "MMI", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "MMI", deviceState);
 
                             //COM1信息回传
                             deviceState = new DeviceState(vobcInfo.ComStatus, vobcInfo.Com1SoftVersion, "无");
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "COM_1", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "COM_1", deviceState);
 
                             //COM2信息回传
                             deviceState = new DeviceState(vobcInfo.ComStatus, vobcInfo.Com2SoftVersion, "无");
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "COM_2", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "COM_2", deviceState);
 
                             //CCOV信息回传
                             deviceState = new DeviceState(vobcInfo.CCOVStatus, vobcInfo.CCOVSoftVersion, vobcInfo.CCOVDataVersion);
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, "CC", deviceState);
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "CC", deviceState);
 
                             //通知界面刷新
                             CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
@@ -258,15 +276,26 @@ namespace RemoteDeploy.DataPack
                             LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到文件上传请求回复帧");
                             iter++;
 
-                            //判定回复的状态
-                            CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceFileState(serverIP,
-                                (recvServerData[iter] == CommonConstValue.constValueHEX55 ? true : false));
+                            //回复状态判定
+                            bool tmpRequestState=(recvServerData[iter] == CommonConstValue.constValueHEX55 ? true : false);
 
-                            if (recvServerData[iter] != CommonConstValue.constValueHEX55)
+                            //设置传输状态
+                            CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceFileState(serverIP,serverPort, tmpRequestState);
+
+                            //如果传输状态为拒绝 设置某些状态
+                            if (!tmpRequestState)
                             {
+                                //跳过执行标志 为true 下一阶段不在执行
                                 vobc.SkipFlag = true;
+
+                                //不在执行状态
                                 vobc.InProcess = false;
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, "下位机拒绝文件上传请求");
+
+                                //部署失败原因赋值
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "下位机拒绝文件上传请求");
+
+                                ///通知刷新背景色
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
 
                         }
@@ -285,21 +314,21 @@ namespace RemoteDeploy.DataPack
                                 case 0x01:
                                 case 0x02:
                                 case 0x03:
-                                    SetVOBCATPCheckState(recvServerData, iter, binarySysData);
+                                    SetVOBCATPCheckState(recvServerData, iter, binarySysData, vobc);
                                     break;
                                 case 0x04:
                                 case 0x05:
-                                    SetVOBCATOCheckState(recvServerData, iter, binarySysData);
+                                    SetVOBCATOCheckState(recvServerData, iter, binarySysData, vobc);
                                     break;
                                 case 0x06:
                                 case 0x07:
-                                    SetVOBCCOMCheckState(recvServerData, iter, binarySysData);
+                                    SetVOBCCOMCheckState(recvServerData, iter, binarySysData, vobc);
                                     break;
                                 case 0x08:
-                                    SetVOBCMMICheckState(recvServerData, iter, binarySysData);
+                                    SetVOBCMMICheckState(recvServerData, iter, binarySysData, vobc);
                                     break;
                                 case 0x09:
-                                    SetVOBCCCOVCheckState(recvServerData, iter, binarySysData);
+                                    SetVOBCCCOVCheckState(recvServerData, iter, binarySysData, vobc);
                                     break;
                                 default:
                                     //TODO  不处理
@@ -308,12 +337,14 @@ namespace RemoteDeploy.DataPack
 
                             LogManager.InfoLog.LogProcInfo("DataAnalysis", "文件校验请求接收回复帧", "接收到文件校验结果信息");
                             //回执检查状态                         
-                            CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceCheckState(serverIP, _updateFileState.VeriResult);
-                            if (_updateFileState.VeriResult == false)
+                            CDeviceDataFactory.Instance.VobcContainer.SetVOBCDeviceCheckState(serverIP, vobc._updateFileState.VeriResult);
+                            if (vobc._updateFileState.VeriResult == false)
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, "文件校验未通过");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "文件校验未通过");
+                                ///通知刷新背景色
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                         }
                         //文件更新请求回复帧
@@ -325,8 +356,8 @@ namespace RemoteDeploy.DataPack
                             iter++;//这里有误，首先需要先判断更新请求回复帧，其中如有任何一系的任何一类文件失败，应显示
 
                             //设置烧录子子系统在界面中的显示状态--文件待重启
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "待重启");
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP,
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "待重启");
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
                             CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
                             Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.DevRestart)));
                             //通知界面刷新
@@ -375,9 +406,8 @@ namespace RemoteDeploy.DataPack
                             {
                                 //同意停止更新
                                 //设置烧录子子系统在界面中的显示状态--停止更新
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP,
-                                CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
-                                "停止更新");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
+                                CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),"停止更新");
                                 //通知界面刷新
                                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
                             }
@@ -385,7 +415,7 @@ namespace RemoteDeploy.DataPack
                             {
                                 //不同意停止更新
                                 //设置烧录子子系统在界面中的显示状态--无法停止更新
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP,
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
                                 CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
                                 "无法停止更新");
                                 //通知界面刷新
@@ -414,7 +444,7 @@ namespace RemoteDeploy.DataPack
                             IDevice device = vobc.CBelongsDevice.Find(y => y.DeviceName == CommonMethod.GetStringByType(sysType));
 
                             //获取该设备在部署下达时需要部署的文件总数
-                            updateFileCount = GetUpdateFileCountByType(sysType);
+                            updateFileCount = GetUpdateFileCountByType(sysType, vobc);
 
                             if (recvServerData[iter + 3] == CommonConstValue.constValueHEX55)
                             {
@@ -439,7 +469,7 @@ namespace RemoteDeploy.DataPack
                                 //设置标志位并将产品状态设为更新失败
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
                                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                                 //根据子系统获取该设备更新文件总数
@@ -573,7 +603,7 @@ namespace RemoteDeploy.DataPack
                             Common.vobcSystemType sysType = getVobcSystemType(recvServerData, iter);
 
                             //烧录阶段 二次MD5文件校验中
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP,
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
                             CommonMethod.GetVobcSystemListByType(sysType),
                             Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
 
@@ -614,9 +644,35 @@ namespace RemoteDeploy.DataPack
             }
         }
 
+
         #endregion
 
         #region 私有处理函数
+
+
+        /// <summary>
+        /// 拼接收到的数据帧
+        /// </summary>
+        /// <param name="Data">数据帧</param>
+        /// <param name="client">socket对象</param>
+        /// <returns>拼接后的数据</returns>
+        private static string dataPrint(byte[] Data, Socket_TCPClient client)
+        {
+            //变量用于存储数据
+            string msg = string.Empty;
+
+            //遍历数据
+            foreach (byte item in Data)
+            {
+                //拼接数据
+                msg += " " + Convert.ToString(item, 16).PadLeft(2, '0');
+            }
+
+            //追加IP端口信息
+            msg += "[" + client.ServerIP + ":" + client.ServerPort + "]";
+
+            return msg;
+        }
 
         /// <summary>
         /// 拆包
@@ -641,30 +697,30 @@ namespace RemoteDeploy.DataPack
                 //截取一包数据
                 byte[] tmpData = Data.Skip(dataIndex).Take(dataLength + 2).ToArray();
 
-                //索引赋值
-                dataIndex += tmpData.Length;
-
-                //数据添加至集合
-                dataList.Add(tmpData);
-
-                /*//判定帧头FFFE
-                if (Data[0] == 0xFF && Data[1] == 0xFE)
-                {
-                    //取数据长度
-                    string le = Convert.ToString(Data[dataIndex + 2], 16).PadLeft(2, '0') + Convert.ToString(Data[dataIndex + 3], 16).PadLeft(2, '0');
-                    Int32 dataLength = Convert.ToInt32(le,16);
-
-                    //截取一包数据
-                    byte[] tmpData = Data.Skip(dataIndex).Take(dataLength + 6).ToArray();
-
                     //索引赋值
                     dataIndex += tmpData.Length;
 
-                    //去除FFFE协议头尾
-                    FFFE.FFFEAnalysis(ref tmpData);
-
                     //数据添加至集合
                     dataList.Add(tmpData);
+
+                    /*//判定帧头FFFE
+                    if (Data[0] == 0xFF && Data[1] == 0xFE)
+                    {
+                        //取数据长度
+                        string le = Convert.ToString(Data[dataIndex + 2], 16).PadLeft(2, '0') + Convert.ToString(Data[dataIndex + 3], 16).PadLeft(2, '0');
+                        Int32 dataLength = Convert.ToInt32(le,16);
+
+                        //截取一包数据
+                        byte[] tmpData = Data.Skip(dataIndex).Take(dataLength + 6).ToArray();
+
+                        //索引赋值
+                        dataIndex += tmpData.Length;
+
+                        //去除FFFE协议头尾
+                        FFFE.FFFEAnalysis(ref tmpData);
+
+                        //数据添加至集合
+                        dataList.Add(tmpData);
 
                 }
                 else
@@ -1020,40 +1076,40 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="iter">帧类型码所在位索引下标</param>
         /// <param name="binarySysData">校验文件类型码 二进制值</param>
-        private static void SetVOBCATPCheckState(byte[] recvServerData, int iter, string binarySysData)
+        private static void SetVOBCATPCheckState(byte[] recvServerData, int iter, string binarySysData, VOBCProduct vobc)
         {
 
             //内核文件
             if (binarySysData[7] == '1')
             {
-                _updateFileState.AtpCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
+                vobc._updateFileState.AtpCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtpCoreVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtpCoreVeriFlag;
             }
             //数据文件
             if (binarySysData[6] == '1')
             {
-                _updateFileState.AtpDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
+                vobc._updateFileState.AtpDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtpDataVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtpDataVeriFlag;
             }
             //配置文件
             if (binarySysData[5] == '1')
             {
-                _updateFileState.AtpNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
+                vobc._updateFileState.AtpNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtpNvramVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtpNvramVeriFlag;
             }
             //引导文件
             if (binarySysData[4] == '1')
             {
-                _updateFileState.AtpBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
+                vobc._updateFileState.AtpBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtpBootVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtpBootVeriFlag;
             }
 
 
@@ -1065,40 +1121,40 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="iter">帧类型码所在位索引下标</param>
         /// <param name="binarySysData">校验文件类型码 二进制值</param>
-        private static void SetVOBCATOCheckState(byte[] recvServerData, int iter, string binarySysData)
+        private static void SetVOBCATOCheckState(byte[] recvServerData, int iter, string binarySysData, VOBCProduct vobc)
         {
 
             //内核文件
             if (binarySysData[7] == '1')
             {
-                _updateFileState.AtoCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
+                vobc._updateFileState.AtoCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtoCoreVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtoCoreVeriFlag;
             }
             //数据文件
             if (binarySysData[6] == '1')
             {
-                _updateFileState.AtoDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
+                vobc._updateFileState.AtoDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtoDataVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtoDataVeriFlag;
             }
             //配置文件
             if (binarySysData[5] == '1')
             {
-                _updateFileState.AtoNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
+                vobc._updateFileState.AtoNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtoNvramVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtoNvramVeriFlag;
             }
             //引导文件
             if (binarySysData[4] == '1')
             {
-                _updateFileState.AtoBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
+                vobc._updateFileState.AtoBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.AtoBootVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.AtoBootVeriFlag;
             }
 
 
@@ -1110,24 +1166,24 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="iter">帧类型码所在位索引下标</param>
         /// <param name="binarySysData">校验文件类型码 二进制值</param>
-        private static void SetVOBCCOMCheckState(byte[] recvServerData, int iter, string binarySysData)
+        private static void SetVOBCCOMCheckState(byte[] recvServerData, int iter, string binarySysData, VOBCProduct vobc)
         {
 
             //内核文件
             if (binarySysData[7] == '1')
             {
-                _updateFileState.ComCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
+                vobc._updateFileState.ComCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.ComCoreVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.ComCoreVeriFlag;
             }
             //引导文件
             if (binarySysData[4] == '1')
             {
-                _updateFileState.ComBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
+                vobc._updateFileState.ComBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.ComBootVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.ComBootVeriFlag;
             }
 
 
@@ -1139,40 +1195,32 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="iter">帧类型码所在位索引下标</param>
         /// <param name="binarySysData">校验文件类型码 二进制值</param>
-        private static void SetVOBCMMICheckState(byte[] recvServerData, int iter, string binarySysData)
+        private static void SetVOBCMMICheckState(byte[] recvServerData, int iter, string binarySysData, VOBCProduct vobc)
         {
 
             //内核文件
             if (binarySysData[7] == '1')
             {
-                _updateFileState.MmiCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
+                vobc._updateFileState.MmiCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.MmiCoreVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.MmiCoreVeriFlag;
             }
-            //数据文件
-            /*if (binarySysData[6] == '1')
-            {
-                _updateFileState.MmiDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
-
-                //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.MmiDataVeriFlag;
-            }*/
             //配置文件
             if (binarySysData[5] == '1')
             {
-                _updateFileState.MmiNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
+                vobc._updateFileState.MmiNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.MmiNvramVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.MmiNvramVeriFlag;
             }
             //引导文件
             if (binarySysData[4] == '1')
             {
-                _updateFileState.MmiBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
+                vobc._updateFileState.MmiBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.MmiBootVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.MmiBootVeriFlag;
             }
 
         }
@@ -1183,48 +1231,40 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="iter">帧类型码所在位索引下标</param>
         /// <param name="binarySysData">校验文件类型码 二进制值</param>
-        private static void SetVOBCCCOVCheckState(byte[] recvServerData, int iter, string binarySysData)
+        private static void SetVOBCCCOVCheckState(byte[] recvServerData, int iter, string binarySysData, VOBCProduct vobc)
         {
 
             //内核文件
             if (binarySysData[7] == '1')
             {
-                _updateFileState.CcovCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
+                vobc._updateFileState.CcovCoreVeriFlag = (recvServerData[(iter + 3)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovCoreVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.CcovCoreVeriFlag;
             }
             //数据文件
             if (binarySysData[6] == '1')
             {
-                _updateFileState.CcovDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
+                vobc._updateFileState.CcovDataVeriFlag = (recvServerData[(iter + 4)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovDataVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.CcovDataVeriFlag;
             }
-            //配置文件
-            /*if (binarySysData[5] == '1')
-            {
-                _updateFileState.CcovNvramVeriFlag = (recvServerData[(iter + 5)] == 0x55) ? true : false;
-
-                //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovNvramVeriFlag;
-            }*/
             //引导文件
             if (binarySysData[4] == '1')
             {
-                _updateFileState.CcovBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
+                vobc._updateFileState.CcovBootVeriFlag = (recvServerData[(iter + 6)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovBootVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.CcovBootVeriFlag;
             }
             //CCOV配置文件
             if (binarySysData[3] == '1')
             {
-                _updateFileState.CcovConfigVeriFlag = (recvServerData[(iter + 7)] == 0x55) ? true : false;
+                vobc._updateFileState.CcovConfigVeriFlag = (recvServerData[(iter + 7)] == 0x55) ? true : false;
 
                 //异或 取得文件传输验证结果（false即验证失败）
-                _updateFileState.VeriResult = _updateFileState.VeriResult & _updateFileState.CcovConfigVeriFlag;
+                vobc._updateFileState.VeriResult = vobc._updateFileState.VeriResult & vobc._updateFileState.CcovConfigVeriFlag;
             }
 
         }
@@ -1239,25 +1279,25 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCATPcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCATPcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter, VOBCProduct vobc)
         {
             switch (vobcFType)
             {
                 //内核文件
                 case vobcFileType.CORE:
-                    _updateFileState.AtpCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtpCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //数据文件
                 case vobcFileType.DATA:
-                    _updateFileState.AtpDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtpDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //NvRam文件
                 case vobcFileType.NVRAM:
-                    _updateFileState.AtpNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtpNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //引导文件
                 case vobcFileType.BootLoader:
-                    _updateFileState.AtpBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtpBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //无效值
                 case vobcFileType.INVALID:
@@ -1277,25 +1317,25 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCATOcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCATOcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter, VOBCProduct vobc)
         {
             switch (vobcFType)
             {
                 //内核文件
                 case vobcFileType.CORE:
-                    _updateFileState.AtoCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtoCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //数据文件
                 case vobcFileType.DATA:
-                    _updateFileState.AtoDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtoDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //NvRam文件
                 case vobcFileType.NVRAM:
-                    _updateFileState.AtoNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtoNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //引导文件
                 case vobcFileType.BootLoader:
-                    _updateFileState.AtoBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.AtoBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //无效值
                 case vobcFileType.INVALID:
@@ -1315,17 +1355,17 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCCOMcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCCOMcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter, VOBCProduct vobc)
         {
             switch (vobcFType)
             {
                 //内核文件
                 case vobcFileType.CORE:
-                    _updateFileState.ComCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.ComCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //引导文件
                 case vobcFileType.BootLoader:
-                    _updateFileState.ComBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.ComBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //无效值
                 case vobcFileType.INVALID:
@@ -1345,21 +1385,21 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCMMIcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCMMIcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter, VOBCProduct vobc)
         {
             switch (vobcFType)
             {
                 //内核文件
                 case vobcFileType.CORE:
-                    _updateFileState.MmiCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.MmiCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //配置文件（名称写错了，实际对应路径MMIConfig.xml）
                 case vobcFileType.NVRAM:
-                    _updateFileState.MmiNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.MmiNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //引导文件
                 case vobcFileType.BootLoader:
-                    _updateFileState.MmiBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.MmiBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //无效值
                 case vobcFileType.INVALID:
@@ -1379,29 +1419,29 @@ namespace RemoteDeploy.DataPack
         /// <param name="recvServerData">数据</param>
         /// <param name="vobcFType">子子系统更新文件类型</param>
         /// <param name="updateResultIter">更新完成 结果码 索引位</param>
-        private static void SetVOBCCCOVcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter)
+        private static void SetVOBCCCOVcompleteState(byte[] recvServerData, vobcFileType vobcFType, int updateResultIter, VOBCProduct vobc)
         {
             switch (vobcFType)
             {
                 //内核文件
                 case vobcFileType.CORE:
-                    _updateFileState.CcovCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.CcovCoreCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //数据文件
                 case vobcFileType.DATA:
-                    _updateFileState.CcovDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.CcovDataCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //NvRam文件，实际是真正的CCOV配置文件
                 case vobcFileType.NVRAM:
-                    _updateFileState.CcovNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.CcovNvramCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //CCOV配置文件
                 case vobcFileType.CCOVConfig:
-                    _updateFileState.CcovConfigCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.CcovConfigCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //引导文件
                 case vobcFileType.BootLoader:
-                    _updateFileState.CcovBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
+                    vobc._updateFileState.CcovBootCompleteFlag &= (recvServerData[updateResultIter] == 0x55) ? true : false;
                     break;
                 //无效值
                 case vobcFileType.INVALID:
@@ -1416,9 +1456,9 @@ namespace RemoteDeploy.DataPack
         }
 
         /// <summary>
-        /// 设置VOBCCCOV更新完成状态
+        /// 获取某一子系统需要更新的文件数量
         /// </summary>
-        private static int GetUpdateFileCountByType(vobcSystemType sysType)
+        private static int GetUpdateFileCountByType(vobcSystemType sysType ,VOBCProduct vobc)
         {
             int updateFileCount = 0;
             switch (sysType)
@@ -1426,49 +1466,49 @@ namespace RemoteDeploy.DataPack
                 case vobcSystemType.ATP_1:
                 case vobcSystemType.ATP_2:
                 case vobcSystemType.ATP_3:
-                    if (_updateFileState.AtpCoreCompleteFlag == true)
+                    if (vobc._updateFileState.AtpCoreCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtpDataCompleteFlag == true)
+                    if (vobc._updateFileState.AtpDataCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtpNvramCompleteFlag == true)
+                    if (vobc._updateFileState.AtpNvramCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtpBootCompleteFlag == true)
+                    if (vobc._updateFileState.AtpBootCompleteFlag == true)
                         updateFileCount++;
                     break;
                 case vobcSystemType.ATO_1:
                 case vobcSystemType.ATO_2:
-                    if (_updateFileState.AtoCoreCompleteFlag == true)
+                    if (vobc._updateFileState.AtoCoreCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtoDataCompleteFlag == true)
+                    if (vobc._updateFileState.AtoDataCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtoNvramCompleteFlag == true)
+                    if (vobc._updateFileState.AtoNvramCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.AtoBootCompleteFlag == true)
+                    if (vobc._updateFileState.AtoBootCompleteFlag == true)
                         updateFileCount++;
                     break;
                 case vobcSystemType.COM_1:
                 case vobcSystemType.COM_2:
-                    if (_updateFileState.ComCoreCompleteFlag == true)
+                    if (vobc._updateFileState.ComCoreCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.ComBootCompleteFlag == true)
+                    if (vobc._updateFileState.ComBootCompleteFlag == true)
                         updateFileCount++;
                     break;
                 case vobcSystemType.MMI:
-                    if (_updateFileState.MmiCoreCompleteFlag == true)
+                    if (vobc._updateFileState.MmiCoreCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.MmiNvramCompleteFlag == true)
+                    if (vobc._updateFileState.MmiNvramCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.MmiBootCompleteFlag == true)
+                    if (vobc._updateFileState.MmiBootCompleteFlag == true)
                         updateFileCount++;
                     break;
                 case vobcSystemType.CCOV:
-                    if (_updateFileState.CcovCoreCompleteFlag == true)
+                    if (vobc._updateFileState.CcovCoreCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.CcovDataCompleteFlag == true)
+                    if (vobc._updateFileState.CcovDataCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.CcovConfigCompleteFlag == true)
+                    if (vobc._updateFileState.CcovConfigCompleteFlag == true)
                         updateFileCount++;
-                    if (_updateFileState.CcovBootCompleteFlag == true)
+                    if (vobc._updateFileState.CcovBootCompleteFlag == true)
                         updateFileCount++;
                     break;
                 default:
@@ -1477,10 +1517,14 @@ namespace RemoteDeploy.DataPack
             return updateFileCount;
         }
 
-
-
         #endregion
 
+        /// <summary>
+        /// 获取数据长度字段
+        /// </summary>
+        /// <param name="value">数据组</param>
+        /// <param name="startIndex">拆分数据过程中 数据头所在的索引位置</param>
+        /// <returns>拆分数据过程中 数据长度字节的转换后的数值</returns>
         public static Int16 BytesToInt16(byte[] value, Int32 startIndex)
         {
             if (value.Length < (startIndex + 2))
@@ -1495,7 +1539,6 @@ namespace RemoteDeploy.DataPack
 
             return tmpData;
         }
-
 
         #endregion
 

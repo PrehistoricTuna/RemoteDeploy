@@ -20,14 +20,27 @@ namespace RemoteDeploy.SendRecv.Send
                     if (CommandQueue.instance.m_CommandQueue.Count != 0)
                     {
                         ICommand command = CommandQueue.instance.m_CommandQueue.Dequeue();
-                        command.Exec();
+
+                        //非空验证
+                        if (null != command)
+                        {
+                            command.Exec();
+                        }
+                        else 
+                        {
+                        //TODO
+                        }
+
+                    }
+                    else
+                    {
+                        Thread.Sleep(10);
                     }
                 }
                 else
                 {
                     break;
                 }
-                Thread.Sleep(100);
             }
         }
     }

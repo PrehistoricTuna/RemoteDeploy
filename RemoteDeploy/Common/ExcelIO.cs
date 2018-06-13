@@ -5,6 +5,7 @@ using System.Text;
 using System.Data.OleDb;
 using System.Globalization;
 using System.Data;
+using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.Common
 {
@@ -72,7 +73,9 @@ namespace RemoteDeploy.Common
                     {
                         //关闭连接
                         connection.Close();
-                        throw new ArgumentException("文件[" + filePath.Substring(filePath.LastIndexOf('\\') + 1) + "]读取[" + tbName + "]信息时" + e.Message, e);
+
+                        LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport",
+                            "文件[" + filePath.Substring(filePath.LastIndexOf('\\') + 1) + "]读取[" + tbName + "]信息时" + e.Message);
                     }
                     finally
                     {

@@ -38,7 +38,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(32, 49);
+            this.label1.Location = new System.Drawing.Point(12, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(285, 28);
             this.label1.TabIndex = 1;
@@ -47,9 +47,9 @@
             // button_OK
             // 
             this.button_OK.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button_OK.Location = new System.Drawing.Point(58, 113);
+            this.button_OK.Location = new System.Drawing.Point(47, 82);
             this.button_OK.Name = "button_OK";
-            this.button_OK.Size = new System.Drawing.Size(75, 23);
+            this.button_OK.Size = new System.Drawing.Size(76, 32);
             this.button_OK.TabIndex = 6;
             this.button_OK.Text = "确认部署";
             this.button_OK.UseVisualStyleBackColor = true;
@@ -58,9 +58,9 @@
             // button_Cancel
             // 
             this.button_Cancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.button_Cancel.Location = new System.Drawing.Point(210, 113);
+            this.button_Cancel.Location = new System.Drawing.Point(183, 82);
             this.button_Cancel.Name = "button_Cancel";
-            this.button_Cancel.Size = new System.Drawing.Size(75, 23);
+            this.button_Cancel.Size = new System.Drawing.Size(76, 32);
             this.button_Cancel.TabIndex = 7;
             this.button_Cancel.Text = "取消";
             this.button_Cancel.UseVisualStyleBackColor = true;
@@ -70,11 +70,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 185);
+            this.ClientSize = new System.Drawing.Size(319, 150);
             this.Controls.Add(this.button_Cancel);
             this.Controls.Add(this.button_OK);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Confirm";
             this.Text = "Confirm";
             this.Load += new System.EventHandler(this.Confirm_Load);

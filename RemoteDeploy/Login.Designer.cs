@@ -72,6 +72,7 @@
             this.textBox_Name.Name = "textBox_Name";
             this.textBox_Name.Size = new System.Drawing.Size(100, 21);
             this.textBox_Name.TabIndex = 3;
+            this.textBox_Name.Text = "admin";
             // 
             // textBox_Password
             // 
@@ -80,9 +81,11 @@
             this.textBox_Password.PasswordChar = '*';
             this.textBox_Password.Size = new System.Drawing.Size(100, 21);
             this.textBox_Password.TabIndex = 4;
+            this.textBox_Password.Text = "123456";
             // 
             // comboBox_UserType
             // 
+            this.comboBox_UserType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox_UserType.FormattingEnabled = true;
             this.comboBox_UserType.ImeMode = System.Windows.Forms.ImeMode.Disable;
             this.comboBox_UserType.Location = new System.Drawing.Point(108, 129);
@@ -90,7 +93,6 @@
             this.comboBox_UserType.Size = new System.Drawing.Size(121, 20);
             this.comboBox_UserType.TabIndex = 5;
             this.comboBox_UserType.SelectedIndexChanged += new System.EventHandler(this.comboBox_UserType_SelectedIndexChanged);
-            this.comboBox_UserType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // button1
             // 

@@ -14,5 +14,6 @@ namespace RemoteDeploy.ControlDispatcher
         public Queue<ICommand> m_CommandQueue = new Queue<ICommand>();
 
         public static CommandQueue instance = new CommandQueue();
+
     }
 }

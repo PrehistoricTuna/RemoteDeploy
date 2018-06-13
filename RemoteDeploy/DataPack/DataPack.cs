@@ -443,6 +443,9 @@ namespace RemoteDeploy.DataPack
         /// <returns>计算好的MD5值</returns>
         public static byte[] GetMD5FromFile(string fileName)
         {
+            //执行MD5码计算
+            byte[] retVal = null;
+
             try
             {
                 //文件流 用于读取文件
@@ -452,23 +455,17 @@ namespace RemoteDeploy.DataPack
                     //MD5对象 用于计算MD5
                     System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
 
-                    //执行MD5码计算
-                    byte[] retVal = md5.ComputeHash(file);
+                    retVal = md5.ComputeHash(file);
 
-                    //StringBuilder sb = new StringBuilder();
-                    //for (int i = 0; i < retVal.Length; i++)
-                    //{
-                    //    sb.Append(retVal[i].ToString("x2"));
-                    //}
-
-                    return retVal;
                 }
 
             }
             catch (Exception ex)
             {
-                throw new Exception("计算文件MD5时出现异常！" + ex.Message);
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "计算文件MD5时出现异常！" + ex.Message);
             }
+
+            return retVal;
         }
 
         #endregion
@@ -492,7 +489,7 @@ namespace RemoteDeploy.DataPack
             }
             catch (Exception ex)
             {
-                throw new Exception("组包VOBC文件校验信息时出现异常！" + ex.Message);
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "组包VOBC文件校验信息时出现异常！" + ex.Message);
             }
         }
 
