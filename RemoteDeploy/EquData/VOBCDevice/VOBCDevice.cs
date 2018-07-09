@@ -44,7 +44,7 @@ namespace RemoteDeploy.EquData
             : base(product)
         {
 
-        } 
+        }
 
         #endregion
 
@@ -71,11 +71,9 @@ namespace RemoteDeploy.EquData
             VOBCProduct vobc = base.BelongProduct as VOBCProduct;
 
             //当前为VOBC产品第一个烧录设备  执行产品烧录前的准备过程
-            //if (CDeviceDataFactory.Instance.CurrentDeployProduct == null ||
-            //    CDeviceDataFactory.Instance.CurrentDeployProduct.ProductID != this.BelongProduct.ProductID)
-            if(vobc.InProcess == false && vobc.SkipFlag == false)
+            if (vobc.InProcess == false && vobc.SkipFlag == false)
             {
-              
+
                 ///清空烧录过程状态
                 vobc.ResetDeviceProcState();
 
@@ -116,34 +114,30 @@ namespace RemoteDeploy.EquData
 
                 #endregion
 
+                VOBCProduct oppovobc = CDeviceDataFactory.Instance.GetOppositeProductByIDEnd(vobc.ProductID);
                 //设备预检
-                //string preCheckResult = String.Empty;//Modified @ 4.28，待改回
-                string preCheckResult = PreCheck(vobc.VobcStateInfo);
-                //bool fileCheckResult = FilePreCheck(vobc.CheckFileList);
+                string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
+
+                ////用完清空VobcStateInfo
+                //vobc.VobcStateInfo = null;
 
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
                 {
-                    //if (!fileCheckResult)
-                    //{
-                    //    MessageBox.Show("部分部署的文件不存在，请检查配置路径下的文件！");
-                    //}
-                    //else
-                    //{
-                        //设置VOBC产品下的子子系统预检状态
-                        foreach (IDevice device in vobc.CBelongsDevice)
-                        {
-                            device.PreCheckResult = false;
-                            device.PreCheckFailReason = preCheckResult;
-                        }
 
-                        //刷新界面
-                        CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+                    //设置VOBC产品下的子子系统预检状态
+                    foreach (IDevice device in vobc.CBelongsDevice)
+                    {
+                        device.PreCheckResult = false;
+                        device.PreCheckFailReason = preCheckResult;
+                    }
 
-                        //记录警告日志
-                        LogManager.InfoLog.LogProcWarning("VOBCDevice", "RunDeploy", "VOBC产品：" + base.BelongProduct.ProductID + "预检失败，原因" + preCheckResult);
-                        LogManager.InfoLog.LogProcWarning("VOBCDevice", "RunDeploy", "VOBC产品：" + base.BelongProduct.ProductID + "部署未执行，部署进程结束");
-                    //}
+                    //刷新界面
+                    CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+
+                    //记录警告日志
+                    LogManager.InfoLog.LogProcWarning("VOBCDevice", "RunDeploy", "VOBC产品：" + base.BelongProduct.ProductID + "预检失败，原因" + preCheckResult);
+                    LogManager.InfoLog.LogProcWarning("VOBCDevice", "RunDeploy", "VOBC产品：" + base.BelongProduct.ProductID + "部署未执行，部署进程结束");
 
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
@@ -165,14 +159,14 @@ namespace RemoteDeploy.EquData
 
                     //设置跳过标志为false  后续代码根据此标志 执行具体部署
                     vobc.SkipFlag = false;
-                    
+
                     //生成配置文件
                     BelongProduct.GenConfig();
 
                     //当前处于部署阶段
                     vobc.InProcess = true;
                 }
-                
+
 
             }
 
@@ -186,7 +180,7 @@ namespace RemoteDeploy.EquData
                 DeployExec();
 
                 //若执行部署过程中 跳出标志被置为true 
-                if(vobc.SkipFlag == true)
+                if (vobc.SkipFlag == true)
                 {
                     ///当前处于部署之中
                     if (vobc.InProcess == true)
@@ -194,7 +188,7 @@ namespace RemoteDeploy.EquData
                         //刷新界面日志信息
                         vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + "更新失败：执行过程中出现失败环节");
                         vobc.InProcess = false;
-                    } 
+                    }
 
                     ///通知刷新背景色
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
@@ -205,7 +199,7 @@ namespace RemoteDeploy.EquData
             else if (vobc.StepOne)
             {
                 LogManager.InfoLog.LogProcInfo("VOBCDevice", "RunDeploy", base.BelongProduct.ProductID + "部署过程失败：生成配置文件前的相关环节失败或未收到允许上传的回复");
-                vobc.Report.ReportWindow("更新失败（生成配置文件前的相关环节失败或未收到允许上传的回复）或跳过了本轮部署");
+                //vobc.Report.ReportWindow("更新失败！（生成配置文件前的相关环节失败或未收到允许上传的回复）");
                 //刷新界面
                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
@@ -222,24 +216,19 @@ namespace RemoteDeploy.EquData
         /// </summary>
         /// <param name="vobc">VOBC产品车载状态信息</param>
         /// <returns>预检失败原因明细</returns>
-        private string PreCheck(VOBCStateInfoClass vInfo)
+        private string PreCheck(VOBCStateInfoClass vInfo, VOBCStateInfoClass oppovInfo)
         {
+
             string failReason = String.Empty;
 
             //未进行状态获取操作
             if (null == vInfo)
             {
-                failReason = "未完成‘状态获取’操作";
+                failReason = "未完成‘状态获取’操作或未获取到状态";
             }
-            //零速
-            else if (vInfo.OperationSpeed != 0)
+            else if (null == oppovInfo)
             {
-                failReason = "预检车辆非0速";
-            }
-            //车辆位置
-            else if (vInfo.TrainPosition != "非正线")
-            {
-                failReason = "预检车辆位置：" + vInfo.TrainPosition;
+                failReason = "未完成对端‘状态获取’操作或未获取到对端状态";
             }
             //ATP状态
             else if (vInfo.AtpStatus != "正常")
@@ -256,18 +245,42 @@ namespace RemoteDeploy.EquData
             {
                 failReason = "预检MMI状态为：" + vInfo.MmiStatus;
             }
-            //COM状态
-            else if (vInfo.ComStatus != "正常")
+            //CCOV状态
+            else if (vInfo.AtpTftpStatus != "正常")
             {
-                failReason = "预检COM状态为：" + vInfo.ComStatus;
+                failReason = "预检CCOV状态为：" + vInfo.AtpTftpStatus;
+            }
+            else if (vInfo.PreResult != true)
+            {
+                //通控给出的总预检结果                
+                failReason = "本端预检失败";
+
+                //零速
+                if (vInfo.IsSteady != true)
+                {
+                    failReason = "预检车辆非0速";
+                }
+                //车辆位置
+                else if (vInfo.TrainPosition != "无位置")
+                {
+                    failReason = "预检车辆：" + vInfo.TrainPosition;
+                }
+                else
+                {
+                    //TODO
+                }
+            }
+            else if (oppovInfo.PreResult != true)
+            {
+                //对端通控给出的总预检结果                
+                failReason = "对端预检失败";
             }
             else
             {
-                //TODO
+                //什么都不做
             }
-
             return failReason;
-        } 
+        }
 
         /// <summary>
         /// VOBC待烧录设备是否存在检查
@@ -321,7 +334,7 @@ namespace RemoteDeploy.EquData
                     VOBCCommand sendFileCommand = new VOBCCommand(vobc.Ip,
                         Convert.ToInt32(vobc.Port), vobc.ProductID,
                         vobcCommandType.sendFile, m_vobcCheckFile);
-                    
+
                     //添加命令到队列中
                     CommandQueue.instance.m_CommandQueue.Enqueue(sendFileCommand);
 
@@ -389,7 +402,7 @@ namespace RemoteDeploy.EquData
                 {
                     //记录日志
                     LogManager.InfoLog.LogProcInfo(this.GetType().Name, "CheckFile", "已收到VOBC产品：" + base.BelongProduct.ProductID + "的部署文件校验回复");
-                    
+
                     //设置处理标志为true
                     rev = true;
 
@@ -474,8 +487,8 @@ namespace RemoteDeploy.EquData
                 //执行文件校验操作
                 if (!CheckFile(vobc))
                 {
-                    LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时，部署失败！");
-                    vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时，部署失败！");
+                    LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
+                    vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
                     return;
@@ -511,12 +524,12 @@ namespace RemoteDeploy.EquData
                     vobc.InProcess = false;
                 }
             }
-            else 
+            else
             {
-              //暂时什么都不做
+                //暂时什么都不做
             }
 
-        } 
+        }
 
         #endregion
 

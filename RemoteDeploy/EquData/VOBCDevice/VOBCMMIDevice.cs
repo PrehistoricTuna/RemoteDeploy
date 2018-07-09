@@ -144,7 +144,7 @@ namespace RemoteDeploy.EquData
                 vobc.InProcess = false;
 
                 //日志信息
-                string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，该子子系统本次将不执行部署";
+                string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，部署停止，请检查选择并重新开始部署！";
 
                 //记录日志
                 LogManager.InfoLog.LogCommunicationInfo("VOBCMMIDevice", "GetFileListAndCheckExist", logMsg);

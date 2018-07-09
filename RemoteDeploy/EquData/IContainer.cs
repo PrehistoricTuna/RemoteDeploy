@@ -39,12 +39,12 @@ namespace RemoteDeploy.EquData
         /// <param name="Port">端口信息</param>
         /// <param name="state">状态信息</param>
         /// <returns></returns>
-        public bool SetProductState(string ip,int Port,string state)
+        public void SetProductState(string ip,int Port,string state)
         {
 
             foreach (IProduct product in this)
             {
-                if (product.Ip == ip&&product.Port==Convert.ToString(Port))
+                if (product.Ip == ip && product.Port==Convert.ToString(Port))
                 {
                     product.ProductState = state;
                     LogManager.InfoLog.LogProcInfo("IProContainer", "SetProductState", "设置IP为" + product.Ip + "的产品" + product.Name + "状态为" + state);
@@ -52,8 +52,8 @@ namespace RemoteDeploy.EquData
             }
             ///通知数据变化
             dataModify.Modify();
-
-            return true;
+            dataModify.Color();
+            
         }
 
         /// <summary>

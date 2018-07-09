@@ -133,5 +133,30 @@ namespace RemoteDeploy.EquData
             }
             return null;
         }
+
+        public VOBCProduct GetOppositeProductByIDEnd(string id)
+        {
+            if (id.Substring(4, 3) == "TC1")
+            {
+                foreach (VOBCProduct pro in VobcContainer)
+                {
+                    if (pro.ProductID.Substring(0, 4) == id.Substring(0, 4) && pro.ProductID.Substring(4, 3) == "TC2")
+                    {
+                        return pro;
+                    }
+                }
+            }
+            else if (id.Substring(4, 3) == "TC2")
+            {
+                foreach (VOBCProduct pro in VobcContainer)
+                {
+                    if (pro.ProductID.Substring(0, 4) == id.Substring(0, 4) && pro.ProductID.Substring(4, 3) == "TC1")
+                    {
+                        return pro;
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

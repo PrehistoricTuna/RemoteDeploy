@@ -21,9 +21,9 @@ namespace RemoteDeploy.NetworkService
         #region 变量
 
         /// <summary>
-        /// 接收数据字节数据定义(默认1024字节)
+        /// 接收数据字节数据定义(默认2048字节)
         /// </summary>
-        private byte[] bytReceive = new byte[1024];
+        private byte[] bytReceive = new byte[2048];
 
         /// <summary>
         /// 要通信的服务端IP

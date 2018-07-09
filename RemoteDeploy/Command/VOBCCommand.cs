@@ -10,6 +10,7 @@ using RemoteDeploy.EquData;
 using TCT.ShareLib.LogManager;
 using RemoteDeploy.DataPack;
 using RemoteDeploy.TFTP;
+using System.Threading;
 
 namespace RemoteDeploy.Command
 {
@@ -123,7 +124,7 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 //建链
                 if (vobcCommandT == vobcCommandType.buildLink)
                 {
-                    if (pro.CTcpClient == null)
+                    if ((pro.CTcpClient == null) || (pro.CTcpClient.IsSocketEnable != true) || (pro.CTcpClient.clientSocket == null))
                     {
                         //实例化TCP客户端类
                         pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
@@ -132,14 +133,27 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                     }
                     else
                     {
+                        //Modified @ 7.7
+                        //释放原对象
                         //pro.CTcpClient.Socket_TCPClient_Dispose();
                         //实例化TCP客户端类
-                        pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
+                        //pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
                         //TCP客户端代码 正式环境使用
-                        pro.CTcpClient.EBackData += new Socket_TCPClient.BackData(TcpVobc_EBackData);
+                        //pro.CTcpClient.EBackData += new Socket_TCPClient.BackData(TcpVobc_EBackData);
                     }
-
-                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackBuildLinkRequest());
+                    Thread.Sleep(500);
+                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackBuildLinkRequest(pro));
+                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "发送建链帧");
+                }
+                //重建链
+                if (vobcCommandT == vobcCommandType.rebuildLink)
+                {                    
+                    //实例化TCP客户端类
+                    pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
+                    //TCP客户端代码 正式环境使用
+                    pro.CTcpClient.EBackData += new Socket_TCPClient.BackData(TcpVobc_EBackData);                    
+                    Thread.Sleep(500);
+                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackBuildLinkRequest(pro));
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "发送建链帧");
                 }
                 //VOBC状态获取
@@ -158,29 +172,48 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 //执行文件发送
                 else if (vobcCommandT == vobcCommandType.sendFile)
                 {
-
-
-
+                    foreach (KeyValuePair<string, string> path in m_checkFile.vobcFilePathList)
+                    {
+                        LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "待更新的文件：[" + path + "]");
+                    }
                     foreach (KeyValuePair<string, string> path in m_checkFile.vobcFilePathList)
                     {
                         if (File.Exists(path.Key))
                         {
-                            LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "开始执行文件[" + path + "]的FTP发送！");
-                            //TFTP.TFTP_Client.UpLoad(vobcServerIP, path);
-                            //设置烧录子子系统在界面中的显示状态--文件上传中
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP,
-                            CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
-                            Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileUploading)));
-                            //通知界面刷新
-                            CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
-                            //FTP上传文件
-                            FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value);
+                            try
+                            {
+                                LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "开始执行文件[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
+                               
+                                //TFTP.TFTP_Client.UpLoad(vobcServerIP, path);
+                                //设置烧录子子系统在界面中的显示状态--文件上传中
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
+                                CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
+                                Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileUploading)));
 
-                            LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "文件[" + path + "]的FTP发送完成！");
+                                //通知界面刷新
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+
+                                //FTP上传文件
+                                bool ret = FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value);
+
+                                if (ret == false)
+                                {
+                                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "Ftp send file ERROR[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
+                                }
+                                else
+                                {
+                                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "文件[" + path + "]的FTP发送完成！");
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "Error ");
+                            }
                         }
                         else
                         {
                             //TODO
+                            LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "本地文件未找到[" + path + "]！");
                         }
 
                     }
@@ -190,13 +223,13 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 else if (vobcCommandT == vobcCommandType.checkFile)
                 {
                     //设置烧录子子系统在界面中的显示状态--文件校验中
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP,
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
                     CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
                     Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
                     //通知界面刷新
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
-                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileVerificationRequest(m_checkFile));
+                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileVerificationRequest(m_checkFile, pro));
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "文件校验请求发送！");
                 }
                 //文件更新请求帧
@@ -209,11 +242,11 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                     //通知界面刷新
                     //CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
-                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileUpdateRequest());
+                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileUpdateRequest(pro));
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "文件更新请求发送！");
                 }
                 //远程重启帧
-                else if (vobcCommandT == vobcCommandType.checkFile)
+                else if (vobcCommandT == vobcCommandType.systemRestart)
                 {
                     //TODO:暂时不处理，下位机硬件暂不支持
                 }
@@ -232,14 +265,24 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 //断链请求帧
                 else if (vobcCommandT == vobcCommandType.cutLink)
                 {
-                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackDisconnectRequest());
-                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "断链请求发送！");
-                    pro.CTcpClient.Socket_TCPClient_Dispose();
+                    try
+                    {
+                        if (pro != null)
+                        {
+                            execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackDisconnectRequest());
+                            pro.CTcpClient.Socket_TCPClient_Dispose();
+                        }
+                        LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "断链请求发送！");
+                    }
+                    catch
+                    {
+
+                    }
                 }
                 //CCOV向上位机获取MD5指令
                 else if (vobcCommandT == vobcCommandType.CcovGetMD5)
                 {
-                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileVerificationRequest(m_checkFile));
+                    execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileVerificationRequest(m_checkFile, pro));
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "CCOV获取MD5，向下发送！");
                 }
                 else
@@ -251,78 +294,6 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
             {
                 execResult = false;
             }
-
-            #endregion
-
-            #region UDP代码 调试使用
-
-            ////根据指令类型 传输不同指令
-            ////建链
-            //if (vobcCommandT == vobcCommandType.buildLink)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackBuildLinkRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////VOBC状态获取
-            //else if (vobcCommandT == vobcCommandType.vobcInfoRequest)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackVOBCInfoRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////文件传输请求
-            //else if (vobcCommandT == vobcCommandType.fileTransRequest)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackFileTransferRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////执行文件发送
-            //else if (vobcCommandT == vobcCommandType.sendFile)
-            //{
-            //    foreach (string path in VobcPathList)
-            //    {
-            //        if (File.Exists(path))
-            //        {
-            //            TFTP.TFTP_Client.UpLoad(vobcServerIP, path);
-            //        }
-            //        else
-            //        {
-            //            //TODO
-            //        }
-            //    }
-
-            //}
-            ////文件校验请求帧
-            //else if (vobcCommandT == vobcCommandType.checkFile)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackFileVerificationRequest(m_checkFile), vobcServerIP, vobcServerPort);
-
-            //}
-            ////文件更新请求帧
-            //else if (vobcCommandT == vobcCommandType.startUpdateFile)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackFileUpdateRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////远程重启帧
-            //else if (vobcCommandT == vobcCommandType.checkFile)
-            //{
-            //    //TODO:暂时不处理，下位机硬件暂不支持
-            //}
-            ////停止更新请求帧
-            //else if (vobcCommandT == vobcCommandType.stopUpdateFile)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackStopUpdateRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////远程复位帧
-            //else if (vobcCommandT == vobcCommandType.systemReset)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackRemoteRebootRequest(), vobcServerIP, vobcServerPort);
-            //}
-            ////断链请求帧
-            //else if (vobcCommandT == vobcCommandType.cutLink)
-            //{
-            //    execResult = Udp.SendTo(DataPack.DataPack.PackDisconnectRequest(), vobcServerIP, vobcServerPort);
-            //}
-            //else
-            //{
-            //    //TODO:暂时不处理
-            //} 
 
             #endregion
 
@@ -338,21 +309,21 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
         {
             VOBCProduct pro = CDeviceDataFactory.Instance.GetProductByIpPort(vobcServerIP, vobcServerPort);
             DataAnalysis.VOBCDataAnalysis(receData, pro.CTcpClient);
-               
-            if(pro != null)
-            {
-                //第一次建链即触发回调，在收到更新结果回复时在这里直接处理
-                if (receData[2] == 0x06)
-                {
-                    pro.WaitForUpdateResult();
-                }
-            }
-            else
-            {
-                LogManager.InfoLog.LogCommunicationError("VOBCCommand", "TcpVobc_EBackData", pro.ProductID + "未找到接收到的VOBC对象！");
-            }
+
+            //if (pro != null)
+            //{
+            //    //第一次建链即触发回调，在收到更新结果回复时在这里直接处理
+            //    if (receData[2] == 0x06)
+            //    {
+            //        pro.WaitForUpdateResult();
+            //    }
+            //}
+            //else
+            //{
+            //    LogManager.InfoLog.LogCommunicationError("VOBCCommand", "TcpVobc_EBackData", pro.ProductID + "未找到接收到的VOBC对象！");
+            //}
         }
-        
+
 
     }
 }

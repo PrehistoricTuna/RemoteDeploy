@@ -196,6 +196,8 @@ namespace RemoteDeploy.DataPack
                             IProContainer item = CDeviceDataFactory.Instance.ProjectConsole.Projducts.Find(tar =>
                                 tar is VOBCContainer);
 
+                            vobc.Report.ReportWindow("收到" + vobc.ProductID + "的键链回复帧");
+
                             //判定回复的状态
                             if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                             {
@@ -237,8 +239,9 @@ namespace RemoteDeploy.DataPack
                             //解析VOBC状态信息
                             VOBCStateInfoClass vobcInfo = GetVOBCInfo(recvServerData);
 
-                            //设置VOBC状态信息
+                            //设置VOBC状态信息，衔接上一步
                             item.SetProductVobcStateInfo(serverIP, serverPort, vobcInfo);
+                            vobc.Report.ReportWindow("已获取到" + vobc.ProductID + "的列车状态信息");
 
                             //解析后的数据回传界面
                             //ATP信息回传
@@ -262,7 +265,7 @@ namespace RemoteDeploy.DataPack
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "COM_2", deviceState);
 
                             //CCOV信息回传
-                            deviceState = new DeviceState(vobcInfo.CCOVStatus, vobcInfo.CCOVSoftVersion, vobcInfo.CCOVDataVersion);
+                            deviceState = new DeviceState(vobcInfo.AtpTftpStatus, vobcInfo.CCOVSoftVersion, vobcInfo.CCOVDataVersion);
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort, "CC", deviceState);
 
                             //通知界面刷新
@@ -355,7 +358,7 @@ namespace RemoteDeploy.DataPack
 
                             iter++;//这里有误，首先需要先判断更新请求回复帧，其中如有任何一系的任何一类文件失败，应显示
 
-                            //设置烧录子子系统在界面中的显示状态--文件待重启
+                            //设置烧录子子系统在界面中的显示状态--文件待重启                            
                             CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "待重启");
                             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
                             CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
@@ -469,73 +472,12 @@ namespace RemoteDeploy.DataPack
                                 //设置标志位并将产品状态设为更新失败
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
+                                
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                                
                             }
-                                //根据子系统获取该设备更新文件总数
-                                //检查是否成功
-                                //成功则该设备成功文件数+1 //否则设置本产品更新失败
-                                //如果成功文件数等于更新文件总数则设置该设备设置状态更新成功
-
-
-                                ////计算更新文件数量
-                                //int updateFileCount = 0;
-                                //for (int i = 0; i < vobc.CheckFileList.Count; i++)
-                                //{
-                                //    updateFileCount += vobc.CheckFileList[i].vobcFilePathList.Count;
-                                //}
-
-                                ////更新文件总数对比已校验更新文件数量
-                                //if (updateFileCount > updateSuccessFileCount)
-                                //{
-                                //    //递增
-                                //    updateSuccessFileCount++;
-
-                                //    //判定子子系统类型
-                                //    switch ((recvServerData[(iter + 1)]))
-                                //    {
-                                //        case 0x01:
-                                //        case 0x02:
-                                //        case 0x03:
-                                //            SetVOBCATPcompleteState(recvServerData, fileType, iter + 3);
-                                //            break;
-                                //        case 0x04:
-                                //        case 0x05:
-                                //            SetVOBCATOcompleteState(recvServerData, fileType, iter + 3);
-                                //            break;
-                                //        case 0x06:
-                                //        case 0x07:
-                                //            SetVOBCCOMcompleteState(recvServerData, fileType, iter + 3);
-                                //            break;
-                                //        case 0x08:
-                                //            SetVOBCMMIcompleteState(recvServerData, fileType, iter + 3);
-                                //            break;
-                                //        case 0x09:
-                                //            SetVOBCCCOVcompleteState(recvServerData, fileType, iter + 3);
-                                //            break;
-                                //        default:
-                                //            //TODO  不处理
-                                //            break;
-                                //    }
-                                //}
-                                ////全部更新完成 重置计数器并回传设置更新状态
-                                //else
-                                //{
-                                //    //重置
-                                //    updateSuccessFileCount = 0;
-
-                                //}
-
-                            //    //设置更新状态
-                            //    CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
-
-                            ////当出现更新失败的设备时直接提示整车状态为更新失败
-                            //if (recvServerData[iter + 3] == CommonConstValue.constValueHEXAA)
-                            //{
-                            //    vobc.SkipFlag = true;
-                            //    vobc.InProcess = false;
-                            //    CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, "更新失败");
-                            //}
+                            //收到更新成功汇报就检查总体更新结果
+                            vobc.WaitForUpdateResult();
                         }
                         //远程复位回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_SystemReset)
@@ -857,11 +799,11 @@ namespace RemoteDeploy.DataPack
         private static VOBCStateInfoClass GetVOBCInfo(byte[] recvServerData)
         {
             //初始下标
-            int iter = 4;
+            int iter = 3;
 
             //VOBC状态信息实体类存储对象
             VOBCStateInfoClass _vobcInfo = new VOBCStateInfoClass();
-            _vobcInfo.CCOVStatus = "正常";
+            //_vobcInfo.CCOVStatus = "正常";
 
             try
             {
@@ -910,7 +852,7 @@ namespace RemoteDeploy.DataPack
                 _vobcInfo.CCOVDataVersion = GetMontageData(recvServerData, iter, 2, 8, ".");
                 iter = iter + 8;
 
-                //CCOV的TFTP服务开启状态（1字节）
+                //CCOV运行状态（1字节）
                 _vobcInfo.AtpTftpStatus = (recvServerData[iter] == CommonConstValue.constValueHEX55) ? "正常" : "故障";
                 iter++;
 
@@ -945,81 +887,104 @@ namespace RemoteDeploy.DataPack
                 #endregion
 
                 #region 其他状态提取
-                //列车运行模式（1字节）
-                if (recvServerData[iter] == 0x00)
+                ////列车运行模式（1字节）
+                //if (recvServerData[iter] == 0x00)
+                //{
+                //    _vobcInfo.OperationMode = "CM";
+                //}
+                //else if (recvServerData[iter] == 0x01)
+                //{
+                //    _vobcInfo.OperationMode = "AM";
+                //}
+                //else if (recvServerData[iter] == 0x02)
+                //{
+                //    _vobcInfo.OperationMode = "RM";
+                //}
+
+                //iter++;
+
+                //列车是否零速（1字节）
+                if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                 {
-                    _vobcInfo.OperationMode = "CM";
+                    _vobcInfo.IsSteady = true;
                 }
-                else if (recvServerData[iter] == 0x01)
+                else
                 {
-                    _vobcInfo.OperationMode = "AM";
-                }
-                else if (recvServerData[iter] == 0x02)
-                {
-                    _vobcInfo.OperationMode = "RM";
+                    _vobcInfo.IsSteady = false;
                 }
 
                 iter++;
-                //列车运行速度（2字节）
-                _vobcInfo.OperationSpeed = Convert.ToInt32(GetMontageData(recvServerData, iter, 1, 2, ""));
 
-                iter = iter + 2;
-                //VOBC的IP地址（4字节）
-                _vobcInfo.TrainIP = GetMontageData(recvServerData, iter, 1, 4, ".");
+                ////VOBC的IP地址（4字节）
+                //_vobcInfo.TrainIP = GetMontageData(recvServerData, iter, 1, 4, ".");
 
-                iter = iter + 4;
-                //无线网络状态（1字节）
-                _vobcInfo.WirelessStatus = (recvServerData[iter] == CommonConstValue.constValueHEX55) ? "正常" : "故障";
+                //iter = iter + 4;
+                ////无线网络状态（1字节）
+                //_vobcInfo.WirelessStatus = (recvServerData[iter] == CommonConstValue.constValueHEX55) ? "正常" : "故障";
 
-                iter++;
+                //iter++;
+
                 //无线关联信噪比（1字节）
                 _vobcInfo.WirelessSNR = Convert.ToInt32(recvServerData[iter].ToString());
 
                 iter++;
-                //TC1端状态（1字节）
-                if (recvServerData[iter] == 0x00)
-                {
-                    _vobcInfo.Tc1Status = "无效";
-                }
-                else if (recvServerData[iter] == CommonConstValue.constValueHEX55)
-                {
-                    _vobcInfo.Tc1Status = "正常";
-                }
-                else
-                {
-                    _vobcInfo.Tc1Status = "故障";
-                }
 
-                iter++;
-                //TC2端状态（1字节）
-                if (recvServerData[iter] == 0x00)
-                {
-                    _vobcInfo.Tc2Status = "无效";
-                }
-                else if (recvServerData[iter] == CommonConstValue.constValueHEX55)
-                {
-                    _vobcInfo.Tc2Status = "正常";
-                }
-                else
-                {
-                    _vobcInfo.Tc2Status = "故障";
-                }
+                ////TC1端状态（1字节）
+                //if (recvServerData[iter] == 0x00)
+                //{
+                //    _vobcInfo.Tc1Status = "无效";
+                //}
+                //else if (recvServerData[iter] == CommonConstValue.constValueHEX55)
+                //{
+                //    _vobcInfo.Tc1Status = "正常";
+                //}
+                //else
+                //{
+                //    _vobcInfo.Tc1Status = "故障";
+                //}
 
-                iter++;
+                //iter++;
+                ////TC2端状态（1字节）
+                //if (recvServerData[iter] == 0x00)
+                //{
+                //    _vobcInfo.Tc2Status = "无效";
+                //}
+                //else if (recvServerData[iter] == CommonConstValue.constValueHEX55)
+                //{
+                //    _vobcInfo.Tc2Status = "正常";
+                //}
+                //else
+                //{
+                //    _vobcInfo.Tc2Status = "故障";
+                //}
+
+                //iter++;
+
                 //列车位置（1字节）
                 if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                 {
-                    _vobcInfo.TrainPosition = "正线";
+                    _vobcInfo.TrainPosition = "有位置";
                 }
                 else if (recvServerData[iter] == CommonConstValue.constValueHEXAA)
                 {
-                    _vobcInfo.TrainPosition = "非正线";
+                    _vobcInfo.TrainPosition = "无位置";
                 }
                 else
                 {
                     _vobcInfo.TrainPosition = "无效";
                 }
 
+                iter++;
+
+                //最终预检结果（1字节）
+                if (recvServerData[iter] == CommonConstValue.constValueHEX55)
+                {
+                    _vobcInfo.PreResult = true;
+                }
+                else
+                {
+                    _vobcInfo.PreResult = false;
+                }
                 #endregion
             }
             catch (Exception ex)

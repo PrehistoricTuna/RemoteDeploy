@@ -115,7 +115,7 @@ namespace RemoteDeploy
         {
             if (Login.UserType.manager == usertypestat)
             {
-                button_Clear.Visible = true;
+                button_Clear.Visible = false;
             }
         }
     }

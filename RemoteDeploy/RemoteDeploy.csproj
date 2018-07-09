@@ -26,7 +26,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/RemoteDeploy/</UpdateUrl>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationRevision>3</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -119,7 +119,7 @@
     <Compile Include="Command\DeployCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\InitCommand.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCCommand.cs" />
+    <Compile Include="Command\VOBCCommand.cs" />
     <Compile Include="Common\CommonConstValue.cs" />
     <Compile Include="Common\CommonEnum.cs" />
     <Compile Include="Common\CommonMethod.cs" />
@@ -137,11 +137,11 @@
     <Compile Include="DataPack\DataAnalysis.cs" />
     <Compile Include="DataPack\DataPack.cs" />
     <Compile Include="DataPack\FFFE.cs" />
-    <Compile Include="DataPack\EquData\CcDevice.cs" />
-    <Compile Include="DataPack\EquData\CommDevice.cs" />
-    <Compile Include="DataPack\EquData\ZCProduct.cs" />
-    <Compile Include="DataPack\EquData\ZCPU13Device.cs" />
-    <Compile Include="DataPack\EquData\ZCPU24Device.cs" />
+    <Compile Include="EquData\CcDevice.cs" />
+    <Compile Include="EquData\CommDevice.cs" />
+    <Compile Include="EquData\ZCProduct.cs" />
+    <Compile Include="EquData\ZCPU13Device.cs" />
+    <Compile Include="EquData\ZCPU24Device.cs" />
     <Compile Include="LogHistory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -157,23 +157,23 @@
     <Compile Include="Models\VOBC\VOBCUpdateFileState.cs" />
     <Compile Include="Models\VOBC\VobcCheckFile.cs" />
     <Compile Include="Models\VOBC\VOBCStateInfoClass.cs" />
-    <Compile Include="DataPack\EquData\CDeviceDataFactory.cs" />
-    <Compile Include="DataPack\EquData\DataType.cs" />
-    <Compile Include="DataPack\EquData\IContainer.cs" />
-    <Compile Include="DataPack\EquData\IDevice.cs" />
-    <Compile Include="DataPack\EquData\IProduct.cs" />
-    <Compile Include="DataPack\EquData\IProjectConsole.cs" />
-    <Compile Include="DataPack\EquData\HLHTLineConsole.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCATODevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCATPDevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCCCOVDevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCCOMDevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCContainer.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCDevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCDevice\VOBCMMIDevice.cs" />
-    <Compile Include="DataPack\EquData\VOBCProduct.cs" />
-    <Compile Include="DataPack\EquData\ZCContainer.cs" />
-    <Compile Include="DataPack\EquData\ZCDevice.cs" />
+    <Compile Include="EquData\CDeviceDataFactory.cs" />
+    <Compile Include="EquData\DataType.cs" />
+    <Compile Include="EquData\IContainer.cs" />
+    <Compile Include="EquData\IDevice.cs" />
+    <Compile Include="EquData\IProduct.cs" />
+    <Compile Include="EquData\IProjectConsole.cs" />
+    <Compile Include="EquData\HLHTLineConsole.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCATODevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCATPDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCCCOVDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCCOMDevice.cs" />
+    <Compile Include="EquData\VOBCContainer.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCDevice.cs" />
+    <Compile Include="EquData\VOBCDevice\VOBCMMIDevice.cs" />
+    <Compile Include="EquData\VOBCProduct.cs" />
+    <Compile Include="EquData\ZCContainer.cs" />
+    <Compile Include="EquData\ZCDevice.cs" />
     <Compile Include="EquStateData\IStateData.cs" />
     <Compile Include="Log\EmLogType.cs" />
     <Compile Include="Log\LogAlarmContent.cs" />
@@ -199,6 +199,7 @@
     <Compile Include="Observer\WindowReport.cs" />
     <Compile Include="ProcState\IProcState.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -260,6 +261,11 @@
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 和 x64%29</ProductName>
       <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
       <Visible>False</Visible>

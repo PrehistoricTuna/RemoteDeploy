@@ -79,28 +79,31 @@ namespace RemoteDeploy.Models.VOBC
         #region 其他列车参数赋值
 
         //列车运行模式
-        public string OperationMode{ get; set; }
+        //public string OperationMode{ get; set; }
 
-        //列车运行速度 
-        public int OperationSpeed { get; set; }
+        //列车是否静止 
+        public bool IsSteady { get; set; }
 
         //列车IP地址        
-        public string TrainIP{ get; set; }
+        //public string TrainIP{ get; set; }
 
         //列车无线网络状态
-        public string WirelessStatus{ get; set; }
+        //public string WirelessStatus{ get; set; }
 
         //列车无线关联信噪比
         public int WirelessSNR{ get; set; }
 
         //TC1端？
-        public string Tc1Status{ get; set; }
+        //public string Tc1Status{ get; set; }
 
         //TC2端？
-        public string Tc2Status { get; set; }
+        //public string Tc2Status { get; set; }
 
         //列车位置
         public string TrainPosition{ get; set; }
+
+        //最终预检结果
+        public bool PreResult { get; set; }
 
         #endregion
 

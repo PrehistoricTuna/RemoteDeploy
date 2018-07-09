@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using RemoteDeploy.Models.VOBC;
+using RemoteDeploy.EquData;
 using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.DataPack
@@ -11,11 +12,11 @@ namespace RemoteDeploy.DataPack
     //工具软件向VOBC发送数据打包类
     public static class DataPack
     {
-        private static byte _atpUpdateFile;
-        private static byte _atoUpdateFile;
-        private static byte _ccovUpdateFile;
-        private static byte _mmiUpdateFile;
-        private static byte _comUpdateFile; 
+        //private static byte _atpUpdateFile;
+        //private static byte _atoUpdateFile;
+        //private static byte _ccovUpdateFile;
+        //private static byte _mmiUpdateFile;
+        //private static byte _comUpdateFile; 
 
         #region 打包建链请求信息
 
@@ -24,7 +25,7 @@ namespace RemoteDeploy.DataPack
         /// 打包建链请求
         /// </summary>
         /// <returns>帧字节数组</returns>
-        public static byte[] PackBuildLinkRequest()
+        public static byte[] PackBuildLinkRequest(VOBCProduct vobc)
         {
             byte[] pData = new byte[8];
             byte iter = 0;
@@ -39,6 +40,13 @@ namespace RemoteDeploy.DataPack
             pData[iter++] = BitConverter.GetBytes(crc32)[2];
             pData[iter++] = BitConverter.GetBytes(crc32)[1];
             pData[iter] = BitConverter.GetBytes(crc32)[0];
+
+            //使用前重置更新标志位
+            vobc._atpUpdateFile = new byte();
+            vobc._atoUpdateFile = new byte();
+            vobc._comUpdateFile = new byte();
+            vobc._mmiUpdateFile = new byte();
+            vobc._ccovUpdateFile = new byte();
 
             return pData;
             //添加FFFE协议头尾
@@ -138,7 +146,7 @@ namespace RemoteDeploy.DataPack
         /// </summary>
         /// <param name="checkFileList">待验证VOBC信息实体类集合</param>
         /// <returns>帧字节数组</returns>
-        public static byte[] PackFileVerificationRequest(VobcCheckFile checkFile)
+        public static byte[] PackFileVerificationRequest(VobcCheckFile checkFile, VOBCProduct vobc)
         {
             byte[] pData = new byte[111];
             int iter = 0;
@@ -153,19 +161,19 @@ namespace RemoteDeploy.DataPack
             switch (systemType)
             {
                 case Common.vobcSystemType.ATP_1:
-                    _atpUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
+                    vobc._atpUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
                     break;
                 case Common.vobcSystemType.ATO_1:
-                    _atoUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
+                    vobc._atoUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
                     break;
                 case Common.vobcSystemType.COM_1:
-                    _comUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
+                    vobc._comUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
                     break;
                 case Common.vobcSystemType.MMI:
-                    _mmiUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
+                    vobc._mmiUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
                     break;
                 case Common.vobcSystemType.CCOV:
-                    _ccovUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
+                    vobc._ccovUpdateFile = Convert.ToByte(checkFile.vobcFileTypeList.Sum(tar => Convert.ToInt32(tar)));
                     break;
                 default:
                     break;
@@ -254,7 +262,7 @@ namespace RemoteDeploy.DataPack
         /// 打包文件更新请求信息
         /// </summary>
         /// <returns>帧字节数组</returns>
-        public static byte[] PackFileUpdateRequest()
+        public static byte[] PackFileUpdateRequest(VOBCProduct vobc)
         {
             byte[] pData = new byte[16];
             byte iter = 0;
@@ -262,15 +270,15 @@ namespace RemoteDeploy.DataPack
             pData[iter++] = 0x0E;//帧长度
             pData[iter++] = 0x01;//帧类型码
             //填入各更新文件类型码
-            pData[iter++] = _atpUpdateFile;
-            pData[iter++] = _atpUpdateFile;
-            pData[iter++] = _atpUpdateFile;
-            pData[iter++] = _atoUpdateFile;
-            pData[iter++] = _atoUpdateFile;
-            pData[iter++] = _comUpdateFile;
-            pData[iter++] = _comUpdateFile;
-            pData[iter++] = _mmiUpdateFile;
-            pData[iter++] = _ccovUpdateFile;
+            pData[iter++] = vobc._atpUpdateFile;
+            pData[iter++] = vobc._atpUpdateFile;
+            pData[iter++] = vobc._atpUpdateFile;
+            pData[iter++] = vobc._atoUpdateFile;
+            pData[iter++] = vobc._atoUpdateFile;
+            pData[iter++] = vobc._comUpdateFile;
+            pData[iter++] = vobc._comUpdateFile;
+            pData[iter++] = vobc._mmiUpdateFile;
+            pData[iter++] = vobc._ccovUpdateFile;
 
             //pData[iter++] = 0x01;//请求标志置为有效
 
@@ -280,6 +288,13 @@ namespace RemoteDeploy.DataPack
             pData[iter++] = BitConverter.GetBytes(crc32)[2];
             pData[iter++] = BitConverter.GetBytes(crc32)[1];
             pData[iter] = BitConverter.GetBytes(crc32)[0];
+
+            //使用后重置更新标志位
+            vobc._atpUpdateFile = new byte();
+            vobc._atoUpdateFile = new byte();
+            vobc._comUpdateFile = new byte();
+            vobc._mmiUpdateFile = new byte();
+            vobc._ccovUpdateFile = new byte();
 
             return pData;
             //添加FFFE协议头尾

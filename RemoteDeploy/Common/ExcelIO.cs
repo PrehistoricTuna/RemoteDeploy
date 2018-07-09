@@ -5,6 +5,7 @@ using System.Text;
 using System.Data.OleDb;
 using System.Globalization;
 using System.Data;
+using System.Windows.Forms;
 using TCT.ShareLib.LogManager;
 
 namespace RemoteDeploy.Common
@@ -73,7 +74,7 @@ namespace RemoteDeploy.Common
                     {
                         //关闭连接
                         connection.Close();
-
+                        MessageBox.Show("打开Excel发生异常，请检查系统配置及文件占用情况！");
                         LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport",
                             "文件[" + filePath.Substring(filePath.LastIndexOf('\\') + 1) + "]读取[" + tbName + "]信息时" + e.Message);
                     }

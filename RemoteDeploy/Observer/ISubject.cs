@@ -32,6 +32,7 @@ namespace RemoteDeploy.Observer
         {
             if (this.ReportEvent != null)
             {
+                //report = "【" + DateTime.Now.ToLongTimeString() + "】 " + report;
                 report = "【" + DateTime.Now.ToString("yyyyMMdd HH:mm:ss") + "】 " + report;
                 this.ReportEvent(report);
             }

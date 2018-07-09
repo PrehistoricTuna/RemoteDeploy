@@ -41,7 +41,7 @@
             this.label1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(30, 40);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(223, 24);
+            this.label1.Size = new System.Drawing.Size(225, 24);
             this.label1.TabIndex = 1;
             this.label1.Text = "Auto Deployment Tools";
             // 
@@ -51,7 +51,7 @@
             this.label2.Font = new System.Drawing.Font("Arial", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(14, 93);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(258, 16);
+            this.label2.Size = new System.Drawing.Size(259, 16);
             this.label2.TabIndex = 2;
             this.label2.Text = "©2018 TCT Co.,Ltd. Allrights Reserved.";
             // 
@@ -74,6 +74,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "About";
             this.Text = "About";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

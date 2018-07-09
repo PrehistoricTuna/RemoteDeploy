@@ -86,7 +86,7 @@ namespace RemoteDeploy
                 comboBox_UserType.Focus();
                 return;
             }
-            bool i = true;// CheckPassword(name,password);
+            bool i = CheckPassword(name,password);
             //登录成功
             if (i == true)
             {

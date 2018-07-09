@@ -135,18 +135,18 @@ namespace RemoteDeploy.EquData
         public int DeployProcess()
         {
             int rtnValue = 0;
-            if(CSelectedDevice.Count == 0)
+            if (CSelectedDevice.Count == 0)
             {
                 return rtnValue;
             }
-            foreach(IDevice device in CSelectedDevice)
+            foreach (IDevice device in CSelectedDevice)
             {
-                if(device.State == "更新成功")
+                if (device.State == "更新成功")
                 {
                     rtnValue++;
-                }    
+                }
             }
-            return (rtnValue*100)/CSelectedDevice.Count;
+            return (rtnValue * 100) / CSelectedDevice.Count;
         }
         #endregion
 
