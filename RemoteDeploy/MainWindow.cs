@@ -354,44 +354,41 @@ namespace RemoteDeploy
         {
             //当前为VOBC部署模式
             if (curruntDataGridView == dataGrid_VOBC)
-            {               
+            {
                 //遍历VOBC实体数据
-                foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
+                //foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
+                //Modified @ 9.10
+                foreach (IProduct product in productLinkList)
                 {
                     //获取产品实例
-                    IProduct product = container[oneProduct.Index];
+                    //IProduct product = container[oneProduct.Index];
 
                     ////VOBC产品 默认将产品类中存储的VOBC状态信息重置
                     //if (product is VOBCProduct)
                     //{
                     //    (product as VOBCProduct).VobcStateInfo = null;
                     //}
-
-                    while (true)
+                    if (product.ProductState == "正常")
                     {
-                        if (product.ProductState == "正常")
-                        {
-                            CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.vobcInfoRequest));
-                            break;
-                        }                      
-                        else
-                        {
-                            break;
-                        }
-                        //else
-                        //{
-                        //    Thread.Sleep(1000);
-
-                        //    //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
-
-                        //    TimeSpan span = DateTime.Now - beginTime;
-                        //    if (span.TotalMilliseconds > 5000)
-                        //    {
-                        //        break;
-                        //    }
-
-                        //}
+                        CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.vobcInfoRequest));
+                    }                      
+                    else
+                    {
+                        //Do nothing.
                     }
+                    //else
+                    //{
+                    //    Thread.Sleep(1000);
+
+                    //    //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
+
+                    //    TimeSpan span = DateTime.Now - beginTime;
+                    //    if (span.TotalMilliseconds > 5000)
+                    //    {
+                    //        break;
+                    //    }
+
+                    //}
                 }
             }
             else if (curruntDataGridView == dataGrid_ZC)
@@ -578,8 +575,11 @@ namespace RemoteDeploy
                 //发送建链信息帧
                 CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, Convert.ToInt32(product.Port), "");
-
-                productLinkList.Add(product);
+                //Modified @ 9.10
+                if (!productLinkList.Exists((IProduct temp) => temp.ProductID == product.ProductID))
+                {
+                    productLinkList.Add(product);
+                }
                 
             }
             if (timer2.Enabled == false)

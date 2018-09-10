@@ -372,7 +372,9 @@ namespace RemoteDeploy.EquData
                             //Modified @ 7.24
                             StepOne = true;
                             result = false;
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
+                            //Modified @ 9.10
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(Ip, Convert.ToInt32(Port), "更新失败");
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");                           
                             return result;
                         }
                         else
@@ -1090,7 +1092,11 @@ namespace RemoteDeploy.EquData
             }
 
             //设置标志位
-            SkipFlag = true;
+            //Modified @ 9.10
+            if (InProcess)
+            {
+                SkipFlag = true;
+            }
             InProcess = false;
             timerHB.Dispose();
             //StepOne = true;

@@ -187,6 +187,26 @@ namespace RemoteDeploy.EquData
             return true;
         }
 
-        
+        /// <summary>
+        /// 统一设置全部设备状态 Modified @ 9.10
+        /// </summary>
+        /// <param name="ip">产品IP信息</param>
+        /// <param name="Port">端口信息</param>
+        /// <param name="deviceState">设备需显示的状态</param>
+        public void SetProductDeviceState(string ip, int Port, string deviceState)
+        {
+            foreach (IProduct product in this)
+            {
+                if (product.Ip == ip && product.Port == Convert.ToString(Port))
+                {
+                    foreach (IDevice device in product.CBelongsDevice)
+                    {
+                        device.State = deviceState;
+                    }
+                }
+            }
+            dataModify.Modify();
+        }
+
     }
 }
