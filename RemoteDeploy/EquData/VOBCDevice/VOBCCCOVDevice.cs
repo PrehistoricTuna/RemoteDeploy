@@ -49,34 +49,34 @@ namespace RemoteDeploy.EquData
             //处理结果
             bool dealResult = true;
 
-            if (base.BelongProduct.ProductID.Contains("TC1"))
-            {
-                try
-                {
-                    //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
-                    File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Red\\config.ini", m_ccovIniPath.Key, true);
-                }
-                catch
-                {
-                    MessageBox.Show("请检查CCOV配置文件路径");
-                }
-            }
-            else if (base.BelongProduct.ProductID.Contains("TC2"))
-            {
-                try
-                {
-                    //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
-                    File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Blue\\config.ini", m_ccovIniPath.Key, true);
-                }
-                catch
-                {
-                    MessageBox.Show("请检查CCOV配置文件路径");
-                }
-            }
-            else
-            {
-                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "非法列车！");
-            }
+            //if (base.BelongProduct.ProductID.Contains("TC1"))
+            //{
+            //    try
+            //    {
+            //        //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
+            //        File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Red\\config.ini", m_ccovIniPath.Key, true);
+            //    }
+            //    catch
+            //    {
+            //        MessageBox.Show("请检查CCOV配置文件路径");
+            //    }
+            //}
+            //else if (base.BelongProduct.ProductID.Contains("TC2"))
+            //{
+            //    try
+            //    {
+            //        //CCOV统一使用一个配置文件config.ini，将红/蓝网关IP信息和WGB设备厂商信息写在一起
+            //        File.Copy(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\Blue\\config.ini", m_ccovIniPath.Key, true);
+            //    }
+            //    catch
+            //    {
+            //        MessageBox.Show("请检查CCOV配置文件路径");
+            //    }
+            //}
+            //else
+            //{
+            //    LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "非法列车！");
+            //}
 
             //文件路径键值信息
             Dictionary<string, string> filePathList = new Dictionary<string, string>();
@@ -143,7 +143,7 @@ namespace RemoteDeploy.EquData
                         vobc.InProcess = false;
 
                         //日志信息
-                        string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;
+                        string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;
 
                         //记录日志
                         LogManager.InfoLog.LogCommunicationInfo("VOBCCCOVDevice", "GetFileListAndCheckExist", logMsg);
@@ -181,11 +181,8 @@ namespace RemoteDeploy.EquData
                 //启用跳过标志 将不执行该子子系统的部署
                 vobc.SkipFlag = true;
 
-                //不在执行过程中
-                vobc.InProcess = false;
-
                 //日志信息
-                string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，部署停止，请检查选择并重新开始部署！";
+                string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，部署停止，请检查选择并重新开始部署！";
 
                 //记录日志
                 LogManager.InfoLog.LogCommunicationInfo("VOBCCCOVDevice", "GetFileListAndCheckExist", logMsg);

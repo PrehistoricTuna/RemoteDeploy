@@ -20,7 +20,7 @@ namespace RemoteDeploy.Common
         vobcInfoRequest = 0x07,//VOBC信息获取
         heart = 0x08,//心跳
         buildLink = 0x09,//建立链接
-        rebuildLink = 0x09,//重建链接
+        rebuildLink = 0x0E,//重建链接
         systemRestart = 0x0A,//系统重启
         fileTransRequest = 0x0B,//文件传输请求
         stopUpdateFile = 0x0C,//停止更新文件命令

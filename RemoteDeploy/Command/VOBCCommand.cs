@@ -123,7 +123,8 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 //根据指令类型 传输不同指令
                 //建链
                 if (vobcCommandT == vobcCommandType.buildLink)
-                {
+                {            
+                    //Modified @ 7.7
                     if ((pro.CTcpClient == null) || (pro.CTcpClient.IsSocketEnable != true) || (pro.CTcpClient.clientSocket == null))
                     {
                         //实例化TCP客户端类
@@ -146,7 +147,7 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "发送建链帧");
                 }
                 //重建链
-                if (vobcCommandT == vobcCommandType.rebuildLink)
+                else if (vobcCommandT == vobcCommandType.rebuildLink)
                 {                    
                     //实例化TCP客户端类
                     pro.CTcpClient = new Socket_TCPClient(vobcServerIP, vobcServerPort);
@@ -193,8 +194,10 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                                 //通知界面刷新
                                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
-                                //FTP上传文件
+                                
+                                    //FTP上传文件
                                 bool ret = FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value);
+
 
                                 if (ret == false)
                                 {

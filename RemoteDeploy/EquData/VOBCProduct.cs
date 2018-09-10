@@ -134,7 +134,7 @@ namespace RemoteDeploy.EquData
                 {
                     device.LoadXml(node);
                     m_cBelongsDevice.Add(device);
-                    LogManager.InfoLog.LogConfigurationInfo("线路数据", "VOBC产品设备数据", "完成加载VOBC设备" + this.ProductID + "的子子系统：" + device.DeviceName + "数据");
+                    LogManager.InfoLog.LogConfigurationInfo("线路数据", "VOBC产品设备数据", "完成加载VOBC" + this.ProductID + "的子子系统：" + device.DeviceName + "数据");
                 }
                 else
                 {
@@ -156,7 +156,7 @@ namespace RemoteDeploy.EquData
                 {
 
                     //刷新界面上的日志信息
-                    Report.ReportWindow("VOBC设备：" + m_productID + "正在生成配置文件");
+                    Report.ReportWindow("VOBC" + m_productID + "正在生成配置文件");
 
                     //当前正在处理的VOBC产品
                     LogManager.InfoLog.LogProcInfo("VOBCProduct", "GenConfigHLHT", "正在生成ATPATO配置文件......");
@@ -168,7 +168,7 @@ namespace RemoteDeploy.EquData
                     GenCCOV();
 
                     //刷新界面上的日志信息
-                    Report.ReportWindow("VOBC设备：" + m_productID + "配置文件生成完毕！");
+                    Report.ReportWindow("VOBC" + m_productID + "配置文件生成完毕！");
 
                 }
                 else 
@@ -199,7 +199,7 @@ namespace RemoteDeploy.EquData
                         //StepOne = true;
                         skipCount = 0;
                         LogManager.InfoLog.LogProcInfo("VOBCProduct", "GenConfigHLHT", "未收到下位机允许上传回复超时或下位机拒绝上传文件");
-                        Report.ReportWindow("VOBC设备：" + m_productID + "未收到下位机允许上传回复超时或下位机拒绝上传文件");
+                        Report.ReportWindow("VOBC" + m_productID + "未收到下位机允许上传回复超时或下位机拒绝上传文件");
                         CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
                         CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                         break;
@@ -232,7 +232,7 @@ namespace RemoteDeploy.EquData
         protected override bool FileUpdateExec()
         {
             bool result = true;
-            Report.ReportWindow("VOBC设备" + m_productID + "正在执行更新......");
+            Report.ReportWindow("VOBC" + m_productID + "更新标识已下发至通信控制器,请勿终止部署.如此阶段发生异常情况,请重启车载设备两次再重新开始部署!");
             LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "发送VOBC产品" + m_productID + "的文件更新命令");
             VOBCCommand fileUpdateCommand = new VOBCCommand(m_ip, Convert.ToInt32(m_port), m_productID, vobcCommandType.startUpdateFile);
             CommandQueue.instance.m_CommandQueue.Enqueue(fileUpdateCommand);
@@ -258,9 +258,14 @@ namespace RemoteDeploy.EquData
                         //StepOne = true;
                         skipCount = 0;
                         result = false;
-                        Report.ReportWindow("未收到VOBC设备" + m_productID + "的允许更新回复超时");
+                        Report.ReportWindow("未收到VOBC" + m_productID + "的允许更新回复超时");
                         LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "未收到VOBC产品" + m_productID + "的允许更新回复超时");
                         CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
+
+                        //Modified @ 7.25
+                        //断开连接
+                        CTcpClient.Socket_TCPClient_Dispose();
+                        timerHB.Dispose();
                         CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                         return result;
                     }
@@ -298,24 +303,31 @@ namespace RemoteDeploy.EquData
             //进入重连
             do
             {
-                PingReply reply = ping.Send(m_ip);
-                if(reply.Status == IPStatus.Success)
+                if (!StepOne)
                 {
-                    online = true;
-                    LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "VOBC产品" + m_productID + "重新在线Ping通");
-                    LogManager.InfoLog.LogCommunicationInfo("VOBCProduct", "FileUpdateExec", "二次建链ping通，等待5秒开始执行建链");
-                    Thread.Sleep(5000);
+                    PingReply reply = ping.Send(m_ip);
+                    if (reply.Status == IPStatus.Success)
+                    {
+                        online = true;
+                        LogManager.InfoLog.LogCommunicationInfo("VOBCProduct", "FileUpdateExec", "二次建链ping通，等待5秒开始执行建链");
+                        Report.ReportWindow("VOBC产品" + m_productID + "二次建链ping通，等待5秒开始执行建链");
+                        Thread.Sleep(5000);
+                    }
+                    else
+                    {
+                        Thread.Sleep(3000);
+                    }
                 }
-                else
+                else 
                 {
-                    Thread.Sleep(3000);
+                    result = false;
+                    return result;
                 }
-                
             } while (online == false);
 
             VOBCCommand buildCommand = new VOBCCommand(m_ip, Convert.ToInt32(m_port), m_productID, vobcCommandType.rebuildLink);
             CommandQueue.instance.m_CommandQueue.Enqueue(buildCommand);
-
+            skipCount = 0;
             rev = false;
             do
             {
@@ -329,16 +341,46 @@ namespace RemoteDeploy.EquData
                 else
                 {
                     //重连倒计时
-                    if (skipCount > skipCountMax)
+                    if (skipCount > 15)
                     {
                         //SkipFlag = true;
                         skipCount = 0;
                         //result = false;
-                        Report.ReportWindow("VOBC产品" + m_productID + "第二阶段网络重连超时！请手动点击建立链接尝试重连");
-                        CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip,Convert.ToInt32(Port), "重连失败");
-                        CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+                        //Report.ReportWindow("VOBC产品" + m_productID + "第二阶段网络重连超时！继续重连");
+                        //CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip,Convert.ToInt32(Port), "重连失败");
+                        //CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
                         //return result;
-                        break;
+                        for (int i = 0; i < 3; i++)
+                        {
+                            if (ProductState != "正常")
+                            {
+                                CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(Ip, Convert.ToInt32(Port), ProductID, vobcCommandType.rebuildLink));
+                                Thread.Sleep(15000);
+                            }
+                            else
+                            {
+                                Report.ReportWindow("VOBC产品" + m_productID + "已完成重连，开始执行第二阶段程序");
+                                result = true;
+                                return result;
+                            }
+                        }
+                        if (ProductState != "正常")
+                        {
+                            Report.ReportWindow("VOBC产品" + m_productID + "第二阶段网络重连超时，更新失败！请重启车载设备两次再重新开始部署");
+                            SkipFlag = true;
+                            InProcess = false;
+                            //Modified @ 7.24
+                            StepOne = true;
+                            result = false;
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
+                            return result;
+                        }
+                        else
+                        {
+                            Report.ReportWindow("VOBC产品" + m_productID + "已完成重连，开始执行第二阶段程序");
+                            result = true;
+                            return result;
+                        }
                     }
                     else
                     {
@@ -352,10 +394,10 @@ namespace RemoteDeploy.EquData
             } while (rev == false);
 
             //记录日志
-            LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "VOBC产品" + m_productID + "处于正常状态");
+            //LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "VOBC产品" + m_productID + "处于正常状态");
 
             ///进入下一个产品的部署过程之前，等待当前产品的更新状态回复结果
-            LogManager.InfoLog.LogProcInfo("VOBCProduct", "WaitForUpdateResult", "等待VOBC产品:" + m_productID + "的部署更新结果");
+            //LogManager.InfoLog.LogProcInfo("VOBCProduct", "WaitForUpdateResult", "等待VOBC产品:" + m_productID + "的部署更新结果");
             ///WaitForUpdateResult();
 
             return result;
@@ -463,8 +505,12 @@ namespace RemoteDeploy.EquData
                 LogManager.InfoLog.LogProcError("VOBCProduct", "WaitForUpdateResult", "接收到VOBC产品:" + m_productID + "的部署更新失败消息");
                 if(InProcess == true)
                 {
+                    //该产品已部署失败就停止并禁用心跳计时器
+                    timerHB.Close();
+                    timerEnable = false;
+
                     //刷新界面日志信息
-                    Report.ReportWindow("VOBC设备" + m_productID + "更新失败！");
+                    Report.ReportWindow("VOBC" + m_productID + "更新失败！请重启车载设备重新开始部署");
                     SkipFlag = true;
                     InProcess = false;
                     //StepOne = true;
@@ -472,6 +518,11 @@ namespace RemoteDeploy.EquData
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                     //CDeviceDataFactory.Instance.VobcContainer.dataModify.ColorEvent();
                     //DataModify.ColorEventHandler
+
+                    //断开TCP连接并释放资源 Modified @ 7.7
+                    CTcpClient.Socket_TCPClient_Dispose();
+                    //释放内存
+                    GC.Collect();
                 }
 
 
@@ -498,7 +549,7 @@ namespace RemoteDeploy.EquData
                 timerEnable = false;
 
                 //刷新界面日志信息
-                Report.ReportWindow("VOBC设备" + m_productID + "更新成功！");
+                Report.ReportWindow("VOBC" + m_productID + "更新成功！");
                 InProcess = false;
                 //StepOne = true;
                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新成功");
@@ -510,7 +561,9 @@ namespace RemoteDeploy.EquData
                 //发送复位指令
                 VOBCCommand resetCommand = new VOBCCommand(m_ip, Convert.ToInt32(m_port), m_productID, vobcCommandType.systemReset);
                 CommandQueue.instance.m_CommandQueue.Enqueue(resetCommand);
-               
+
+                //断开TCP连接并释放资源 Modified @ 7.7
+                CTcpClient.Socket_TCPClient_Dispose();
                 //释放内存
                 GC.Collect();
             }
@@ -692,7 +745,7 @@ namespace RemoteDeploy.EquData
                 LogManager.InfoLog.LogCommunicationError("VOBCProduct", "GenCCOV", "写入ccov.ini文件出错！");
 
                 //刷新界面上的日志信息
-                Report.ReportWindow("VOBC设备：" + m_productID + "写入ccov.ini文件时出错");
+                Report.ReportWindow("VOBC" + m_productID + "写入ccov.ini文件时出错");
             }
 
         }
@@ -719,7 +772,7 @@ namespace RemoteDeploy.EquData
                 LogManager.InfoLog.LogCommunicationError("VOBCProduct", "GenATPATOConfig", "生成ATPATO配置文件时出错！"+ex.Message);
 
                 //刷新界面上的日志信息
-                Report.ReportWindow("VOBC设备：" + m_productID + "生成ATPATO配置文件时出错！");
+                Report.ReportWindow("VOBC" + m_productID + "生成ATPATO配置文件时出错！");
             }
 
         }
@@ -1039,13 +1092,15 @@ namespace RemoteDeploy.EquData
             //设置标志位
             SkipFlag = true;
             InProcess = false;
+            timerHB.Dispose();
             //StepOne = true;
             //设置该产品通信状态为中断
+            CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(Ip, Convert.ToInt32(Port), "与下位机通信中断");
+            
+            
             CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "中断");
-            CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(Ip, Convert.ToInt32(Port), "与下位机通信中断超时");
-            CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
-
-            timerHB.Dispose();
+            
+                       
 
             //向消息窗口汇报
             Report.ReportWindow(ProductID + "超过通信中断判定时间未收到心跳信息，断开连接！请重新开始部署");

@@ -294,11 +294,10 @@ namespace RemoteDeploy.DataPack
                                 //不在执行状态
                                 vobc.InProcess = false;
 
+                                vobc.Report.ReportWindow("文件被拒绝上传，更新失败！请重新开始部署");
                                 //部署失败原因赋值
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "下位机拒绝文件上传请求");
-
-                                ///通知刷新背景色
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
                             }
 
                         }
@@ -345,30 +344,58 @@ namespace RemoteDeploy.DataPack
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
+                                vobc.Report.ReportWindow(vobc.ProductID + "文件校验未通过，更新失败！请重新开始部署");
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "文件校验未通过");
-                                ///通知刷新背景色
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
                             }
                         }
                         //文件更新请求回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_FileUpdateStart)
                         {
-                            //记录日志
                             LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到文件更新请求回复帧");
-
-                            iter++;//这里有误，首先需要先判断更新请求回复帧，其中如有任何一系的任何一类文件失败，应显示
-
-                            //设置烧录子子系统在界面中的显示状态--文件待重启                            
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "待重启");
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
-                            CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
-                            Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.DevRestart)));
-                            //通知界面刷新
-                            CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
-
-                            //禁用并停止心跳超时计时器
-                            vobc.timerEnable = false;
-                            vobc.TimerClose();
+                            //Modified @ 8.20
+                            iter++;
+                            bool flag = true;
+                            int count = 0;
+                            for (int i = iter; i < iter + 9; i++)
+                            {
+                                if (recvServerData[i] == 0)
+                                {
+                                    count++;
+                                }
+                                else
+                                {
+                                    /*Do nothing.*/
+                                }
+                            }
+                            if (count == 9)
+                            {
+                                flag = false;
+                            }
+                            else
+                            {
+                                /*Do nothing.*/
+                            }
+                            if(flag)
+                            {
+                                //设置烧录子子系统在界面中的显示状态--文件待重启                                                            
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
+                                CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL),
+                                Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.DevRestart)));
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "待重启");
+                                //禁用并停止心跳超时计时器
+                                vobc.timerEnable = false;
+                                vobc.TimerClose();
+                            }
+                            else
+                            {
+                                vobc.SkipFlag = true;
+                                vobc.InProcess = false;
+                                vobc.Report.ReportWindow(vobc.ProductID + "不允许更新！请检查当前列车状态是否满足可部署条件，并重新开始部署。");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "VOBC当前禁止部署");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");  
+                                //此时更新失败不要禁用计时器，否则不能正常dispose掉链接
+                            }                           
                         }
                         //远程重启回复帧
                         else if (recvServerData[iter] == vobcResponseFrame_Restart)
@@ -444,7 +471,7 @@ namespace RemoteDeploy.DataPack
                             Common.vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
 
                             //根据类型实例化该设备
-                            IDevice device = vobc.CBelongsDevice.Find(y => y.DeviceName == CommonMethod.GetStringByType(sysType));
+                            VOBCDevice device = vobc.CBelongsDevice.Find(y => y.DeviceName == CommonMethod.GetStringByType(sysType)) as VOBCDevice;
 
                             //获取该设备在部署下达时需要部署的文件总数
                             updateFileCount = GetUpdateFileCountByType(sysType, vobc);
@@ -455,7 +482,7 @@ namespace RemoteDeploy.DataPack
                                 if (device.UpdateSuccessFileCount == updateFileCount)
                                 {
                                     //设置更新状态成功
-                                    CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
+                                    CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType,CommonConstValue.constValueHEX55);
 
                                     //本设备更新完成，清空更新成功文件计数
                                     device.UpdateSuccessFileCount = 0;
@@ -464,7 +491,7 @@ namespace RemoteDeploy.DataPack
                             else
                             {
                                 //设置更新状态失败
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, recvServerData[iter + 3]);
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductVOBCDeviceState(serverIP, sysType, CommonConstValue.constValueHEXAA);
 
                                 //本设备存在更新失败文件，清空更新成功文件计数
                                 device.UpdateSuccessFileCount = 0;
@@ -536,43 +563,50 @@ namespace RemoteDeploy.DataPack
                         //CCOV向上位机获取MD5码
                         else if (recvServerData[iter] == vobcResponseFrame_CCOVGetMd5)
                         {
-
-                            iter++;
-
-                            LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到" + serverIP + "的二次MD5请求");
-
-                            //获取子系统文件类型
-                            Common.vobcSystemType sysType = getVobcSystemType(recvServerData, iter);
-
-                            //烧录阶段 二次MD5文件校验中
-                            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
-                            CommonMethod.GetVobcSystemListByType(sysType),
-                            Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
-
-                            //通知界面刷新
-                            CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
-
-                            //通过子系统类型 获取该类型对应的更新文件列表
-                            if (vobc != null)
+                            if (!vobc.StepOne)
                             {
-                                VobcCheckFile checkFile = vobc.CheckFileList.Find((VobcCheckFile temp) => temp.vobcSystemType == sysType);
 
-                                //如果为null 说明没有该子子系统更新  发送一个无效帧
-                                if (null == checkFile)
+                                iter++;
+
+                                LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到" + serverIP + "的二次MD5请求");
+
+                                //获取子系统文件类型
+                                Common.vobcSystemType sysType = getVobcSystemType(recvServerData, iter);
+
+                                //烧录阶段 二次MD5文件校验中
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(serverIP, serverPort,
+                                CommonMethod.GetVobcSystemListByType(sysType),
+                                Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
+
+                                //通知界面刷新
+                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+
+                                //通过子系统类型 获取该类型对应的更新文件列表
+                                if (vobc != null)
                                 {
-                                    checkFile = new VobcCheckFile();
-                                    checkFile.vobcSystemType = sysType;
-                                    checkFile.vobcFileTypeList = new List<vobcFileType>();
-                                    checkFile.vobcFilePathList = new Dictionary<string, string>();
+                                    VobcCheckFile checkFile = vobc.CheckFileList.Find((VobcCheckFile temp) => temp.vobcSystemType == sysType);
+
+                                    //如果为null 说明没有该子子系统更新  发送一个无效帧
+                                    if (null == checkFile)
+                                    {
+                                        checkFile = new VobcCheckFile();
+                                        checkFile.vobcSystemType = sysType;
+                                        checkFile.vobcFileTypeList = new List<vobcFileType>();
+                                        checkFile.vobcFilePathList = new Dictionary<string, string>();
+                                    }
+
+                                    //以校验帧形式 回复下位机进行第二次MD5校验
+                                    VOBCCommand command = new VOBCCommand(vobc.Ip, Convert.ToInt32(vobc.Port), vobc.ProductID, vobcCommandType.CcovGetMD5, checkFile);
+                                    CommandQueue.instance.m_CommandQueue.Enqueue(command);
+
+                                    //记录日志
+                                    LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "向CCOV发送VOBC" + vobc.ProductID + "子子系统" + checkFile.vobcSystemType.ToString() + "的MD5校验信息");
+
                                 }
-
-                                //以校验帧形式 回复下位机进行第二次MD5校验
-                                VOBCCommand command = new VOBCCommand(vobc.Ip, Convert.ToInt32(vobc.Port), vobc.ProductID, vobcCommandType.CcovGetMD5, checkFile);
-                                CommandQueue.instance.m_CommandQueue.Enqueue(command);
-
-                                //记录日志
-                                LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "向CCOV发送VOBC设备" + vobc.ProductID + "子子系统" + checkFile.vobcSystemType.ToString() + "的MD5校验信息");
-
+                            }
+                            else
+                            {
+                                vobc.Report.ReportWindow("VOBC当前处于非应用状态下，请重启车载设备再重新开始部署！");
                             }
                         }
 

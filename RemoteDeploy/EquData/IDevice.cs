@@ -75,7 +75,7 @@ namespace RemoteDeploy.EquData
         protected DeviceState m_deviceState = new DeviceState();
         protected IProduct m_belongProduct;
         private string m_processState = "0%";
-        private int m_successFileCount = 0;
+        //private int m_successFileCount = 0;
         #endregion
 
         #region 属性
@@ -119,11 +119,11 @@ namespace RemoteDeploy.EquData
             get { return m_deviceState.PreCheckFailReason; }
             set { m_deviceState.PreCheckFailReason = value; }
         }
-        public int UpdateSuccessFileCount
-        {
-            get { return m_successFileCount; }
-            set { m_successFileCount = value; }
-        }
+        //public int UpdateSuccessFileCount
+        //{
+        //    get { return m_successFileCount; }
+        //    set { m_successFileCount = value; }
+        //}
         public string DeviceName
         {
             get { return m_deviceName; }

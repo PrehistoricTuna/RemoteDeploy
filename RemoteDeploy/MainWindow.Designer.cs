@@ -117,11 +117,11 @@
             this.Column_VOBCID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_VOBCState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_VOBCSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_VOBCCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCMMI = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column_VOBCCOM = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column_VOBCATP = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column_VOBCATO = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_VOBCMMI = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column_Area = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_System = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column_Device = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -373,11 +373,11 @@
             this.Column_VOBCID,
             this.Column_VOBCState,
             this.Column_VOBCSystem,
-            this.Column_VOBCCC12,
+            this.Column_VOBCMMI,
             this.Column_VOBCCOM,
+            this.Column_VOBCCC12,
             this.Column_VOBCATP,
-            this.Column_VOBCATO,
-            this.Column_VOBCMMI});
+            this.Column_VOBCATO});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -496,7 +496,7 @@
             this.panel_AutoLoadingDetails.Controls.Add(this.label1);
             this.panel_AutoLoadingDetails.Location = new System.Drawing.Point(4, 102);
             this.panel_AutoLoadingDetails.Name = "panel_AutoLoadingDetails";
-            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1068, 33);
+            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1086, 33);
             this.panel_AutoLoadingDetails.TabIndex = 5;
             this.panel_AutoLoadingDetails.SizeChanged += new System.EventHandler(this.panel_AutoLoadingDetails_SizeChanged);
             // 
@@ -519,7 +519,7 @@
             this.panel_Datagridview_Details.Controls.Add(this.dataGridView_VOBCDeviceDetails);
             this.panel_Datagridview_Details.Location = new System.Drawing.Point(4, 132);
             this.panel_Datagridview_Details.Name = "panel_Datagridview_Details";
-            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1068, 491);
+            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1086, 491);
             this.panel_Datagridview_Details.TabIndex = 1;
             // 
             // dataGridView_VOBCDeviceDetails
@@ -576,7 +576,7 @@
             this.dataGridView_VOBCDeviceDetails.RowHeadersVisible = false;
             this.dataGridView_VOBCDeviceDetails.RowTemplate.Height = 23;
             this.dataGridView_VOBCDeviceDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(1017, 489);
+            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(1008, 489);
             this.dataGridView_VOBCDeviceDetails.TabIndex = 0;
             // 
             // panel_Operations
@@ -596,7 +596,7 @@
             this.panel_Functions.Cursor = System.Windows.Forms.Cursors.Default;
             this.panel_Functions.Location = new System.Drawing.Point(3, 3);
             this.panel_Functions.Name = "panel_Functions";
-            this.panel_Functions.Size = new System.Drawing.Size(1163, 94);
+            this.panel_Functions.Size = new System.Drawing.Size(1181, 94);
             this.panel_Functions.TabIndex = 2;
             // 
             // rtbReportView
@@ -608,7 +608,7 @@
             this.rtbReportView.Location = new System.Drawing.Point(0, 0);
             this.rtbReportView.Name = "rtbReportView";
             this.rtbReportView.ReadOnly = true;
-            this.rtbReportView.Size = new System.Drawing.Size(1161, 92);
+            this.rtbReportView.Size = new System.Drawing.Size(1179, 92);
             this.rtbReportView.TabIndex = 0;
             this.rtbReportView.Text = "";
             // 
@@ -860,7 +860,7 @@
             // 
             // timer2
             // 
-            this.timer2.Interval = 15000;
+            this.timer2.Interval = 30000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // dataGridViewTextBoxColumn1
@@ -891,6 +891,7 @@
             // 
             this.dataGridViewCheckBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dataGridViewCheckBoxColumn1.FalseValue = "0";
+            this.dataGridViewCheckBoxColumn1.FillWeight = 105F;
             this.dataGridViewCheckBoxColumn1.HeaderText = "CCOV";
             this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
             this.dataGridViewCheckBoxColumn1.TrueValue = "1";
@@ -904,6 +905,7 @@
             // dataGridViewCheckBoxColumn3
             // 
             this.dataGridViewCheckBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewCheckBoxColumn3.FillWeight = 105F;
             this.dataGridViewCheckBoxColumn3.HeaderText = "ATP";
             this.dataGridViewCheckBoxColumn3.Name = "dataGridViewCheckBoxColumn3";
             // 
@@ -952,6 +954,7 @@
             // 
             this.dataGridViewTextBoxColumn7.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dataGridViewTextBoxColumn7.DataPropertyName = "ProductState";
+            this.dataGridViewTextBoxColumn7.FillWeight = 105F;
             this.dataGridViewTextBoxColumn7.HeaderText = "集中区";
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
@@ -981,6 +984,7 @@
             this.dataGridViewTextBoxColumn10.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dataGridViewTextBoxColumn10.HeaderText = "系统";
             this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
+            this.dataGridViewTextBoxColumn10.ReadOnly = true;
             this.dataGridViewTextBoxColumn10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn10.Width = 71;
             // 
@@ -1003,7 +1007,7 @@
             this.dataGridViewTextBoxColumn12.ReadOnly = true;
             this.dataGridViewTextBoxColumn12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn12.Visible = false;
-            this.dataGridViewTextBoxColumn12.Width = 441;
+            this.dataGridViewTextBoxColumn12.Width = 435;
             // 
             // dataGridViewCheckBoxColumn6
             // 
@@ -1081,19 +1085,24 @@
             this.Column_VOBCSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column_VOBCSystem.Width = 50;
             // 
-            // Column_VOBCCC12
+            // Column_VOBCMMI
             // 
-            this.Column_VOBCCC12.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCCC12.FalseValue = "0";
-            this.Column_VOBCCC12.HeaderText = "CCOV";
-            this.Column_VOBCCC12.Name = "Column_VOBCCC12";
-            this.Column_VOBCCC12.TrueValue = "1";
+            this.Column_VOBCMMI.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCMMI.HeaderText = "MMI";
+            this.Column_VOBCMMI.Name = "Column_VOBCMMI";
             // 
             // Column_VOBCCOM
             // 
             this.Column_VOBCCOM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Column_VOBCCOM.HeaderText = "COM";
             this.Column_VOBCCOM.Name = "Column_VOBCCOM";
+            // 
+            // Column_VOBCCC12
+            // 
+            this.Column_VOBCCC12.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCCC12.FillWeight = 105F;
+            this.Column_VOBCCC12.HeaderText = "CCOV";
+            this.Column_VOBCCC12.Name = "Column_VOBCCC12";
             // 
             // Column_VOBCATP
             // 
@@ -1106,12 +1115,6 @@
             this.Column_VOBCATO.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Column_VOBCATO.HeaderText = "ATO";
             this.Column_VOBCATO.Name = "Column_VOBCATO";
-            // 
-            // Column_VOBCMMI
-            // 
-            this.Column_VOBCMMI.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCMMI.HeaderText = "MMI";
-            this.Column_VOBCMMI.Name = "Column_VOBCMMI";
             // 
             // Column_Area
             // 
@@ -1147,6 +1150,7 @@
             // 
             this.Column_State.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.Column_State.DataPropertyName = "ProductState";
+            this.Column_State.FillWeight = 105F;
             this.Column_State.HeaderText = "设备状态";
             this.Column_State.Name = "Column_State";
             this.Column_State.ReadOnly = true;
@@ -1176,6 +1180,7 @@
             this.Column_DataVersion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.Column_DataVersion.HeaderText = "数据版本号";
             this.Column_DataVersion.Name = "Column_DataVersion";
+            this.Column_DataVersion.ReadOnly = true;
             this.Column_DataVersion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.Column_DataVersion.Width = 53;
             // 
@@ -1602,14 +1607,16 @@
         private System.Windows.Forms.ToolStripButton linkEstab;
         private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn23;
         private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
+        private System.Windows.Forms.Button buttonCheck;
+        private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCID;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCState;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCSystem;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCC12;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCMMI;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCOM;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCC12;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATP;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATO;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCMMI;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_Area;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_System;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_Device;
@@ -1625,7 +1632,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_AdditionalInformation;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_NetState;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_RestartState;
-        private System.Windows.Forms.Button buttonCheck;
-        private System.Windows.Forms.Timer timer2;
     }
 }

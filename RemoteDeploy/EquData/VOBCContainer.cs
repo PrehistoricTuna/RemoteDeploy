@@ -82,7 +82,7 @@ namespace RemoteDeploy.EquData
             {
                 if (product.Ip == ip && Convert.ToInt32(product.Port) == port)
                 {
-                    LogManager.InfoLog.LogProcInfo("VOBCContainer", "SetVOBCDeviceFileState", "设置VOBC设备：" + product.ProductID + "的文件请求回复状态为" + state.ToString());
+                    LogManager.InfoLog.LogProcInfo("VOBCContainer", "SetVOBCDeviceFileState", "设置VOBC：" + product.ProductID + "的文件请求回复状态为" + state.ToString());
                     product.FileState = state;
 
                 }
@@ -102,7 +102,7 @@ namespace RemoteDeploy.EquData
             {
                 if (product.Ip == ip)
                 {
-                    LogManager.InfoLog.LogProcInfo("VOBCContainer", "SetVOBCDeviceCheckState", "设置VOBC设备：" + product.Name + "的文件校验回复状态为" + state.ToString());
+                    LogManager.InfoLog.LogProcInfo("VOBCContainer", "SetVOBCDeviceCheckState", "设置VOBC：" + product.Name + "的文件校验回复状态为" + state.ToString());
                     product.CheckState = state;
 
                 }

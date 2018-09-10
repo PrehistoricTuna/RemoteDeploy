@@ -32,6 +32,8 @@ namespace RemoteDeploy.EquData
         //当前正在处理的VOBC子系统类型
         public vobcSystemType vobcSysType = vobcSystemType.INVALID;
 
+        public int UpdateSuccessFileCount;
+
         #endregion
 
         #region 构造函数
@@ -113,13 +115,11 @@ namespace RemoteDeploy.EquData
                 vobc._updateFileState.CcovConfigCompleteFlag = configState.IsIniCheck;
 
                 #endregion
-
+                //获取对端状态
                 VOBCProduct oppovobc = CDeviceDataFactory.Instance.GetOppositeProductByIDEnd(vobc.ProductID);
                 //设备预检
-                string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
-
-                ////用完清空VobcStateInfo
-                //vobc.VobcStateInfo = null;
+                //string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
+                string preCheckResult = String.Empty;
 
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
@@ -141,7 +141,7 @@ namespace RemoteDeploy.EquData
 
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
-                    vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + "更新失败！");
+                    vobc.Report.ReportWindow("VOBC" + vobc.ProductID + "更新失败！请检查是否满足预检通过条件并重新开始部署");
                     ///通知刷新背景色
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                 }
@@ -167,7 +167,9 @@ namespace RemoteDeploy.EquData
                     vobc.InProcess = true;
                 }
 
-
+                ////用完清空VobcStateInfo（有误）
+                //vobc.VobcStateInfo = null;
+                //oppovobc.VobcStateInfo = null;
             }
 
             //如果跳过标志为假且当前处在部署第一阶段，执行部署
@@ -186,7 +188,7 @@ namespace RemoteDeploy.EquData
                     if (vobc.InProcess == true)
                     {
                         //刷新界面日志信息
-                        vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + "更新失败：执行过程中出现失败环节");
+                        vobc.Report.ReportWindow("VOBC" + vobc.ProductID + "更新失败：执行过程中出现失败环节，请重新开始部署");
                         vobc.InProcess = false;
                     }
 
@@ -328,7 +330,7 @@ namespace RemoteDeploy.EquData
                     LogManager.InfoLog.LogProcInfo("VOBCATODevice", "SendFile", "已收到文件请求回复，发送VOBC产品：" + base.BelongProduct.ProductID + "的部署文件");
 
                     //界面信息打印
-                    vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "正在发送部署文件......");
+                    vobc.Report.ReportWindow("VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "正在发送部署文件......");
 
                     //创建发送文件数据帧
                     VOBCCommand sendFileCommand = new VOBCCommand(vobc.Ip,
@@ -498,10 +500,10 @@ namespace RemoteDeploy.EquData
                 if (vobc.IsFileChecked())
                 {
                     //记录日志
-                    LogManager.InfoLog.LogProcInfo(this.GetType().Name, "DeployExec", "VOBC设备" + base.BelongProduct.ProductID + "所有文件校验通过，开始更新过程");
+                    LogManager.InfoLog.LogProcInfo(this.GetType().Name, "DeployExec", "VOBC" + base.BelongProduct.ProductID + "所有文件校验通过，开始更新过程");
 
                     //刷新界面显示内容
-                    vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + "部署文件校验成功！");
+                    vobc.Report.ReportWindow("VOBC" + vobc.ProductID + "部署文件校验成功！");
 
                     //执行文件更新流程
                     if (!BelongProduct.FileUpdate())
@@ -519,9 +521,11 @@ namespace RemoteDeploy.EquData
                 if (vobc.recvCheckCount == vobc.CSelectedDeviceType.Count)
                 {
                     ///接收到全部device的校验回复，依然失败，校验失败
-                    vobc.Report.ReportWindow("VOBC设备" + vobc.ProductID + "部署文件校验失败！");
+                    vobc.Report.ReportWindow("VOBC" + vobc.ProductID + "部署文件校验失败！");
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(vobc.Ip, Convert.ToInt32(vobc.Port), "文件校验未通过");
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip, Convert.ToInt32(vobc.Port), "更新失败");
                 }
             }
             else

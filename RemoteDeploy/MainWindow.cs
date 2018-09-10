@@ -162,7 +162,7 @@ namespace RemoteDeploy
         {
             //当所有产品都不在部署状态后再重置
             if (container.FindAll(tar => (tar.InProcess == true)).Count == 0)
-            {
+            { 
                 //启用各类按钮
                 button_OK.Enabled = true;
                 linkEstab.Enabled = true;
@@ -272,6 +272,9 @@ namespace RemoteDeploy
                         //禁用确认选择按钮
                         button_OK.Enabled = false;
 
+                        //禁用建立链接
+                        linkEstab.Enabled = false;
+
                         //禁用状态查看
                         tsbStateUpdate.Enabled = false;
 
@@ -305,6 +308,10 @@ namespace RemoteDeploy
                         {
                             if (pro.CSelectedDevice.Count != 0)
                             {
+                                //Modified @ 7.10
+                                //(pro as VOBCProduct).VobcStateInfo = null;
+                                //CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(pro.Ip, Convert.ToInt32(pro.Port), pro.ProductID, vobcCommandType.vobcInfoRequest));
+
                                 pro.InProcess = false;
                                 pro.StepOne = true;
                                 
@@ -315,11 +322,11 @@ namespace RemoteDeploy
                                 worker.RunWorkerCompleted += backgroundWorkerDeploy_RunWorkerCompleted;
                                 wokerList.Add(worker, pro);
                                 //清空进度信息
-                                foreach (IDevice device in selectedDevice)
-                                {
-                                    int index = dataGridView_VOBCDeviceDetails.Rows.Add();
-                                    dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Process"].Value = "";
-                                }
+                                //foreach (IDevice device in selectedDevice)
+                                //{
+                                //    int index = dataGridView_VOBCDeviceDetails.Rows.Add();
+                                //    dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Process"].Value = "";
+                                //}
                             }
                         }
                         foreach (KeyValuePair<BackgroundWorker, IProduct> pair in wokerList)
@@ -347,18 +354,18 @@ namespace RemoteDeploy
         {
             //当前为VOBC部署模式
             if (curruntDataGridView == dataGrid_VOBC)
-            {
+            {               
                 //遍历VOBC实体数据
                 foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
                 {
                     //获取产品实例
-                    IProduct product = container[oneProduct.Index] as IProduct;
+                    IProduct product = container[oneProduct.Index];
 
-                    //VOBC产品 默认将产品类中存储的VOBC状态信息重置
-                    if (product is VOBCProduct)
-                    {
-                        (product as VOBCProduct).VobcStateInfo = null;
-                    }
+                    ////VOBC产品 默认将产品类中存储的VOBC状态信息重置
+                    //if (product is VOBCProduct)
+                    //{
+                    //    (product as VOBCProduct).VobcStateInfo = null;
+                    //}
 
                     while (true)
                     {
@@ -440,9 +447,13 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void tsbStop_Click(object sender, EventArgs e)
         {
+            timer2.Enabled = false;
+            timer2.Dispose();
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.Rows)
             {
                 VOBCProduct product = container[oneProduct.Index] as VOBCProduct;
+                //终止时清空VobcStateInfo
+                product.VobcStateInfo = null;
 
                 //重置显示状态 Modified @ 7.7
                 CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(product.Ip, Convert.ToInt32(product.Port),
@@ -462,13 +473,14 @@ namespace RemoteDeploy
                     注销ToolStripMenuItem.Enabled = true;
 
                     product.SkipFlag = true;
-                    product.InProcess = false;                    
+                    product.InProcess = false;
+                    product.StepOne = true;
                     workerCount = 0;
                     windowEditable = true;
 
                     for (int i = 0; i < curruntDataGridView.Rows.Count; i++)
                     {
-                        for (int j = 0; j < curruntDataGridView.Columns.Count; j++)
+                        for (int j = 3; j < curruntDataGridView.Columns.Count; j++)
                         {
                             curruntDataGridView.Rows[i].Cells[j].ReadOnly = false;
                         }
@@ -501,6 +513,9 @@ namespace RemoteDeploy
             //TODO:尚未确定方案,点击停止后应该发送停止更新请求还是终止FTP传输进程???如果是终止FTP部署则关联上面DoWork进程,如发送停止更新请求(已经在部署之后,CCOV更新或其他过程中),则不需要终止进程,只发送请求停止数据包即可(是否允许停止在数据分析中负责回显).
             
             button_OK.Enabled = true;
+
+            VOBCProduct productone = container[0] as VOBCProduct;
+            productone.Report.ReportWindow("部署进程已被用户终止，请根据使用指导重启或重启两次车载设备后再重新开始部署！");
         }
 
         ////timer计时器事件 执行心跳帧发送
@@ -545,7 +560,13 @@ namespace RemoteDeploy
         /// <param name="e"></param>
         private void linkEstab_Click(object sender, EventArgs e)
         {
-                       
+            //清空列表全部VOBC状态
+            foreach (DataGridViewRow oneProduct in dataGrid_VOBC.Rows)
+            {
+                IProduct product = container[oneProduct.Index];
+                (product as VOBCProduct).VobcStateInfo = null;
+            }   
+        
             //遍历用户选择的需要建立链接的产品对象信息
             foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
             {               
@@ -559,12 +580,12 @@ namespace RemoteDeploy
                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, Convert.ToInt32(product.Port), "");
 
                 productLinkList.Add(product);
-                if (timer2.Enabled == false)
-                {
-                    timer2.Enabled = true;
-                }
+                
             }
-            
+            if (timer2.Enabled == false)
+            {
+                timer2.Enabled = true;
+            }
             tsbStateUpdate.Enabled = true;
         }
 
@@ -903,7 +924,7 @@ namespace RemoteDeploy
                         //如果是初始未开始的则不刷新颜色
                         else 
                         {
- 
+                            row.DefaultCellStyle.BackColor = System.Drawing.SystemColors.Window;
                         }
                     }
                 }
@@ -937,64 +958,167 @@ namespace RemoteDeploy
         /// </summary>
         private void RefreshDataDetail()
         {
-
+            //int currentLine = this.dataGridView_VOBCDeviceDetails.FirstDisplayedScrollingRowIndex;
             //清空数据
-            dataGridView_VOBCDeviceDetails.Rows.Clear();
+            //dataGridView_VOBCDeviceDetails.Rows.Clear();
 
             //VOBC使用车载ID  非VOBC 如ZC  CI  DSU等使用集中区
 
             dataGridView_VOBCDeviceDetails.Columns["Column_Area"].HeaderText = (curruntDataGridView == dataGrid_VOBC) ?
                 "车载ID" : "集中区";
-
-            //遍历当前已选中的实体
+            //添加行部分
+            List<IDevice> adddevices = new List<IDevice>();
+            List<DataGridViewRow> removeHe = new List<DataGridViewRow>();
             foreach (IDevice device in selectedDevice)
             {
-
-                //获取当前正在添加的数据行索引
-                int index = dataGridView_VOBCDeviceDetails.Rows.Add();
-
-                //依据数据行索引 并从数据实体中获取数据  显示到界面中
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Area"].Value = device.BelongProduct.ProductID;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_System"].Value = device.DeviceType;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Device"].Value = device.DeviceName;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_State"].Value = device.State;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_SoftVersion"].Value = device.SoftVersion;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_DataVersion"].Value = device.DataVersion;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_IP"].Value = device.BelongProduct.Ip;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_PreResults"].Value = device.PreCheckResult ? "预检成功" : "预检失败";
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_ErrorReason"].Value = device.PreCheckFailReason;
-                dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Process"].Value = device.ProcessState;
-
-                //依据状态 显示结果列的状态图标
-                switch (device.State)
+                bool isadd = true;
+                foreach (DataGridViewRow row in this.dataGridView_VOBCDeviceDetails.Rows)
                 {
-                    case "更新成功":
-                        dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Results"].Value = RemoteDeploy.Properties.Resources.Green;
-                        dataGridView_VOBCDeviceDetails.Rows[index].DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
-                        break;
-                    case "更新失败":
-                        dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Results"].Value = RemoteDeploy.Properties.Resources.Red;
-                        dataGridView_VOBCDeviceDetails.Rows[index].DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
-                        break;
-                    case "文件上传中":
-                    case "设备待重启":
-                    case "更新执行中":
-                    case "文件校验中":
-                    case "下发完成":
-                        dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Results"].Value = RemoteDeploy.Properties.Resources.DarkOrange;
-                        dataGridView_VOBCDeviceDetails.Rows[index].DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
-                        break;
-                    default:
-                        dataGridView_VOBCDeviceDetails.Rows[index].Cells["Column_Results"].Value = RemoteDeploy.Properties.Resources.Gray;
-                        dataGridView_VOBCDeviceDetails.Rows[index].DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
-                        break;
+                    if (row.Cells[0].Value.ToString() == device.BelongProduct.ProductID
+                         && row.Cells[2].Value.ToString() == device.DeviceName)
+                    {
+                        isadd = false;
+                    }
                 }
-
+                if (isadd)
+                {
+                    adddevices.Add(device);
+                }
             }
+            //移除行部分
+            foreach (DataGridViewRow row in this.dataGridView_VOBCDeviceDetails.Rows)
+            {
+                bool isremove = true;
+                foreach (IDevice device in selectedDevice) 
+                {
+                    if (row.Cells[0].Value.ToString() == device.BelongProduct.ProductID
+                         && row.Cells[2].Value.ToString() == device.DeviceName)
+                    {
+                        isremove = false;
+                    }
+                }
+                if (isremove)
+                {
+                    removeHe.Add(row);
+                }
+            }
+            foreach (DataGridViewRow re_row in removeHe)
+            {
+                if (re_row.Index!=-1)
+                dataGridView_VOBCDeviceDetails.Rows.Remove(re_row);
+            }
+            //其他
+            //遍历当前已选中的实体
+            int i = 0;
+            foreach (IDevice device in selectedDevice)
+            {
+                //待添加表格行
+                if (adddevices.Contains(device))
+                {
+                    DataGridViewRow _row = new DataGridViewRow();
+                    _row.CreateCells(this.dataGridView_VOBCDeviceDetails);
+                    //获取当前正在添加的数据行索引
+                    //dataGridView_VOBCDeviceDetails.Rows.Add();
+                    #region 添加表格数据
+                    //依据数据行索引 并从数据实体中获取数据  显示到界面中
+                    _row.Cells[0].Value = device.BelongProduct.ProductID;
+                    _row.Cells[1].Value = device.DeviceType;
+                    _row.Cells[2].Value = device.DeviceName;
+                    _row.Cells[3].Value = device.State;
+                    _row.Cells[4].Value = device.BelongProduct.Ip;
+                    _row.Cells[5].Value = device.SoftVersion;
+                    _row.Cells[6].Value = device.DataVersion;
 
+                    _row.Cells[7].Value = device.PreCheckResult ? "预检成功" : "预检失败";
+                    _row.Cells[8].Value = device.PreCheckFailReason;
+                    _row.Cells[10].Value = device.ProcessState;
+
+                    //依据状态 显示结果列的状态图标
+                    switch (device.State)
+                    {
+                        case "更新成功":
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Green;
+                            _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
+                            break;
+                        case "更新失败":
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Red;
+                            _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+                            break;
+                        case "文件上传中":
+                        case "设备待重启":
+                        case "更新执行中":
+                        case "文件校验中":
+                        case "下发完成":
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.DarkOrange;
+                            _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+                            break;
+                        default:
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Gray;
+                            _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+                            break;
+                    }
+                    dataGridView_VOBCDeviceDetails.Rows.Insert(i,_row);
+                    #endregion
+                }
+                else
+                {
+                    foreach (DataGridViewRow row in this.dataGridView_VOBCDeviceDetails.Rows)
+                    {
+                        if (row.Cells[0].Value.ToString() == device.BelongProduct.ProductID
+                             && row.Cells[2].Value.ToString() == device.DeviceName)
+                        {
+                            #region 更新表格数据
+                            //依据数据行索引 并从数据实体中获取数据  显示到界面中
+                            row.Cells[0].Value = device.BelongProduct.ProductID;
+                            row.Cells[1].Value = device.DeviceType;
+                            row.Cells[2].Value = device.DeviceName;
+                            row.Cells[3].Value = device.State;
+                            row.Cells[4].Value = device.BelongProduct.Ip;
+                            row.Cells[5].Value = device.SoftVersion;
+                            row.Cells[6].Value = device.DataVersion;
+                            row.Cells[7].Value = device.PreCheckResult ? "预检成功" : "预检失败";
+                            row.Cells[8].Value = device.PreCheckFailReason;
+                            row.Cells[10].Value = device.ProcessState;
+                            //依据状态 显示结果列的状态图标
+                            switch (device.State)
+                            {
+                                case "更新成功":
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Green;
+                                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
+                                    break;
+                                case "更新失败":
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Red;
+                                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
+                                    break;
+                                case "文件上传中":
+                                case "设备待重启":
+                                case "更新执行中":
+                                case "文件校验中":
+                                case "下发完成":
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.DarkOrange;
+                                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+                                    break;
+                                default:
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Gray;
+                                    row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+                                    break;
+                            }
+                            #endregion
+                        }
+                    }
+
+                }
+                i++;
+            }
+            
+           
+            
             //清除控件选中状态
-            dataGridView_VOBCDeviceDetails.ClearSelection();
-
+            //dataGridView_VOBCDeviceDetails.ClearSelection();
+            //if ((dataGridView_VOBCDeviceDetails.Rows.Count > currentLine) && (currentLine>=0))
+            //{
+            //    this.dataGridView_VOBCDeviceDetails.FirstDisplayedScrollingRowIndex = currentLine;
+            //}
         }
 
         /// <summary>
@@ -1033,13 +1157,16 @@ namespace RemoteDeploy
                 //usertypestat更改状态
                 usertypestat = login.getusertype();
 
-
                 //超级管理员可以勾选引导文件,配置文件，NVRam文件
                 if (usertypestat == Login.UserType.manager)            
                 {
                     checkBox_bootloader.Enabled = true;
-                    checkBox_ini.Enabled = true;
-                    checkBox_nvram.Enabled = true;
+                    checkBox_bootloader.Checked = false;
+                }
+                else
+                {
+                    checkBox_bootloader.Enabled = false;
+                    checkBox_bootloader.Checked = false;
                 }
             }
         }
@@ -1179,13 +1306,17 @@ namespace RemoteDeploy
             foreach (IProduct product in productLinkList)
             { 
                 //产品烧录状态（非正常&&非用户终止） 即判定为超时
-                if (product.ProductState != "正常" && product.ProductState != "用户终止" && product.ProductState != "待重启")
+                if (product.ProductState != "正常" && product.ProductState != "待重启")
                 {
                     product.ProductState = "中断";
                     //通知界面刷新
                     CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
                     product.Report.ReportWindow("VOBC产品" + product.ProductID + "建链超时，请重新尝试建链！");
                     //LogManager.InfoLog.LogProcInfo("MainWindow", "linkEstab_Click", "VOBC产品" + product.ProductID + "建链超时！");
+                    if (product.CTcpClient != null)
+                    {
+                        product.CTcpClient.Socket_TCPClient_Dispose();
+                    }
                 }
             }
 
@@ -1193,9 +1324,9 @@ namespace RemoteDeploy
             productLinkList.Clear();
 
             //禁用timer 待下次点击‘建链’时在启用该timer
-            timer2.Stop();
+            
             timer2.Enabled = false;
-
+            timer2.Dispose();
         }
 
         /// <summary>
@@ -1211,6 +1342,11 @@ namespace RemoteDeploy
             //跳过标志默认为false
             product.SkipFlag = false;
 
+            //初始化各设备更新文件成功计数，修复缺陷，Modified @ 8.29
+            foreach (VOBCDevice device in product.CBelongsDevice)
+            {
+                device.UpdateSuccessFileCount = 0;
+            }
             //开始执行部署
             foreach (VOBCDevice device in product.CSelectedDevice)
             {
@@ -1233,7 +1369,7 @@ namespace RemoteDeploy
             {
                 IProduct product = container[oneProduct.Index] as IProduct;
                 selectedDevice.AddRange(product.CSelectedDevice);
-                RefreshDataDetail();
+                RefreshDataDetail();                
             }
         }
 

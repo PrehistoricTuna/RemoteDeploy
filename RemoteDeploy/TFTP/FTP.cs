@@ -25,6 +25,15 @@ namespace RemoteDeploy.TFTP
         /// </summary>
         public static string FtpPassword = "1";
 
+        /// <summary>
+        /// 文件锁
+        /// </summary>
+        private static object m_cThisLock = new object();
+
+        /*
+         * 记录文件路径和文件流信息的keyvalue键值表 用作防止文件被互斥访问  key=文件本地路径  value=文件流*/
+        private static List<KeyValuePair<string, FileInfo>> keyValueOfFileStreamList = new List<KeyValuePair<string, FileInfo>>();
+
         #endregion
 
         #region 上传文件到FTP服务器
@@ -35,7 +44,159 @@ namespace RemoteDeploy.TFTP
         /// <param name="localFullPath">本地文件全路径名称：C:\Users\JianKunKing\Desktop\IronPython脚本测试工具</param>
         /// <param name="remoteFilepath">远程文件所在文件夹路径</param>
         /// <returns></returns>       
-        public static bool FtpUploadBroken(string ftpServerIP,string localFullPath, string remoteFilepath)
+        public static bool FtpUploadBroken(string ftpServerIP, string localFullPath, string remoteFilepath)
+        {
+
+
+            remoteFilepath = (null == remoteFilepath) ? "" : remoteFilepath;
+
+            //判定传送文件的目标目录是否存在
+            //if (!DirectoryExist(remoteFilepath))
+            //{
+            //    MakeDir(remoteFilepath);
+            //}
+            //变量定义
+
+            //用作存储格式化后的文件名称变量
+            string newFileName = string.Empty;
+
+            //更新结果
+            bool success = true;
+
+            //用作读取数据文件流的变量
+            FileInfo fileInf = null;
+
+            try
+            {
+                //在存储列表中查询  如果查询的到则直接使用 如果查询不到则读取并存入列表
+                if (null == keyValueOfFileStreamList.Find(tar => tar.Key == localFullPath).Key)
+                {
+                    fileInf = new FileInfo(localFullPath);
+                    KeyValuePair<string, FileInfo> tmpFValue = new KeyValuePair<string, FileInfo>(localFullPath, fileInf) { };
+                    keyValueOfFileStreamList.Add(tmpFValue);
+                }
+                else
+                {
+                    fileInf = keyValueOfFileStreamList.Find(tar => tar.Key == localFullPath).Value;
+                }
+
+                long allbye = (long)fileInf.Length;
+                if (fileInf.Name.IndexOf("#") == -1)
+                {
+                    newFileName = RemoveSpaces(fileInf.Name);
+                }
+                else
+                {
+                    newFileName = fileInf.Name.Replace("#", "＃");
+                    newFileName = RemoveSpaces(newFileName);
+                }
+                long startfilesize = GetFileSize(newFileName, remoteFilepath, ftpServerIP);
+                if (startfilesize >= allbye)
+                {
+                    return false;
+                }
+                long startbye = startfilesize;
+                //更新进度  
+                //if (updateProgress != null)
+                //{
+                //    updateProgress((int)allbye, (int)startfilesize);//更新进度条   
+                //}
+
+                string uri;
+                if (remoteFilepath.Length == 0)
+                {
+                    uri = "ftp://" + ftpServerIP + "/" + newFileName;
+                }
+                else
+                {
+                    uri = "ftp://" + ftpServerIP + "/" + remoteFilepath + "/" + newFileName;
+                }
+                FtpWebRequest reqFTP = null;
+                // 根据uri创建FtpWebRequest对象
+
+                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+
+
+                reqFTP.Proxy = null;
+                // ftp用户名和密码 
+                reqFTP.Credentials = new NetworkCredential(FtpUserID, FtpPassword);
+                // 默认为true，连接不会被关闭 
+                // 在一个命令之后被执行 
+                reqFTP.KeepAlive = true;
+                // 指定执行什么命令 
+                reqFTP.Method = WebRequestMethods.Ftp.UploadFile;
+                // 指定为FTP主动式工作
+                reqFTP.UsePassive = false;
+                // 指定数据传输类型 
+                reqFTP.UseBinary = true;
+                // 上传文件时通知服务器文件的大小 
+                reqFTP.ContentLength = fileInf.Length;
+                int buffLength = 2048;// 缓冲大小设置为2kb 
+                byte[] buff = new byte[buffLength];
+                // 打开一个文件流 (System.IO.FileStream) 去读上传的文件
+                FileStream fs = null;
+                Stream strm = null;
+                try
+                {
+                    fs = fileInf.OpenRead();
+
+                    // 把上传的文件写入流 
+                    strm = reqFTP.GetRequestStream();
+                    // 每次读文件流的2kb   
+                    fs.Seek(startfilesize, 0);
+                    int contentLen = fs.Read(buff, 0, buffLength);
+                    // 流内容没有结束 
+                    while (contentLen != 0)
+                    {
+                        // 把内容从file stream 写入 upload stream 
+                        strm.Write(buff, 0, contentLen);
+                        contentLen = fs.Read(buff, 0, buffLength);
+                        startbye += contentLen;
+                        //更新进度  
+                        //if (updateProgress != null)
+                        //{
+                        //    updateProgress((int)allbye, (int)startbye);//更新进度条   
+                        //}
+                    }
+                    // 关闭两个流 
+                    strm.Close();
+                    fs.Close();
+                    fs.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    LogManager.InfoLog.LogCommunicationInfo("FTP", "FtpUploadBroken", ex.Message);
+                    success = false;
+                    Thread.Sleep(1000);
+                }
+                finally
+                {
+                    if (fs != null)
+                    {
+                        fs.Close();
+                    }
+                    if (strm != null)
+                    {
+                        strm.Close();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                success = false;
+                LogManager.InfoLog.LogCommunication(EmLogType.Error, "FTP.cs", "FtpUploadBroken", "使用FTP发送文件时发生错误\r\n"+ex.Message);
+            }
+
+            return success;
+        }
+
+        /// <summary>
+        /// 上传文件到FTP服务器(断点续传)
+        /// </summary>
+        /// <param name="localFullPath">本地文件全路径名称：C:\Users\JianKunKing\Desktop\IronPython脚本测试工具</param>
+        /// <param name="remoteFilepath">远程文件所在文件夹路径</param>
+        /// <returns></returns>       
+        public static bool FtpUploadBrokenOLD(string ftpServerIP, string localFullPath, string remoteFilepath)
         {
 
             if (remoteFilepath == null)
@@ -61,7 +222,7 @@ namespace RemoteDeploy.TFTP
                 newFileName = fileInf.Name.Replace("#", "＃");
                 newFileName = RemoveSpaces(newFileName);
             }
-            long startfilesize = GetFileSize(newFileName, remoteFilepath,ftpServerIP);
+            long startfilesize = GetFileSize(newFileName, remoteFilepath, ftpServerIP);
             if (startfilesize >= allbye)
             {
                 return false;
@@ -91,7 +252,7 @@ namespace RemoteDeploy.TFTP
             }
             catch
             {
-                MessageBox.Show("FTP创建异常！");
+                success = false;
             }
             reqFTP.Proxy = null;
             // ftp用户名和密码 
@@ -110,56 +271,58 @@ namespace RemoteDeploy.TFTP
             // 打开一个文件流 (System.IO.FileStream) 去读上传的文件 
             bool b = true;
             FileStream fs = null;
-             Stream strm = null;
+            Stream strm = null;
             //while (b)
             //{
-                try
+            try
+            {
+                fs = fileInf.OpenRead();
+
+                // 把上传的文件写入流 
+                strm = reqFTP.GetRequestStream();
+                // 每次读文件流的2kb   
+                fs.Seek(startfilesize, 0);
+                int contentLen = fs.Read(buff, 0, buffLength);
+                // 流内容没有结束 
+                while (contentLen != 0)
                 {
-                    fs = fileInf.OpenRead();
-                       
-                    // 把上传的文件写入流 
-                    strm = reqFTP.GetRequestStream();
-                    // 每次读文件流的2kb   
-                    fs.Seek(startfilesize, 0);
-                    int contentLen = fs.Read(buff, 0, buffLength);
-                    // 流内容没有结束 
-                    while (contentLen != 0)
-                    {
-                        // 把内容从file stream 写入 upload stream 
-                        strm.Write(buff, 0, contentLen);
-                        contentLen = fs.Read(buff, 0, buffLength);
-                        startbye += contentLen;
-                        //更新进度  
-                        //if (updateProgress != null)
-                        //{
-                        //    updateProgress((int)allbye, (int)startbye);//更新进度条   
-                        //}
-                    }
-                    // 关闭两个流 
-                    strm.Close();
+                    // 把内容从file stream 写入 upload stream 
+                    strm.Write(buff, 0, contentLen);
+                    contentLen = fs.Read(buff, 0, buffLength);
+                    startbye += contentLen;
+                    //更新进度  
+                    //if (updateProgress != null)
+                    //{
+                    //    updateProgress((int)allbye, (int)startbye);//更新进度条   
+                    //}
+                }
+                // 关闭两个流 
+                strm.Close();
+                fs.Close();
+                fs.Dispose();
+                b = false;
+            }
+            catch (Exception ex)
+            {
+                LogManager.InfoLog.LogCommunicationInfo("FTP", "FtpUploadBroken", ex.Message);
+                success = false;
+                Thread.Sleep(1000);
+            }
+            finally
+            {
+                if (fs != null)
+                {
                     fs.Close();
-                    b = false;
                 }
-                catch (Exception ex)
+                if (strm != null)
                 {
-                    success = false;
-                    Thread.Sleep(1000);
+                    strm.Close();
                 }
-                finally
-                {
-                    if (fs != null)
-                    {
-                        fs.Close();
-                    }
-                    if (strm != null)
-                    {
-                        strm.Close();
-                    }
-                }
-               
+            }
+
             //}
-            
-            
+
+
             return success;
         }
 
@@ -196,7 +359,7 @@ namespace RemoteDeploy.TFTP
         /// <param name="path">服务器文件路径</param>
         /// <param name="ftpServerIP">服务器IP地址</param>
         /// <returns></returns>
-        public static long GetFileSize(string filename, string remoteFilepath,string ftpServerIP)
+        public static long GetFileSize(string filename, string remoteFilepath, string ftpServerIP)
         {
             long filesize = 0;
             try
@@ -243,10 +406,10 @@ namespace RemoteDeploy.TFTP
 
             try
             {
-                
+
                 string ftpURI = "ftp://" + ftpServerIP + "/";
 
-                FtpWebRequest ftp= (FtpWebRequest)FtpWebRequest.Create(new Uri(ftpURI));
+                FtpWebRequest ftp = (FtpWebRequest)FtpWebRequest.Create(new Uri(ftpURI));
                 ftp.Credentials = new NetworkCredential(FtpUserID, FtpPassword);
                 ftp.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 WebResponse response = ftp.GetResponse();
@@ -266,7 +429,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP获取远程地址为"+ftpServerIP+"的文件目录时失败：" + ex.Message);
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP获取远程地址为" + ftpServerIP + "的文件目录时失败：" + ex.Message);
             }
 
             return result.ToString().Split('\n');
@@ -278,7 +441,7 @@ namespace RemoteDeploy.TFTP
         /// <param name="mask">搜索的文件类型</param>
         /// <param name="ftpServerIP">服务器IP地址信息</param>
         /// <returns></returns>
-        public static string[] GetFileList(string path,string mask, string ftpServerIP)
+        public static string[] GetFileList(string path, string mask, string ftpServerIP)
         {
 
             StringBuilder result = new StringBuilder();
@@ -330,9 +493,9 @@ namespace RemoteDeploy.TFTP
         /// <param name="mask">搜索的文件类型</param>
         /// <param name="ftpServerIP">服务器IP地址信息</param>
         /// <returns></returns>
-        public static string[] GetFileList(string mask,string ftpServerIP)
+        public static string[] GetFileList(string mask, string ftpServerIP)
         {
-            
+
             StringBuilder result = new StringBuilder();
             FtpWebRequest reqFTP;
             try
@@ -371,7 +534,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                
+
                 throw ex;
             }
         }
@@ -416,7 +579,7 @@ namespace RemoteDeploy.TFTP
         /// </summary>
         /// <param name="ftpServerIP">FTP服务端地址</param> 
         /// <param name="fileName"></param>
-        public static bool Delete(string fileName,string ftpServerIP)
+        public static bool Delete(string fileName, string ftpServerIP)
         {
             try
             {
@@ -488,7 +651,7 @@ namespace RemoteDeploy.TFTP
         /// <param name="filename"></param>
         /// <param name="ftpServerIP">FTP服务端地址</param> 
         /// <returns></returns>
-        public static long GetFileSize(string filename,string ftpServerIP)
+        public static long GetFileSize(string filename, string ftpServerIP)
         {
             //文件长度
             long fileSize = 0;
@@ -497,7 +660,7 @@ namespace RemoteDeploy.TFTP
             {
                 //创建FTPweb访问类
                 FtpWebRequest reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://" + ftpServerIP + "/" + filename));
-                
+
                 //属性赋值
                 reqFTP.Method = WebRequestMethods.Ftp.GetFileSize;
                 reqFTP.UseBinary = true;
@@ -516,7 +679,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP发送文件["+filename+"]时出现异常！" + ex.Message);
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP发送文件[" + filename + "]时出现异常！" + ex.Message);
             }
             return fileSize;
         }
@@ -526,7 +689,7 @@ namespace RemoteDeploy.TFTP
         /// <param name="ftpServerIP">FTP服务端地址</param> 
         /// </summary>
         /// <param name="RemoteDirectoryName">指定的目录名</param>
-        public static bool DirectoryExist(string RemoteDirectoryName,string ftpServerIP)
+        public static bool DirectoryExist(string RemoteDirectoryName, string ftpServerIP)
         {
             try
             {
@@ -552,7 +715,7 @@ namespace RemoteDeploy.TFTP
         /// 判断当前目录下指定的文件是否存在
         /// </summary>
         /// <param name="RemoteFileName">远程文件名</param>
-        public static bool FileExist(string RemoteFileName,string ftpServerIP)
+        public static bool FileExist(string RemoteFileName, string ftpServerIP)
         {
             string[] fileList = GetFileList("*.*", ftpServerIP);
             foreach (string str in fileList)
@@ -570,7 +733,7 @@ namespace RemoteDeploy.TFTP
         /// </summary>
         /// <param name="dirName">待创建的文件路径名称</param>
         /// <param name="ftpServerIP">ftp服务端IP地址</param>
-        public static void MakeDir(string dirName,string ftpServerIP)
+        public static void MakeDir(string dirName, string ftpServerIP)
         {
             FtpWebRequest reqFTP;
             try
@@ -588,7 +751,7 @@ namespace RemoteDeploy.TFTP
             }
             catch (Exception ex)
             {
-                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP创建远程目录["+dirName+"]时出现错误：" + ex.Message);
+                LogManager.InfoLog.LogCommunicationError("MainWindow", "ProductReport", "FTP创建远程目录[" + dirName + "]时出现错误：" + ex.Message);
             }
         }
 
@@ -598,7 +761,7 @@ namespace RemoteDeploy.TFTP
         /// <param name="currentFilename"></param>
         /// <param name="newFilename"></param>
         /// <param name="ftpServerIP">ftp服务端IP地址</param>
-        public static void ReName(string currentFilename, string newFilename,string ftpServerIP)
+        public static void ReName(string currentFilename, string newFilename, string ftpServerIP)
         {
             FtpWebRequest reqFTP;
             try
@@ -625,11 +788,11 @@ namespace RemoteDeploy.TFTP
         /// </summary>
         /// <param name="currentFilename"></param>
         /// <param name="ftpServerIP">ftp服务端IP地址</param>
-        public static void MovieFile(string currentFilename, string newDirectory,string ftpServerIP)
+        public static void MovieFile(string currentFilename, string newDirectory, string ftpServerIP)
         {
             ReName(currentFilename, newDirectory, ftpServerIP);
         }
- 
+
         #endregion
 
     }

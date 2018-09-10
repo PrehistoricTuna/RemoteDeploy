@@ -114,7 +114,7 @@ namespace RemoteDeploy.EquData
                         vobc.InProcess = false;
 
                         //日志信息
-                        string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;
+                        string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;
 
                         //记录日志
                         LogManager.InfoLog.LogCommunicationInfo("VOBCATODevice", "GetFileListAndCheckExist", logMsg);
@@ -149,11 +149,8 @@ namespace RemoteDeploy.EquData
                 //启用跳过标志 将不执行该子子系统的部署
                 vobc.SkipFlag = true;
 
-                //不在执行过程中
-                vobc.InProcess = false;
-
                 //日志信息
-                string logMsg = "VOBC设备" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，部署停止，请检查选择并重新开始部署！";
+                string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "没有文件需要发送，部署停止，请检查选择并重新开始部署！";
 
                 //记录日志
                 LogManager.InfoLog.LogCommunicationInfo("VOBCATODevice", "GetFileListAndCheckExist", logMsg);
