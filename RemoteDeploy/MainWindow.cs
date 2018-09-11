@@ -358,16 +358,11 @@ namespace RemoteDeploy
                 //遍历VOBC实体数据
                 //foreach (DataGridViewRow oneProduct in dataGrid_VOBC.SelectedRows)
                 //Modified @ 9.10
-                foreach (IProduct product in productLinkList)
+                foreach (DataGridViewRow oneProduct in dataGrid_VOBC.Rows)
                 {
-                    //获取产品实例
-                    //IProduct product = container[oneProduct.Index];
-
-                    ////VOBC产品 默认将产品类中存储的VOBC状态信息重置
-                    //if (product is VOBCProduct)
-                    //{
-                    //    (product as VOBCProduct).VobcStateInfo = null;
-                    //}
+                    IProduct product = container[oneProduct.Index];
+                    //VOBC产品 默认将产品类中存储的VOBC状态信息重置
+                    (product as VOBCProduct).VobcStateInfo = null;
                     if (product.ProductState == "正常")
                     {
                         CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.vobcInfoRequest));
