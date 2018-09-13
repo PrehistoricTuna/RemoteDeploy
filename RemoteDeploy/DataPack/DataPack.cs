@@ -463,8 +463,8 @@ namespace RemoteDeploy.DataPack
 
             try
             {
-                //文件流 用于读取文件
-                using (FileStream file = new FileStream(fileName, FileMode.Open))
+                //文件流 用于读取文件 Modified @ 9.13
+                using (FileStream file = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
 
                     //MD5对象 用于计算MD5

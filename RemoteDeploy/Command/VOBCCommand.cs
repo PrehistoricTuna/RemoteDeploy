@@ -172,19 +172,16 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                 }
                 //执行文件发送
                 else if (vobcCommandT == vobcCommandType.sendFile)
-                {
+                {       
                     foreach (KeyValuePair<string, string> path in m_checkFile.vobcFilePathList)
                     {
                         LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "待更新的文件：[" + path + "]");
-                    }
-                    foreach (KeyValuePair<string, string> path in m_checkFile.vobcFilePathList)
-                    {
                         if (File.Exists(path.Key))
                         {
                             try
                             {
                                 LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "开始执行文件[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
-                               
+                                
                                 //TFTP.TFTP_Client.UpLoad(vobcServerIP, path);
                                 //设置烧录子子系统在界面中的显示状态--文件上传中
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
@@ -194,19 +191,22 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                                 //通知界面刷新
                                 CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
-                                
-                                    //FTP上传文件
-                                bool ret = FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value);
+                                //Modified @ 9.13
+                                //string th = Convert.ToString(pro.ProductID);
+                                Thread th = new Thread(new ThreadStart(delegate { FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value); }));
+                                th.Start();
+                                ////FTP上传文件
+                                //bool ret = FTPHelper.FtpUploadBroken(vobcServerIP, path.Key, path.Value);
 
 
-                                if (ret == false)
-                                {
-                                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "Ftp send file ERROR[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
-                                }
-                                else
-                                {
-                                    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "文件[" + path + "]的FTP发送完成！");
-                                }
+                                //if (ret == false)
+                                //{
+                                //    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "Ftp send file ERROR[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
+                                //}
+                                //else
+                                //{
+                                //    LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "文件[" + path + "]的FTP发送完成！");
+                                //}
                             }
                             catch (Exception)
                             {

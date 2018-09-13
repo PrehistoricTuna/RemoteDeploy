@@ -38,28 +38,29 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(30, 40);
+            this.label1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(47, 41);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(225, 24);
+            this.label1.Size = new System.Drawing.Size(194, 24);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Auto Deployment Tools";
+            this.label1.Text = "远程自动部署工具";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(14, 93);
+            this.label2.Location = new System.Drawing.Point(14, 76);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(259, 16);
+            this.label2.Size = new System.Drawing.Size(258, 48);
             this.label2.TabIndex = 2;
-            this.label2.Text = "©2018 TCT Co.,Ltd. Allrights Reserved.";
+            this.label2.Text = "Ver. 1.0.0.4\r\n\r\n©2018 TCT Co.,Ltd. Allrights Reserved.";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pictureBox1
             // 
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox1.Image = global::RemoteDeploy.Properties.Resources.TCTlogo1;
-            this.pictureBox1.Location = new System.Drawing.Point(87, 124);
+            this.pictureBox1.Location = new System.Drawing.Point(93, 136);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(100, 50);
             this.pictureBox1.TabIndex = 3;

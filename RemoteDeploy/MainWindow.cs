@@ -446,7 +446,8 @@ namespace RemoteDeploy
                 VOBCProduct product = container[oneProduct.Index] as VOBCProduct;
                 //终止时清空VobcStateInfo
                 product.VobcStateInfo = null;
-
+                //终止心跳计时
+                product.TimerClose();
                 //重置显示状态 Modified @ 7.7
                 CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(product.Ip, Convert.ToInt32(product.Port),
                         CommonMethod.GetVobcSystemListByType(vobcSystemType.ALL), " ");
@@ -484,14 +485,17 @@ namespace RemoteDeploy
                 }
                 else
                 {
-                    if (product != null)
+                    if (product.CTcpClient != null)
                     {
-                        //发送断链请求帧
-                        CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.cutLink));
-                        CDeviceDataFactory.Instance.VobcContainer.SetProductState(product.Ip, Convert.ToInt32(product.Port), "中断");                        
+                        if (product.CTcpClient.IsSocketEnable)
+                        {
+                            //发送断链请求帧
+                            CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.cutLink));
+                            CDeviceDataFactory.Instance.VobcContainer.SetProductState(product.Ip, Convert.ToInt32(product.Port), "中断");
+                        }
                     }
                 }
-                product.TimerClose();
+                
                 //product.Report.ReportWindow("用户终止" + product.ProductID + "部署过程");
             }
 

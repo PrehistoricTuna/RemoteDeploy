@@ -138,7 +138,9 @@ namespace RemoteDeploy.TFTP
                 Stream strm = null;
                 try
                 {
-                    fs = fileInf.OpenRead();
+                    //Modified @ 9.13
+                    //fs = fileInf.OpenRead();
+                    fs = new System.IO.FileStream(localFullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                     // 把上传的文件写入流 
                     strm = reqFTP.GetRequestStream();
@@ -162,6 +164,7 @@ namespace RemoteDeploy.TFTP
                     strm.Close();
                     fs.Close();
                     fs.Dispose();
+                    LogManager.InfoLog.LogCommunicationInfo("FTP", "FtpUploadBroken", localFullPath + "发送完成！");
                 }
                 catch (Exception ex)
                 {
