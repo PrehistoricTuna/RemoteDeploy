@@ -201,7 +201,7 @@ namespace RemoteDeploy.DataPack
                             //判定回复的状态
                             if (recvServerData[iter] == CommonConstValue.constValueHEX55)
                             {
-                                item.SetProductState(serverIP, serverPort, "正常");
+                                item.SetProductStateLink(serverIP, serverPort, "正常");
 
                                 //启用并开始心跳超时计时器
                                 vobc.timerEnable = true;
@@ -211,19 +211,19 @@ namespace RemoteDeploy.DataPack
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                item.SetProductState(serverIP,serverPort, "故障");
+                                item.SetProductStateLink(serverIP,serverPort, "故障");
                                 item.SetProductFailReason(serverIP, serverPort, "下位机拒绝建链请求");
                                 ///通知刷新背景色
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                                //CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                             else
                             {
                                 vobc.SkipFlag = true;
                                 vobc.InProcess = false;
-                                item.SetProductState(serverIP, serverPort, "故障");
+                                item.SetProductStateLink(serverIP, serverPort, "故障");
                                 item.SetProductFailReason(serverIP, serverPort, "下位机回复非法值");
                                 ///通知刷新背景色
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                                //CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                             }
                         }
                         //VOBC状态信息回复帧
@@ -292,10 +292,11 @@ namespace RemoteDeploy.DataPack
                                 vobc.SkipFlag = true;
 
                                 //不在执行状态
-                                vobc.InProcess = false;
+                                //vobc.InProcess = false;
 
                                 vobc.Report.ReportWindow("文件被拒绝上传，更新失败！请重新开始部署");
                                 //部署失败原因赋值
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port), "发送失败");
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "下位机拒绝文件上传请求");
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
                             }
@@ -343,8 +344,9 @@ namespace RemoteDeploy.DataPack
                             if (vobc._updateFileState.VeriResult == false)
                             {
                                 vobc.SkipFlag = true;
-                                vobc.InProcess = false;
+                                //vobc.InProcess = false;
                                 vobc.Report.ReportWindow(vobc.ProductID + "文件校验未通过，更新失败！请重新开始部署");
+                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port), "校验失败");
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(serverIP, serverPort, "文件校验未通过");
                                 CDeviceDataFactory.Instance.VobcContainer.SetProductState(serverIP, serverPort, "更新失败");
                             }

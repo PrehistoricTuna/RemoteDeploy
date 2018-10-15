@@ -251,7 +251,7 @@ namespace RemoteDeploy.EquData
                 else
                 {
                     //计数15次 未收到允许更新就跳出循环结束
-                    if (skipCount > 60)
+                    if (skipCount > 30)
                     {
                         SkipFlag = true;
                         InProcess = false;
@@ -259,7 +259,8 @@ namespace RemoteDeploy.EquData
                         skipCount = 0;
                         result = false;
                         Report.ReportWindow("未收到VOBC" + m_productID + "的允许更新回复超时");
-                        LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "未收到VOBC产品" + m_productID + "的允许更新回复超时");
+                        //LogManager.InfoLog.LogProcInfo("VOBCProduct", "FileUpdateExec", "未收到VOBC产品" + m_productID + "的允许更新回复超时");
+                        CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(Ip, Convert.ToInt32(Port), "更新失败");
                         CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
 
                         //Modified @ 7.25
@@ -517,7 +518,7 @@ namespace RemoteDeploy.EquData
                     InProcess = false;
                     //StepOne = true;
                     CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
-                    CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                    //CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                     //CDeviceDataFactory.Instance.VobcContainer.dataModify.ColorEvent();
                     //DataModify.ColorEventHandler
 

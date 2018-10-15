@@ -183,13 +183,13 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                                 LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "开始执行文件[" + path + "]的FTP发送！目标地址：" + vobcServerIP);
                                 
                                 //TFTP.TFTP_Client.UpLoad(vobcServerIP, path);
-                                //设置烧录子子系统在界面中的显示状态--文件上传中
-                                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
-                                CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
-                                Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileUploading)));
+                                ////设置烧录子子系统在界面中的显示状态--文件上传中 放到SendFile里执行刷新界面，节约command执行时间 Modified @ 9.13
+                                //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
+                                //CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
+                                //Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileUploading)));
 
-                                //通知界面刷新
-                                CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+                                ////通知界面刷新
+                                //CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
                                 //Modified @ 9.13
                                 //string th = Convert.ToString(pro.ProductID);
@@ -218,19 +218,19 @@ string vobcID, vobcCommandType commandT, VobcCheckFile checkFile)
                             //TODO
                             LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", "本地文件未找到[" + path + "]！");
                         }
-
+                        Thread.Sleep(10);
                     }
 
                 }
                 //文件校验请求帧
                 else if (vobcCommandT == vobcCommandType.checkFile)
                 {
-                    //设置烧录子子系统在界面中的显示状态--文件校验中
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
-                    CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
-                    Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
-                    //通知界面刷新
-                    CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+                    ////设置烧录子子系统在界面中的显示状态--文件校验中 放到CheckFile里执行刷新界面，节约command执行时间 Modified @ 9.13
+                    //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobcServerIP, vobcServerPort,
+                    //CommonMethod.GetVobcSystemListByType(m_checkFile.vobcSystemType),
+                    //Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
+                    ////通知界面刷新
+                    //CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
                     execResult = pro.CTcpClient.Me_SendMessage(DataPack.DataPack.PackFileVerificationRequest(m_checkFile, pro));
                     LogManager.InfoLog.LogCommunicationInfo("VOBCCommand", "Exec", vobcDevID + "文件校验请求发送！");

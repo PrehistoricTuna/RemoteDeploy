@@ -28,10 +28,10 @@ namespace RemoteDeploy.TFTP
         /// <summary>
         /// 文件锁
         /// </summary>
-        private static object m_cThisLock = new object();
+        //private static object m_cThisLock = new object();
 
-        /*
-         * 记录文件路径和文件流信息的keyvalue键值表 用作防止文件被互斥访问  key=文件本地路径  value=文件流*/
+        
+        //记录文件路径和文件流信息的keyvalue键值表 用作防止文件被互斥访问  key=文件本地路径  value=文件流
         private static List<KeyValuePair<string, FileInfo>> keyValueOfFileStreamList = new List<KeyValuePair<string, FileInfo>>();
 
         #endregion

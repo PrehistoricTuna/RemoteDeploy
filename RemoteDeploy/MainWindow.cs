@@ -586,6 +586,11 @@ namespace RemoteDeploy
                 timer2.Enabled = true;
             }
             tsbStateUpdate.Enabled = true;
+            foreach (DataGridViewRow row in curruntDataGridView.Rows)
+            {
+                //IProduct product = CDeviceDataFactory.Instance.VobcContainer.Find((IProduct temp) => temp.ProductID == Convert.ToString(row.Cells["Column_VOBCID"].Value));
+                row.DefaultCellStyle.BackColor = System.Drawing.SystemColors.Window;
+            }
         }
 
     

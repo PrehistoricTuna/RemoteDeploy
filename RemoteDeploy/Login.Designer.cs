@@ -72,6 +72,7 @@
             this.textBox_Name.Name = "textBox_Name";
             this.textBox_Name.Size = new System.Drawing.Size(100, 21);
             this.textBox_Name.TabIndex = 3;
+            this.textBox_Name.Text = "superuser";
             // 
             // textBox_Password
             // 
@@ -80,6 +81,7 @@
             this.textBox_Password.PasswordChar = '*';
             this.textBox_Password.Size = new System.Drawing.Size(100, 21);
             this.textBox_Password.TabIndex = 4;
+            this.textBox_Password.Text = "123456";
             // 
             // comboBox_UserType
             // 

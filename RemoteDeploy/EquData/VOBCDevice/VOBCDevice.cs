@@ -120,7 +120,6 @@ namespace RemoteDeploy.EquData
                 //设备预检
                 //string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
                 string preCheckResult = String.Empty;
-
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
                 {
@@ -332,13 +331,19 @@ namespace RemoteDeploy.EquData
                     //界面信息打印
                     vobc.Report.ReportWindow("VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "正在发送部署文件......");
 
+                    //设置烧录子子系统在界面中的显示状态--文件上传中
+                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),
+                    CommonMethod.GetVobcSystemListByType(m_vobcCheckFile.vobcSystemType),
+                    Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileUploading)));
+                    CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
+
                     //创建发送文件数据帧
                     VOBCCommand sendFileCommand = new VOBCCommand(vobc.Ip,
                         Convert.ToInt32(vobc.Port), vobc.ProductID,
                         vobcCommandType.sendFile, m_vobcCheckFile);
 
                     //添加命令到队列中
-                    CommandQueue.instance.m_CommandQueue.Enqueue(sendFileCommand);
+                    CommandQueue.instance.m_CommandQueue.Enqueue(sendFileCommand);                    
 
                     excuteResult = true;
 
@@ -348,10 +353,10 @@ namespace RemoteDeploy.EquData
                 }
                 else
                 {
-                    //计数15次 跳出循环
-                    if (skipCount > skipCountMax)
+                    //计数15次 跳出循环 Modified @ 9.28
+                    if ((skipCount > skipCountMax) || (vobc.SkipFlag))
                     {
-                        vobc.SkipFlag = true;
+                        //vobc.SkipFlag = true;
                         excuteResult = false;
                         break;
                     }
@@ -383,6 +388,14 @@ namespace RemoteDeploy.EquData
 
             //文件校验请求日志记录
             LogManager.InfoLog.LogProcInfo(this.GetType().Name, "CheckFile", "发送VOBC产品：" + base.BelongProduct.ProductID + "的部署文件校验信息请求");
+
+            Thread.Sleep(2000);
+
+            //设置烧录子子系统在界面中的显示状态--文件校验中
+            CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),
+            CommonMethod.GetVobcSystemListByType(m_vobcCheckFile.vobcSystemType),
+            Convert.ToString(CommonMethod.GetVobcDeployNameByType(vobcSystemDeployState.FileCheck)));
+            CDeviceDataFactory.Instance.VobcContainer.dataModify.Modify();
 
             //发送校验请求
             VOBCCommand checkCommand = new VOBCCommand(vobc.Ip,
@@ -438,10 +451,10 @@ namespace RemoteDeploy.EquData
                 }
                 else
                 {
-                    //计数15次 未收到校验通过更新就跳出循环结束
-                    if (skipCount > 60)
+                    //计数15次 未收到校验通过更新就跳出循环结束 Modified @ 9.28
+                    if ((skipCount > 30) || (vobc.SkipFlag))
                     {
-                        vobc.SkipFlag = true;
+                        //vobc.SkipFlag = true;
                         excuteResult = false;
                         break;
                     }
@@ -479,24 +492,26 @@ namespace RemoteDeploy.EquData
                 //发送文件
                 if (!SendFile(vobc))
                 {
-                    LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "发送文件超时，部署失败！");
+                    //LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "发送文件超时，部署失败！");
                     vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "发送文件超时，部署失败！");
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port), "发送失败");
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip, Convert.ToInt32(vobc.Port), "更新失败");
+                    //Modified @ 9.28 与DataAnalysis的操作重复，且时机不同步，删除此处界面变化，判断仅用于跳出执行流程。
+                    //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port), "发送失败");
+                    //CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip, Convert.ToInt32(vobc.Port), "更新失败");
                     return;
                 }
 
                 //执行文件校验操作
                 if (!CheckFile(vobc))
                 {
-                    LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
+                    //LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
                     vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
                     vobc.SkipFlag = true;
                     vobc.InProcess = false;
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),"校验失败");
-                    CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip,Convert.ToInt32(vobc.Port),"更新失败");
+                    //Modified @ 9.28 与DataAnalysis的操作重复，且时机不同步，删除此处界面变化，判断仅用于跳出执行流程。
+                    //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),"校验失败");
+                    //CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip,Convert.ToInt32(vobc.Port),"更新失败");
                     return;
                 }
 

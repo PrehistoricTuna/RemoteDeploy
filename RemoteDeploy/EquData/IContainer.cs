@@ -57,6 +57,28 @@ namespace RemoteDeploy.EquData
         }
 
         /// <summary>
+        /// 外部接口设置某产品实体的状态属性（专用于收到建链回复）
+        /// </summary>
+        /// <param name="ip">IP信息</param>
+        /// <param name="Port">端口信息</param>
+        /// <param name="state">状态信息</param>
+        /// <returns></returns>
+        public void SetProductStateLink(string ip, int Port, string state)
+        {
+
+            foreach (IProduct product in this)
+            {
+                if (product.Ip == ip && product.Port == Convert.ToString(Port))
+                {
+                    product.ProductState = state;
+                    LogManager.InfoLog.LogProcInfo("IProContainer", "SetProductState", "设置IP为" + product.Ip + "的产品" + product.Name + "状态为" + state);
+                }
+            }
+            ///通知数据变化
+            dataModify.Modify();
+        }
+
+        /// <summary>
         /// 外部接口设置VOBC状态信息
         /// </summary>
         /// <param name="ip">产品设备IP信息</param>
