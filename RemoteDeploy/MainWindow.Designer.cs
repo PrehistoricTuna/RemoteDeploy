@@ -61,14 +61,6 @@
             this.tabControl_Container = new System.Windows.Forms.TabControl();
             this.tabPage_VOBC = new System.Windows.Forms.TabPage();
             this.dataGrid_VOBC = new System.Windows.Forms.DataGridView();
-            this.Column_VOBCID = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_VOBCState = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_VOBCSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_VOBCMMI = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_VOBCCOM = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_VOBCCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_VOBCATP = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_VOBCATO = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.panel_BurningSet = new System.Windows.Forms.Panel();
             this.panel_CheckBoxs = new System.Windows.Forms.Panel();
             this.checkBox_ini = new System.Windows.Forms.CheckBox();
@@ -80,21 +72,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel_Datagridview_Details = new System.Windows.Forms.Panel();
             this.dataGridView_VOBCDeviceDetails = new System.Windows.Forms.DataGridView();
-            this.Column_Area = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_System = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_Device = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_State = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_SoftVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_DataVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_PreResults = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_ErrorReason = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_Refresh = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_Process = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_Results = new System.Windows.Forms.DataGridViewImageColumn();
-            this.Column_AdditionalInformation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_NetState = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_RestartState = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel_Operations = new System.Windows.Forms.Panel();
             this.panel_Functions = new System.Windows.Forms.Panel();
             this.rtbReportView = new System.Windows.Forms.RichTextBox();
@@ -109,30 +86,16 @@
             this.关于ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage_ZC = new System.Windows.Forms.TabPage();
             this.dataGrid_ZC = new System.Windows.Forms.DataGridView();
-            this.Column_ZCArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_ZCSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_ZCState = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewZCCC = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewCheckBoxColumn2 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tabPage_DSU = new System.Windows.Forms.TabPage();
             this.dataGrid_DSU = new System.Windows.Forms.DataGridView();
-            this.Column_DSUArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_DSUSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_DSUCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_DSUPU1234 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.tabPage_CI = new System.Windows.Forms.TabPage();
             this.dataGrid_CI = new System.Windows.Forms.DataGridView();
-            this.Column_CIArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_CISystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column_CICC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Column_CIPU1234 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewCheckBoxColumn2 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn3 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn4 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn5 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -145,28 +108,73 @@
             this.dataGridViewTextBoxColumn10 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn11 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn12 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewCheckBoxColumn6 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn13 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewTextBoxColumn14 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn15 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn16 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewCheckBoxColumn6 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewTextBoxColumn17 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewImageColumn1 = new System.Windows.Forms.DataGridViewImageColumn();
             this.dataGridViewTextBoxColumn18 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewTextBoxColumn19 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn20 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn22 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn23 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn7 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn8 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn9 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn10 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewTextBoxColumn20 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn21 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_ZCArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_ZCSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_ZCState = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewZCCC = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column1 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn24 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn25 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn11 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dataGridViewTextBoxColumn22 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewTextBoxColumn23 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_DSUArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_DSUSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_DSUCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_DSUPU1234 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dataGridViewTextBoxColumn26 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridViewTextBoxColumn27 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridViewCheckBoxColumn13 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewCheckBoxColumn14 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_CIArea = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_CISystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_CICC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_CIPU1234 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dataGridViewButtonColumn1 = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.Column_Area = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_System = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Device = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_State = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_SoftVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_DataVersion = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Data2Version = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Data3Version = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Data4Version = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Data5Version = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_PreResults = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_ErrorReason = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Refresh = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_Process = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_Results = new System.Windows.Forms.DataGridViewImageColumn();
+            this.Column_AdditionalInformation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_NetState = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_RestartState = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_VOBCID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_VOBCState = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_VOBCSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column_VOBCMMI = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCCOM = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCCC12 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCATP = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Column_VOBCATO = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.panel_All.SuspendLayout();
             this.panel_Buttons.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -199,7 +207,7 @@
             this.panel_All.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_All.Location = new System.Drawing.Point(0, 0);
             this.panel_All.Name = "panel_All";
-            this.panel_All.Size = new System.Drawing.Size(1370, 711);
+            this.panel_All.Size = new System.Drawing.Size(1362, 711);
             this.panel_All.TabIndex = 0;
             // 
             // panel_Buttons
@@ -211,7 +219,7 @@
             this.panel_Buttons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Buttons.Location = new System.Drawing.Point(0, 0);
             this.panel_Buttons.Name = "panel_Buttons";
-            this.panel_Buttons.Size = new System.Drawing.Size(1370, 711);
+            this.panel_Buttons.Size = new System.Drawing.Size(1362, 711);
             this.panel_Buttons.TabIndex = 0;
             // 
             // toolStrip1
@@ -223,7 +231,7 @@
             this.tsbStop});
             this.toolStrip1.Location = new System.Drawing.Point(0, 25);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1368, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1360, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -290,8 +298,8 @@
             this.splitContainer.Panel2.Controls.Add(this.panel_Operations);
             this.splitContainer.Panel2.Controls.Add(this.panel_Functions);
             this.splitContainer.Panel2MinSize = 15;
-            this.splitContainer.Size = new System.Drawing.Size(1368, 657);
-            this.splitContainer.SplitterDistance = 422;
+            this.splitContainer.Size = new System.Drawing.Size(1360, 657);
+            this.splitContainer.SplitterDistance = 337;
             this.splitContainer.SplitterWidth = 2;
             this.splitContainer.TabIndex = 0;
             // 
@@ -306,13 +314,13 @@
             this.panel_Container.Controls.Add(this.tabControl_Container);
             this.panel_Container.Location = new System.Drawing.Point(3, 103);
             this.panel_Container.Name = "panel_Container";
-            this.panel_Container.Size = new System.Drawing.Size(414, 554);
+            this.panel_Container.Size = new System.Drawing.Size(329, 554);
             this.panel_Container.TabIndex = 0;
             // 
             // buttonCheck
             // 
             this.buttonCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCheck.Location = new System.Drawing.Point(231, 523);
+            this.buttonCheck.Location = new System.Drawing.Point(146, 523);
             this.buttonCheck.Name = "buttonCheck";
             this.buttonCheck.Size = new System.Drawing.Size(75, 23);
             this.buttonCheck.TabIndex = 6;
@@ -323,7 +331,7 @@
             // button_OK
             // 
             this.button_OK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button_OK.Location = new System.Drawing.Point(331, 523);
+            this.button_OK.Location = new System.Drawing.Point(246, 523);
             this.button_OK.Name = "button_OK";
             this.button_OK.Size = new System.Drawing.Size(75, 23);
             this.button_OK.TabIndex = 5;
@@ -340,7 +348,7 @@
             this.tabControl_Container.Location = new System.Drawing.Point(3, 3);
             this.tabControl_Container.Name = "tabControl_Container";
             this.tabControl_Container.SelectedIndex = 0;
-            this.tabControl_Container.Size = new System.Drawing.Size(410, 518);
+            this.tabControl_Container.Size = new System.Drawing.Size(325, 518);
             this.tabControl_Container.TabIndex = 1;
             this.tabControl_Container.SelectedIndexChanged += new System.EventHandler(this.tabControl_Container_SelectedIndexChanged);
             // 
@@ -350,7 +358,7 @@
             this.tabPage_VOBC.Location = new System.Drawing.Point(4, 22);
             this.tabPage_VOBC.Name = "tabPage_VOBC";
             this.tabPage_VOBC.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_VOBC.Size = new System.Drawing.Size(402, 492);
+            this.tabPage_VOBC.Size = new System.Drawing.Size(317, 492);
             this.tabPage_VOBC.TabIndex = 0;
             this.tabPage_VOBC.Text = "VOBC";
             this.tabPage_VOBC.UseVisualStyleBackColor = true;
@@ -402,64 +410,9 @@
             this.dataGrid_VOBC.RowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dataGrid_VOBC.RowTemplate.Height = 33;
             this.dataGrid_VOBC.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGrid_VOBC.Size = new System.Drawing.Size(396, 486);
+            this.dataGrid_VOBC.Size = new System.Drawing.Size(311, 486);
             this.dataGrid_VOBC.TabIndex = 0;
             this.dataGrid_VOBC.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGrid_VOBC_CellDoubleClick);
-            // 
-            // Column_VOBCID
-            // 
-            this.Column_VOBCID.HeaderText = "车载ID";
-            this.Column_VOBCID.Name = "Column_VOBCID";
-            this.Column_VOBCID.ReadOnly = true;
-            this.Column_VOBCID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_VOBCID.Width = 50;
-            // 
-            // Column_VOBCState
-            // 
-            this.Column_VOBCState.HeaderText = "系统状态";
-            this.Column_VOBCState.Name = "Column_VOBCState";
-            this.Column_VOBCState.ReadOnly = true;
-            this.Column_VOBCState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_VOBCState.Width = 72;
-            // 
-            // Column_VOBCSystem
-            // 
-            this.Column_VOBCSystem.HeaderText = "总进度";
-            this.Column_VOBCSystem.Name = "Column_VOBCSystem";
-            this.Column_VOBCSystem.ReadOnly = true;
-            this.Column_VOBCSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_VOBCSystem.Width = 50;
-            // 
-            // Column_VOBCMMI
-            // 
-            this.Column_VOBCMMI.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCMMI.HeaderText = "MMI";
-            this.Column_VOBCMMI.Name = "Column_VOBCMMI";
-            // 
-            // Column_VOBCCOM
-            // 
-            this.Column_VOBCCOM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCCOM.HeaderText = "COM";
-            this.Column_VOBCCOM.Name = "Column_VOBCCOM";
-            // 
-            // Column_VOBCCC12
-            // 
-            this.Column_VOBCCC12.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCCC12.FillWeight = 105F;
-            this.Column_VOBCCC12.HeaderText = "CCOV";
-            this.Column_VOBCCC12.Name = "Column_VOBCCC12";
-            // 
-            // Column_VOBCATP
-            // 
-            this.Column_VOBCATP.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCATP.HeaderText = "ATP";
-            this.Column_VOBCATP.Name = "Column_VOBCATP";
-            // 
-            // Column_VOBCATO
-            // 
-            this.Column_VOBCATO.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_VOBCATO.HeaderText = "ATO";
-            this.Column_VOBCATO.Name = "Column_VOBCATO";
             // 
             // panel_BurningSet
             // 
@@ -469,7 +422,7 @@
             this.panel_BurningSet.Controls.Add(this.panel_CheckBoxs);
             this.panel_BurningSet.Location = new System.Drawing.Point(3, 3);
             this.panel_BurningSet.Name = "panel_BurningSet";
-            this.panel_BurningSet.Size = new System.Drawing.Size(414, 94);
+            this.panel_BurningSet.Size = new System.Drawing.Size(329, 94);
             this.panel_BurningSet.TabIndex = 0;
             // 
             // panel_CheckBoxs
@@ -482,7 +435,7 @@
             this.panel_CheckBoxs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_CheckBoxs.Location = new System.Drawing.Point(0, 0);
             this.panel_CheckBoxs.Name = "panel_CheckBoxs";
-            this.panel_CheckBoxs.Size = new System.Drawing.Size(412, 92);
+            this.panel_CheckBoxs.Size = new System.Drawing.Size(327, 92);
             this.panel_CheckBoxs.TabIndex = 4;
             // 
             // checkBox_ini
@@ -548,7 +501,7 @@
             this.panel_AutoLoadingDetails.Controls.Add(this.label1);
             this.panel_AutoLoadingDetails.Location = new System.Drawing.Point(4, 102);
             this.panel_AutoLoadingDetails.Name = "panel_AutoLoadingDetails";
-            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1020, 33);
+            this.panel_AutoLoadingDetails.Size = new System.Drawing.Size(1099, 33);
             this.panel_AutoLoadingDetails.TabIndex = 5;
             this.panel_AutoLoadingDetails.SizeChanged += new System.EventHandler(this.panel_AutoLoadingDetails_SizeChanged);
             // 
@@ -571,16 +524,13 @@
             this.panel_Datagridview_Details.Controls.Add(this.dataGridView_VOBCDeviceDetails);
             this.panel_Datagridview_Details.Location = new System.Drawing.Point(4, 132);
             this.panel_Datagridview_Details.Name = "panel_Datagridview_Details";
-            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1020, 491);
+            this.panel_Datagridview_Details.Size = new System.Drawing.Size(1099, 491);
             this.panel_Datagridview_Details.TabIndex = 1;
             // 
             // dataGridView_VOBCDeviceDetails
             // 
             this.dataGridView_VOBCDeviceDetails.AllowUserToAddRows = false;
             this.dataGridView_VOBCDeviceDetails.AllowUserToResizeRows = false;
-            this.dataGridView_VOBCDeviceDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView_VOBCDeviceDetails.BackgroundColor = System.Drawing.Color.White;
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
@@ -599,6 +549,10 @@
             this.Column_IP,
             this.Column_SoftVersion,
             this.Column_DataVersion,
+            this.Column_Data2Version,
+            this.Column_Data3Version,
+            this.Column_Data4Version,
+            this.Column_Data5Version,
             this.Column_PreResults,
             this.Column_ErrorReason,
             this.Column_Refresh,
@@ -628,148 +582,15 @@
             this.dataGridView_VOBCDeviceDetails.RowHeadersVisible = false;
             this.dataGridView_VOBCDeviceDetails.RowTemplate.Height = 23;
             this.dataGridView_VOBCDeviceDetails.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(942, 489);
+            this.dataGridView_VOBCDeviceDetails.Size = new System.Drawing.Size(1016, 489);
             this.dataGridView_VOBCDeviceDetails.TabIndex = 0;
-            // 
-            // Column_Area
-            // 
-            this.Column_Area.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_Area.DataPropertyName = "ProductID";
-            this.Column_Area.HeaderText = "集中区";
-            this.Column_Area.Name = "Column_Area";
-            this.Column_Area.ReadOnly = true;
-            this.Column_Area.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_Area.Width = 42;
-            // 
-            // Column_System
-            // 
-            this.Column_System.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_System.DataPropertyName = "Name";
-            this.Column_System.HeaderText = "子系统";
-            this.Column_System.Name = "Column_System";
-            this.Column_System.ReadOnly = true;
-            this.Column_System.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_System.Visible = false;
-            // 
-            // Column_Device
-            // 
-            this.Column_Device.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_Device.HeaderText = "设备";
-            this.Column_Device.Name = "Column_Device";
-            this.Column_Device.ReadOnly = true;
-            this.Column_Device.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_Device.Width = 32;
-            // 
-            // Column_State
-            // 
-            this.Column_State.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_State.DataPropertyName = "ProductState";
-            this.Column_State.FillWeight = 105F;
-            this.Column_State.HeaderText = "设备状态";
-            this.Column_State.Name = "Column_State";
-            this.Column_State.ReadOnly = true;
-            this.Column_State.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_State.Width = 42;
-            // 
-            // Column_IP
-            // 
-            this.Column_IP.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_IP.HeaderText = "IP地址";
-            this.Column_IP.Name = "Column_IP";
-            this.Column_IP.ReadOnly = true;
-            this.Column_IP.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_IP.Width = 42;
-            // 
-            // Column_SoftVersion
-            // 
-            this.Column_SoftVersion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_SoftVersion.HeaderText = "应用版本号";
-            this.Column_SoftVersion.Name = "Column_SoftVersion";
-            this.Column_SoftVersion.ReadOnly = true;
-            this.Column_SoftVersion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_SoftVersion.Width = 53;
-            // 
-            // Column_DataVersion
-            // 
-            this.Column_DataVersion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_DataVersion.HeaderText = "数据版本号";
-            this.Column_DataVersion.Name = "Column_DataVersion";
-            this.Column_DataVersion.ReadOnly = true;
-            this.Column_DataVersion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_DataVersion.Width = 53;
-            // 
-            // Column_PreResults
-            // 
-            this.Column_PreResults.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_PreResults.HeaderText = "预检结果";
-            this.Column_PreResults.Name = "Column_PreResults";
-            this.Column_PreResults.ReadOnly = true;
-            this.Column_PreResults.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_PreResults.Width = 42;
-            // 
-            // Column_ErrorReason
-            // 
-            this.Column_ErrorReason.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column_ErrorReason.HeaderText = "部署失败原因";
-            this.Column_ErrorReason.Name = "Column_ErrorReason";
-            this.Column_ErrorReason.ReadOnly = true;
-            this.Column_ErrorReason.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Column_Refresh
-            // 
-            this.Column_Refresh.HeaderText = "更新";
-            this.Column_Refresh.Name = "Column_Refresh";
-            this.Column_Refresh.Visible = false;
-            this.Column_Refresh.Width = 70;
-            // 
-            // Column_Process
-            // 
-            this.Column_Process.HeaderText = "进度";
-            this.Column_Process.Name = "Column_Process";
-            this.Column_Process.ReadOnly = true;
-            this.Column_Process.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Column_Results
-            // 
-            this.Column_Results.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.Column_Results.HeaderText = "结果";
-            this.Column_Results.Image = global::RemoteDeploy.Properties.Resources.Gray;
-            this.Column_Results.Name = "Column_Results";
-            this.Column_Results.ReadOnly = true;
-            this.Column_Results.Width = 84;
-            // 
-            // Column_AdditionalInformation
-            // 
-            this.Column_AdditionalInformation.HeaderText = "附加信息";
-            this.Column_AdditionalInformation.Name = "Column_AdditionalInformation";
-            this.Column_AdditionalInformation.ReadOnly = true;
-            this.Column_AdditionalInformation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_AdditionalInformation.Visible = false;
-            // 
-            // Column_NetState
-            // 
-            this.Column_NetState.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.Column_NetState.HeaderText = "网络状态";
-            this.Column_NetState.Name = "Column_NetState";
-            this.Column_NetState.ReadOnly = true;
-            this.Column_NetState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_NetState.Visible = false;
-            // 
-            // Column_RestartState
-            // 
-            this.Column_RestartState.HeaderText = "重启状态";
-            this.Column_RestartState.Name = "Column_RestartState";
-            this.Column_RestartState.ReadOnly = true;
-            this.Column_RestartState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_RestartState.Visible = false;
-            this.Column_RestartState.Width = 74;
             // 
             // panel_Operations
             // 
             this.panel_Operations.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel_Operations.Location = new System.Drawing.Point(0, 624);
             this.panel_Operations.Name = "panel_Operations";
-            this.panel_Operations.Size = new System.Drawing.Size(942, 31);
+            this.panel_Operations.Size = new System.Drawing.Size(1019, 31);
             this.panel_Operations.TabIndex = 3;
             // 
             // panel_Functions
@@ -781,7 +602,7 @@
             this.panel_Functions.Cursor = System.Windows.Forms.Cursors.Default;
             this.panel_Functions.Location = new System.Drawing.Point(3, 3);
             this.panel_Functions.Name = "panel_Functions";
-            this.panel_Functions.Size = new System.Drawing.Size(1115, 94);
+            this.panel_Functions.Size = new System.Drawing.Size(1194, 94);
             this.panel_Functions.TabIndex = 2;
             // 
             // rtbReportView
@@ -793,7 +614,7 @@
             this.rtbReportView.Location = new System.Drawing.Point(0, 0);
             this.rtbReportView.Name = "rtbReportView";
             this.rtbReportView.ReadOnly = true;
-            this.rtbReportView.Size = new System.Drawing.Size(1113, 92);
+            this.rtbReportView.Size = new System.Drawing.Size(1192, 92);
             this.rtbReportView.TabIndex = 0;
             this.rtbReportView.Text = "";
             // 
@@ -805,7 +626,7 @@
             this.帮助ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1368, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1360, 25);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -931,54 +752,6 @@
             this.dataGrid_ZC.Size = new System.Drawing.Size(449, 874);
             this.dataGrid_ZC.TabIndex = 1;
             // 
-            // Column_ZCArea
-            // 
-            this.Column_ZCArea.HeaderText = "集中区";
-            this.Column_ZCArea.Name = "Column_ZCArea";
-            this.Column_ZCArea.ReadOnly = true;
-            this.Column_ZCArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_ZCArea.Width = 50;
-            // 
-            // Column_ZCSystem
-            // 
-            this.Column_ZCSystem.HeaderText = "系统";
-            this.Column_ZCSystem.Name = "Column_ZCSystem";
-            this.Column_ZCSystem.ReadOnly = true;
-            this.Column_ZCSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_ZCSystem.Width = 50;
-            // 
-            // Column_ZCState
-            // 
-            this.Column_ZCState.HeaderText = "状态";
-            this.Column_ZCState.Name = "Column_ZCState";
-            this.Column_ZCState.ReadOnly = true;
-            this.Column_ZCState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_ZCState.Width = 50;
-            // 
-            // dataGridViewZCCC
-            // 
-            this.dataGridViewZCCC.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewZCCC.HeaderText = "CC";
-            this.dataGridViewZCCC.Name = "dataGridViewZCCC";
-            // 
-            // dataGridViewCheckBoxColumn2
-            // 
-            this.dataGridViewCheckBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewCheckBoxColumn2.HeaderText = "PU13";
-            this.dataGridViewCheckBoxColumn2.Name = "dataGridViewCheckBoxColumn2";
-            // 
-            // Column1
-            // 
-            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column1.HeaderText = "PU24";
-            this.Column1.Name = "Column1";
-            // 
-            // Column2
-            // 
-            this.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.Column2.HeaderText = "COM";
-            this.Column2.Name = "Column2";
-            // 
             // tabPage_DSU
             // 
             this.tabPage_DSU.Controls.Add(this.dataGrid_DSU);
@@ -1034,32 +807,6 @@
             this.dataGrid_DSU.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGrid_DSU.Size = new System.Drawing.Size(449, 874);
             this.dataGrid_DSU.TabIndex = 1;
-            // 
-            // Column_DSUArea
-            // 
-            this.Column_DSUArea.HeaderText = "集中区";
-            this.Column_DSUArea.Name = "Column_DSUArea";
-            this.Column_DSUArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_DSUArea.Width = 65;
-            // 
-            // Column_DSUSystem
-            // 
-            this.Column_DSUSystem.HeaderText = "系统";
-            this.Column_DSUSystem.Name = "Column_DSUSystem";
-            this.Column_DSUSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_DSUSystem.Width = 60;
-            // 
-            // Column_DSUCC12
-            // 
-            this.Column_DSUCC12.HeaderText = "CC12";
-            this.Column_DSUCC12.Name = "Column_DSUCC12";
-            this.Column_DSUCC12.Width = 50;
-            // 
-            // Column_DSUPU1234
-            // 
-            this.Column_DSUPU1234.HeaderText = "PU1234";
-            this.Column_DSUPU1234.Name = "Column_DSUPU1234";
-            this.Column_DSUPU1234.Width = 50;
             // 
             // tabPage_CI
             // 
@@ -1117,32 +864,6 @@
             this.dataGrid_CI.Size = new System.Drawing.Size(449, 874);
             this.dataGrid_CI.TabIndex = 1;
             // 
-            // Column_CIArea
-            // 
-            this.Column_CIArea.HeaderText = "集中区";
-            this.Column_CIArea.Name = "Column_CIArea";
-            this.Column_CIArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_CIArea.Width = 65;
-            // 
-            // Column_CISystem
-            // 
-            this.Column_CISystem.HeaderText = "系统";
-            this.Column_CISystem.Name = "Column_CISystem";
-            this.Column_CISystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column_CISystem.Width = 60;
-            // 
-            // Column_CICC12
-            // 
-            this.Column_CICC12.HeaderText = "CC1";
-            this.Column_CICC12.Name = "Column_CICC12";
-            this.Column_CICC12.Width = 50;
-            // 
-            // Column_CIPU1234
-            // 
-            this.Column_CIPU1234.HeaderText = "PU1234";
-            this.Column_CIPU1234.Name = "Column_CIPU1234";
-            this.Column_CIPU1234.Width = 50;
-            // 
             // timer2
             // 
             this.timer2.Interval = 15000;
@@ -1181,6 +902,12 @@
             this.dataGridViewCheckBoxColumn1.Name = "dataGridViewCheckBoxColumn1";
             this.dataGridViewCheckBoxColumn1.TrueValue = "1";
             // 
+            // dataGridViewCheckBoxColumn2
+            // 
+            this.dataGridViewCheckBoxColumn2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewCheckBoxColumn2.HeaderText = "PU13";
+            this.dataGridViewCheckBoxColumn2.Name = "dataGridViewCheckBoxColumn2";
+            // 
             // dataGridViewCheckBoxColumn3
             // 
             this.dataGridViewCheckBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -1208,6 +935,7 @@
             this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
             this.dataGridViewTextBoxColumn4.ReadOnly = true;
             this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn4.Width = 47;
             // 
             // dataGridViewTextBoxColumn5
             // 
@@ -1218,6 +946,7 @@
             this.dataGridViewTextBoxColumn5.ReadOnly = true;
             this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn5.Visible = false;
+            this.dataGridViewTextBoxColumn5.Width = 47;
             // 
             // dataGridViewTextBoxColumn6
             // 
@@ -1226,6 +955,7 @@
             this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
             this.dataGridViewTextBoxColumn6.ReadOnly = true;
             this.dataGridViewTextBoxColumn6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn6.Width = 35;
             // 
             // dataGridViewTextBoxColumn7
             // 
@@ -1236,6 +966,7 @@
             this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
             this.dataGridViewTextBoxColumn7.ReadOnly = true;
             this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn7.Width = 59;
             // 
             // dataGridViewTextBoxColumn8
             // 
@@ -1244,6 +975,7 @@
             this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
             this.dataGridViewTextBoxColumn8.ReadOnly = true;
             this.dataGridViewTextBoxColumn8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn8.Width = 47;
             // 
             // dataGridViewTextBoxColumn9
             // 
@@ -1252,6 +984,7 @@
             this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
             this.dataGridViewTextBoxColumn9.ReadOnly = true;
             this.dataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn9.Width = 71;
             // 
             // dataGridViewTextBoxColumn10
             // 
@@ -1260,6 +993,7 @@
             this.dataGridViewTextBoxColumn10.Name = "dataGridViewTextBoxColumn10";
             this.dataGridViewTextBoxColumn10.ReadOnly = true;
             this.dataGridViewTextBoxColumn10.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn10.Width = 71;
             // 
             // dataGridViewTextBoxColumn11
             // 
@@ -1269,6 +1003,7 @@
             this.dataGridViewTextBoxColumn11.Name = "dataGridViewTextBoxColumn11";
             this.dataGridViewTextBoxColumn11.ReadOnly = true;
             this.dataGridViewTextBoxColumn11.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn11.Width = 77;
             // 
             // dataGridViewTextBoxColumn12
             // 
@@ -1279,13 +1014,7 @@
             this.dataGridViewTextBoxColumn12.ReadOnly = true;
             this.dataGridViewTextBoxColumn12.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn12.Visible = false;
-            // 
-            // dataGridViewCheckBoxColumn6
-            // 
-            this.dataGridViewCheckBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewCheckBoxColumn6.HeaderText = "CC";
-            this.dataGridViewCheckBoxColumn6.Name = "dataGridViewCheckBoxColumn6";
-            this.dataGridViewCheckBoxColumn6.Visible = false;
+            this.dataGridViewTextBoxColumn12.Width = 77;
             // 
             // dataGridViewTextBoxColumn13
             // 
@@ -1294,14 +1023,7 @@
             this.dataGridViewTextBoxColumn13.Name = "dataGridViewTextBoxColumn13";
             this.dataGridViewTextBoxColumn13.ReadOnly = true;
             this.dataGridViewTextBoxColumn13.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // dataGridViewImageColumn1
-            // 
-            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewImageColumn1.HeaderText = "结果";
-            this.dataGridViewImageColumn1.Image = global::RemoteDeploy.Properties.Resources.Gray;
-            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
-            this.dataGridViewImageColumn1.ReadOnly = true;
+            this.dataGridViewTextBoxColumn13.Width = 77;
             // 
             // dataGridViewTextBoxColumn14
             // 
@@ -1312,6 +1034,7 @@
             this.dataGridViewTextBoxColumn14.ReadOnly = true;
             this.dataGridViewTextBoxColumn14.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn14.Visible = false;
+            this.dataGridViewTextBoxColumn14.Width = 77;
             // 
             // dataGridViewTextBoxColumn15
             // 
@@ -1321,6 +1044,7 @@
             this.dataGridViewTextBoxColumn15.ReadOnly = true;
             this.dataGridViewTextBoxColumn15.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn15.Visible = false;
+            this.dataGridViewTextBoxColumn15.Width = 59;
             // 
             // dataGridViewTextBoxColumn16
             // 
@@ -1330,6 +1054,14 @@
             this.dataGridViewTextBoxColumn16.ReadOnly = true;
             this.dataGridViewTextBoxColumn16.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.dataGridViewTextBoxColumn16.Visible = false;
+            this.dataGridViewTextBoxColumn16.Width = 120;
+            // 
+            // dataGridViewCheckBoxColumn6
+            // 
+            this.dataGridViewCheckBoxColumn6.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewCheckBoxColumn6.HeaderText = "CC";
+            this.dataGridViewCheckBoxColumn6.Name = "dataGridViewCheckBoxColumn6";
+            this.dataGridViewCheckBoxColumn6.Visible = false;
             // 
             // dataGridViewTextBoxColumn17
             // 
@@ -1339,6 +1071,14 @@
             this.dataGridViewTextBoxColumn17.ReadOnly = true;
             this.dataGridViewTextBoxColumn17.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
+            // dataGridViewImageColumn1
+            // 
+            this.dataGridViewImageColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewImageColumn1.HeaderText = "结果";
+            this.dataGridViewImageColumn1.Image = global::RemoteDeploy.Properties.Resources.Gray;
+            this.dataGridViewImageColumn1.Name = "dataGridViewImageColumn1";
+            this.dataGridViewImageColumn1.ReadOnly = true;
+            // 
             // dataGridViewTextBoxColumn18
             // 
             this.dataGridViewTextBoxColumn18.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -1346,6 +1086,7 @@
             this.dataGridViewTextBoxColumn18.Name = "dataGridViewTextBoxColumn18";
             this.dataGridViewTextBoxColumn18.ReadOnly = true;
             this.dataGridViewTextBoxColumn18.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn18.Visible = false;
             this.dataGridViewTextBoxColumn18.Width = 95;
             // 
             // dataGridViewTextBoxColumn19
@@ -1355,6 +1096,44 @@
             this.dataGridViewTextBoxColumn19.Name = "dataGridViewTextBoxColumn19";
             this.dataGridViewTextBoxColumn19.ReadOnly = true;
             this.dataGridViewTextBoxColumn19.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn19.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn20
+            // 
+            this.dataGridViewTextBoxColumn20.HeaderText = "附加信息";
+            this.dataGridViewTextBoxColumn20.Name = "dataGridViewTextBoxColumn20";
+            this.dataGridViewTextBoxColumn20.ReadOnly = true;
+            this.dataGridViewTextBoxColumn20.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn20.Visible = false;
+            this.dataGridViewTextBoxColumn20.Width = 90;
+            // 
+            // dataGridViewTextBoxColumn21
+            // 
+            this.dataGridViewTextBoxColumn21.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewTextBoxColumn21.HeaderText = "网络状态";
+            this.dataGridViewTextBoxColumn21.Name = "dataGridViewTextBoxColumn21";
+            this.dataGridViewTextBoxColumn21.ReadOnly = true;
+            this.dataGridViewTextBoxColumn21.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn21.Visible = false;
+            // 
+            // dataGridViewTextBoxColumn22
+            // 
+            this.dataGridViewTextBoxColumn22.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.dataGridViewTextBoxColumn22.HeaderText = "重启状态";
+            this.dataGridViewTextBoxColumn22.Name = "dataGridViewTextBoxColumn22";
+            this.dataGridViewTextBoxColumn22.ReadOnly = true;
+            this.dataGridViewTextBoxColumn22.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn22.Visible = false;
+            this.dataGridViewTextBoxColumn22.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn23
+            // 
+            this.dataGridViewTextBoxColumn23.HeaderText = "重启状态";
+            this.dataGridViewTextBoxColumn23.Name = "dataGridViewTextBoxColumn23";
+            this.dataGridViewTextBoxColumn23.ReadOnly = true;
+            this.dataGridViewTextBoxColumn23.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn23.Visible = false;
+            this.dataGridViewTextBoxColumn23.Width = 74;
             // 
             // dataGridViewCheckBoxColumn7
             // 
@@ -1380,23 +1159,61 @@
             this.dataGridViewCheckBoxColumn10.HeaderText = "CC12";
             this.dataGridViewCheckBoxColumn10.Name = "dataGridViewCheckBoxColumn10";
             // 
-            // dataGridViewTextBoxColumn20
+            // Column_ZCArea
             // 
-            this.dataGridViewTextBoxColumn20.HeaderText = "附加信息";
-            this.dataGridViewTextBoxColumn20.Name = "dataGridViewTextBoxColumn20";
-            this.dataGridViewTextBoxColumn20.ReadOnly = true;
-            this.dataGridViewTextBoxColumn20.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn20.Visible = false;
-            this.dataGridViewTextBoxColumn20.Width = 90;
+            this.Column_ZCArea.HeaderText = "集中区";
+            this.Column_ZCArea.Name = "Column_ZCArea";
+            this.Column_ZCArea.ReadOnly = true;
+            this.Column_ZCArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_ZCArea.Width = 50;
             // 
-            // dataGridViewTextBoxColumn21
+            // Column_ZCSystem
             // 
-            this.dataGridViewTextBoxColumn21.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridViewTextBoxColumn21.HeaderText = "网络状态";
-            this.dataGridViewTextBoxColumn21.Name = "dataGridViewTextBoxColumn21";
-            this.dataGridViewTextBoxColumn21.ReadOnly = true;
-            this.dataGridViewTextBoxColumn21.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn21.Visible = false;
+            this.Column_ZCSystem.HeaderText = "系统";
+            this.Column_ZCSystem.Name = "Column_ZCSystem";
+            this.Column_ZCSystem.ReadOnly = true;
+            this.Column_ZCSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_ZCSystem.Width = 50;
+            // 
+            // Column_ZCState
+            // 
+            this.Column_ZCState.HeaderText = "状态";
+            this.Column_ZCState.Name = "Column_ZCState";
+            this.Column_ZCState.ReadOnly = true;
+            this.Column_ZCState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_ZCState.Width = 50;
+            // 
+            // dataGridViewZCCC
+            // 
+            this.dataGridViewZCCC.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dataGridViewZCCC.HeaderText = "CC";
+            this.dataGridViewZCCC.Name = "dataGridViewZCCC";
+            // 
+            // Column1
+            // 
+            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column1.HeaderText = "PU24";
+            this.Column1.Name = "Column1";
+            // 
+            // Column2
+            // 
+            this.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column2.HeaderText = "COM";
+            this.Column2.Name = "Column2";
+            // 
+            // dataGridViewTextBoxColumn24
+            // 
+            this.dataGridViewTextBoxColumn24.HeaderText = "集中区";
+            this.dataGridViewTextBoxColumn24.Name = "dataGridViewTextBoxColumn24";
+            this.dataGridViewTextBoxColumn24.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn24.Width = 65;
+            // 
+            // dataGridViewTextBoxColumn25
+            // 
+            this.dataGridViewTextBoxColumn25.HeaderText = "系统";
+            this.dataGridViewTextBoxColumn25.Name = "dataGridViewTextBoxColumn25";
+            this.dataGridViewTextBoxColumn25.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn25.Width = 60;
             // 
             // dataGridViewCheckBoxColumn11
             // 
@@ -1410,23 +1227,45 @@
             this.dataGridViewCheckBoxColumn12.Name = "dataGridViewCheckBoxColumn12";
             this.dataGridViewCheckBoxColumn12.Width = 50;
             // 
-            // dataGridViewTextBoxColumn22
+            // Column_DSUArea
             // 
-            this.dataGridViewTextBoxColumn22.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.dataGridViewTextBoxColumn22.HeaderText = "重启状态";
-            this.dataGridViewTextBoxColumn22.Name = "dataGridViewTextBoxColumn22";
-            this.dataGridViewTextBoxColumn22.ReadOnly = true;
-            this.dataGridViewTextBoxColumn22.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn22.Visible = false;
+            this.Column_DSUArea.HeaderText = "集中区";
+            this.Column_DSUArea.Name = "Column_DSUArea";
+            this.Column_DSUArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_DSUArea.Width = 65;
             // 
-            // dataGridViewTextBoxColumn23
+            // Column_DSUSystem
             // 
-            this.dataGridViewTextBoxColumn23.HeaderText = "重启状态";
-            this.dataGridViewTextBoxColumn23.Name = "dataGridViewTextBoxColumn23";
-            this.dataGridViewTextBoxColumn23.ReadOnly = true;
-            this.dataGridViewTextBoxColumn23.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dataGridViewTextBoxColumn23.Visible = false;
-            this.dataGridViewTextBoxColumn23.Width = 74;
+            this.Column_DSUSystem.HeaderText = "系统";
+            this.Column_DSUSystem.Name = "Column_DSUSystem";
+            this.Column_DSUSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_DSUSystem.Width = 60;
+            // 
+            // Column_DSUCC12
+            // 
+            this.Column_DSUCC12.HeaderText = "CC12";
+            this.Column_DSUCC12.Name = "Column_DSUCC12";
+            this.Column_DSUCC12.Width = 50;
+            // 
+            // Column_DSUPU1234
+            // 
+            this.Column_DSUPU1234.HeaderText = "PU1234";
+            this.Column_DSUPU1234.Name = "Column_DSUPU1234";
+            this.Column_DSUPU1234.Width = 50;
+            // 
+            // dataGridViewTextBoxColumn26
+            // 
+            this.dataGridViewTextBoxColumn26.HeaderText = "集中区";
+            this.dataGridViewTextBoxColumn26.Name = "dataGridViewTextBoxColumn26";
+            this.dataGridViewTextBoxColumn26.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn26.Width = 65;
+            // 
+            // dataGridViewTextBoxColumn27
+            // 
+            this.dataGridViewTextBoxColumn27.HeaderText = "系统";
+            this.dataGridViewTextBoxColumn27.Name = "dataGridViewTextBoxColumn27";
+            this.dataGridViewTextBoxColumn27.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dataGridViewTextBoxColumn27.Width = 60;
             // 
             // dataGridViewCheckBoxColumn13
             // 
@@ -1441,16 +1280,270 @@
             this.dataGridViewCheckBoxColumn14.Visible = false;
             this.dataGridViewCheckBoxColumn14.Width = 70;
             // 
+            // Column_CIArea
+            // 
+            this.Column_CIArea.HeaderText = "集中区";
+            this.Column_CIArea.Name = "Column_CIArea";
+            this.Column_CIArea.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_CIArea.Width = 65;
+            // 
+            // Column_CISystem
+            // 
+            this.Column_CISystem.HeaderText = "系统";
+            this.Column_CISystem.Name = "Column_CISystem";
+            this.Column_CISystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_CISystem.Width = 60;
+            // 
+            // Column_CICC12
+            // 
+            this.Column_CICC12.HeaderText = "CC1";
+            this.Column_CICC12.Name = "Column_CICC12";
+            this.Column_CICC12.Width = 50;
+            // 
+            // Column_CIPU1234
+            // 
+            this.Column_CIPU1234.HeaderText = "PU1234";
+            this.Column_CIPU1234.Name = "Column_CIPU1234";
+            this.Column_CIPU1234.Width = 50;
+            // 
             // dataGridViewButtonColumn1
             // 
             this.dataGridViewButtonColumn1.HeaderText = "查看";
             this.dataGridViewButtonColumn1.Name = "dataGridViewButtonColumn1";
             // 
+            // Column_Area
+            // 
+            this.Column_Area.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_Area.DataPropertyName = "ProductID";
+            this.Column_Area.HeaderText = "集中区";
+            this.Column_Area.Name = "Column_Area";
+            this.Column_Area.ReadOnly = true;
+            this.Column_Area.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_Area.Width = 47;
+            // 
+            // Column_System
+            // 
+            this.Column_System.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_System.DataPropertyName = "Name";
+            this.Column_System.HeaderText = "子系统";
+            this.Column_System.Name = "Column_System";
+            this.Column_System.ReadOnly = true;
+            this.Column_System.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_System.Visible = false;
+            this.Column_System.Width = 47;
+            // 
+            // Column_Device
+            // 
+            this.Column_Device.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_Device.HeaderText = "设备";
+            this.Column_Device.Name = "Column_Device";
+            this.Column_Device.ReadOnly = true;
+            this.Column_Device.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_Device.Width = 35;
+            // 
+            // Column_State
+            // 
+            this.Column_State.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_State.DataPropertyName = "ProductState";
+            this.Column_State.FillWeight = 105F;
+            this.Column_State.HeaderText = "设备状态";
+            this.Column_State.Name = "Column_State";
+            this.Column_State.ReadOnly = true;
+            this.Column_State.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_State.Width = 59;
+            // 
+            // Column_IP
+            // 
+            this.Column_IP.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_IP.HeaderText = "IP地址";
+            this.Column_IP.Name = "Column_IP";
+            this.Column_IP.ReadOnly = true;
+            this.Column_IP.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_IP.Width = 47;
+            // 
+            // Column_SoftVersion
+            // 
+            this.Column_SoftVersion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_SoftVersion.FillWeight = 110F;
+            this.Column_SoftVersion.HeaderText = "应用版本号";
+            this.Column_SoftVersion.Name = "Column_SoftVersion";
+            this.Column_SoftVersion.ReadOnly = true;
+            this.Column_SoftVersion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_DataVersion
+            // 
+            this.Column_DataVersion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_DataVersion.FillWeight = 110F;
+            this.Column_DataVersion.HeaderText = "数据版本号";
+            this.Column_DataVersion.Name = "Column_DataVersion";
+            this.Column_DataVersion.ReadOnly = true;
+            this.Column_DataVersion.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Data2Version
+            // 
+            this.Column_Data2Version.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_Data2Version.FillWeight = 110F;
+            this.Column_Data2Version.HeaderText = "数据2版本号";
+            this.Column_Data2Version.Name = "Column_Data2Version";
+            this.Column_Data2Version.ReadOnly = true;
+            this.Column_Data2Version.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Data3Version
+            // 
+            this.Column_Data3Version.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_Data3Version.FillWeight = 110F;
+            this.Column_Data3Version.HeaderText = "数据3版本号";
+            this.Column_Data3Version.Name = "Column_Data3Version";
+            this.Column_Data3Version.ReadOnly = true;
+            this.Column_Data3Version.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Data4Version
+            // 
+            this.Column_Data4Version.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_Data4Version.FillWeight = 110F;
+            this.Column_Data4Version.HeaderText = "数据4版本号";
+            this.Column_Data4Version.Name = "Column_Data4Version";
+            this.Column_Data4Version.ReadOnly = true;
+            this.Column_Data4Version.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Data5Version
+            // 
+            this.Column_Data5Version.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_Data5Version.FillWeight = 110F;
+            this.Column_Data5Version.HeaderText = "数据5版本号";
+            this.Column_Data5Version.Name = "Column_Data5Version";
+            this.Column_Data5Version.ReadOnly = true;
+            this.Column_Data5Version.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_PreResults
+            // 
+            this.Column_PreResults.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_PreResults.FillWeight = 80F;
+            this.Column_PreResults.HeaderText = "预检结果";
+            this.Column_PreResults.Name = "Column_PreResults";
+            this.Column_PreResults.ReadOnly = true;
+            this.Column_PreResults.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_PreResults.Width = 59;
+            // 
+            // Column_ErrorReason
+            // 
+            this.Column_ErrorReason.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_ErrorReason.HeaderText = "部署失败原因";
+            this.Column_ErrorReason.Name = "Column_ErrorReason";
+            this.Column_ErrorReason.ReadOnly = true;
+            this.Column_ErrorReason.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Refresh
+            // 
+            this.Column_Refresh.HeaderText = "更新";
+            this.Column_Refresh.Name = "Column_Refresh";
+            this.Column_Refresh.Visible = false;
+            this.Column_Refresh.Width = 70;
+            // 
+            // Column_Process
+            // 
+            this.Column_Process.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_Process.HeaderText = "进度";
+            this.Column_Process.Name = "Column_Process";
+            this.Column_Process.ReadOnly = true;
+            this.Column_Process.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column_Results
+            // 
+            this.Column_Results.FillWeight = 50F;
+            this.Column_Results.HeaderText = "结果";
+            this.Column_Results.Image = global::RemoteDeploy.Properties.Resources.Gray;
+            this.Column_Results.Name = "Column_Results";
+            this.Column_Results.ReadOnly = true;
+            this.Column_Results.Width = 50;
+            // 
+            // Column_AdditionalInformation
+            // 
+            this.Column_AdditionalInformation.HeaderText = "附加信息";
+            this.Column_AdditionalInformation.Name = "Column_AdditionalInformation";
+            this.Column_AdditionalInformation.ReadOnly = true;
+            this.Column_AdditionalInformation.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_AdditionalInformation.Visible = false;
+            // 
+            // Column_NetState
+            // 
+            this.Column_NetState.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column_NetState.HeaderText = "网络状态";
+            this.Column_NetState.Name = "Column_NetState";
+            this.Column_NetState.ReadOnly = true;
+            this.Column_NetState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_NetState.Visible = false;
+            this.Column_NetState.Width = 59;
+            // 
+            // Column_RestartState
+            // 
+            this.Column_RestartState.HeaderText = "重启状态";
+            this.Column_RestartState.Name = "Column_RestartState";
+            this.Column_RestartState.ReadOnly = true;
+            this.Column_RestartState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_RestartState.Visible = false;
+            this.Column_RestartState.Width = 74;
+            // 
+            // Column_VOBCID
+            // 
+            this.Column_VOBCID.HeaderText = "车载ID";
+            this.Column_VOBCID.Name = "Column_VOBCID";
+            this.Column_VOBCID.ReadOnly = true;
+            this.Column_VOBCID.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_VOBCID.Width = 50;
+            // 
+            // Column_VOBCState
+            // 
+            this.Column_VOBCState.HeaderText = "系统状态";
+            this.Column_VOBCState.Name = "Column_VOBCState";
+            this.Column_VOBCState.ReadOnly = true;
+            this.Column_VOBCState.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_VOBCState.Width = 60;
+            // 
+            // Column_VOBCSystem
+            // 
+            this.Column_VOBCSystem.HeaderText = "总进度";
+            this.Column_VOBCSystem.Name = "Column_VOBCSystem";
+            this.Column_VOBCSystem.ReadOnly = true;
+            this.Column_VOBCSystem.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column_VOBCSystem.Width = 48;
+            // 
+            // Column_VOBCMMI
+            // 
+            this.Column_VOBCMMI.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCMMI.HeaderText = "MMI";
+            this.Column_VOBCMMI.Name = "Column_VOBCMMI";
+            // 
+            // Column_VOBCCOM
+            // 
+            this.Column_VOBCCOM.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCCOM.HeaderText = "COM";
+            this.Column_VOBCCOM.Name = "Column_VOBCCOM";
+            // 
+            // Column_VOBCCC12
+            // 
+            this.Column_VOBCCC12.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCCC12.FillWeight = 105F;
+            this.Column_VOBCCC12.HeaderText = "CCOV";
+            this.Column_VOBCCC12.Name = "Column_VOBCCC12";
+            // 
+            // Column_VOBCATP
+            // 
+            this.Column_VOBCATP.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCATP.HeaderText = "ATP";
+            this.Column_VOBCATP.Name = "Column_VOBCATP";
+            // 
+            // Column_VOBCATO
+            // 
+            this.Column_VOBCATO.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Column_VOBCATO.HeaderText = "ATO";
+            this.Column_VOBCATO.Name = "Column_VOBCATO";
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1370, 711);
+            this.ClientSize = new System.Drawing.Size(1362, 711);
             this.Controls.Add(this.panel_All);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
@@ -1593,14 +1686,10 @@
         private System.Windows.Forms.DataGridViewButtonColumn dataGridViewButtonColumn1;
         private System.Windows.Forms.Button buttonCheck;
         private System.Windows.Forms.Timer timer2;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCID;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCState;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCSystem;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCMMI;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCOM;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCC12;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATP;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATO;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn24;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn25;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn26;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn27;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_Area;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_System;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_Device;
@@ -1608,6 +1697,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_IP;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_SoftVersion;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_DataVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_Data2Version;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_Data3Version;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_Data4Version;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_Data5Version;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_PreResults;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_ErrorReason;
         private System.Windows.Forms.DataGridViewCheckBoxColumn Column_Refresh;
@@ -1616,5 +1709,13 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_AdditionalInformation;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_NetState;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column_RestartState;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCState;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column_VOBCSystem;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCMMI;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCOM;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCCC12;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATP;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn Column_VOBCATO;
     }
 }
