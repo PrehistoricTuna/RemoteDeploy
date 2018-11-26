@@ -240,5 +240,33 @@ namespace RemoteDeploy.Common
 
         }
 
+        /// <summary>
+        /// 字节数组转化成UInt16类型数据
+        /// </summary>
+        /// <param name="value">字节数组</param>
+        /// <param name="startIndex">制定在startIndex索引出开始转换</param>
+        /// <returns>转换后的UInt16数据</returns>
+        public static UInt16 BytesToUInt16(byte[] value, Int32 startIndex)
+        {
+            if (startIndex < Int32.MaxValue - 2)
+            {
+                if (value.Length < (startIndex + 2))
+                {
+                    throw new OverflowException();
+                }
+
+                UInt16 tmpData = 0;
+
+                tmpData |= (UInt16)(value[startIndex] << 8);
+                tmpData |= (UInt16)value[startIndex + 1];
+
+                return tmpData;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
     }
 }

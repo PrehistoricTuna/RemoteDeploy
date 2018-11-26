@@ -27,7 +27,7 @@ namespace RemoteDeploy.EquData
 
         #region 成员变量
 
-        private KeyValuePair<string,string> m_mmiBootRomPath =new KeyValuePair<string, string>( System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\MMI\\mmi_bootloader","/data/vau/mmi");
+        private KeyValuePair<string,string> m_mmiBootRomPath =new KeyValuePair<string, string>( System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\MMI\\bootloader.bin","/data/vau/mmi");
         //private KeyValuePair<string, string> m_mmiDataPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\MMI\\mmi.fs", "/data/vau/mmi");
         private KeyValuePair<string, string> m_mmiCorePath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\MMI\\mmi_linux", "/data/vau/mmi");
         private KeyValuePair<string, string> m_mmiConfigPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\MMI\\MMIConfig.xml", "/data/vau/mmi");
@@ -102,7 +102,7 @@ namespace RemoteDeploy.EquData
                         vobc.SkipFlag = true;
 
                         //不在执行过程中
-                        vobc.InProcess = false;
+                        //vobc.InProcess = false; Modified @ 10.16
 
                         //日志信息
                         string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;

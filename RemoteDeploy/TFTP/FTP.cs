@@ -125,13 +125,13 @@ namespace RemoteDeploy.TFTP
                 reqFTP.KeepAlive = true;
                 // 指定执行什么命令 
                 reqFTP.Method = WebRequestMethods.Ftp.UploadFile;
-                // 指定为FTP主动式工作
-                reqFTP.UsePassive = false;
+                // 指定为FTP主动式工作 Modified @ 10.17
+                //reqFTP.UsePassive = true;
                 // 指定数据传输类型 
                 reqFTP.UseBinary = true;
                 // 上传文件时通知服务器文件的大小 
                 reqFTP.ContentLength = fileInf.Length;
-                int buffLength = 2048;// 缓冲大小设置为2kb 
+                int buffLength = 1024;// 缓冲大小设置为1kb 
                 byte[] buff = new byte[buffLength];
                 // 打开一个文件流 (System.IO.FileStream) 去读上传的文件
                 FileStream fs = null;

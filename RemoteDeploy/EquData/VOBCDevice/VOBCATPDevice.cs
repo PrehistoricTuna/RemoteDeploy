@@ -25,10 +25,11 @@ namespace RemoteDeploy.EquData
         }
 
         #region 成员变量
-
-        private KeyValuePair<string,string> m_atpBootRomPath = new KeyValuePair<string,string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\atp_bootloader.bin","/data/vau/atp");
-        private KeyValuePair<string, string> m_atpDataPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\atp.fs", "/data/vau/atp");
-        private KeyValuePair<string, string> m_atpCorePath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\atp_core", "/data/vau/atp");
+        
+        private KeyValuePair<string, string> m_atpBootRomPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\bootloader.bin","/data/vau/atp");
+        private KeyValuePair<string, string> m_atpDataPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\atp_1.fs", "/data/vau/atp");
+        
+        private KeyValuePair<string, string> m_atpCorePath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\AtpBootloader.bin", "/data/vau/atp");
         private KeyValuePair<string, string> m_atpNvRamPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATP\\atp_nvram.txt", "/data/vau/atp");
         //执行部署的条件（子类中赋值）
         public bool deployExecCondition = false;
@@ -108,7 +109,7 @@ namespace RemoteDeploy.EquData
                         vobc.SkipFlag = true;
 
                         //不在执行过程中
-                        vobc.InProcess = false;
+                        //vobc.InProcess = false; Modified @ 10.16
 
                         //日志信息
                         string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;

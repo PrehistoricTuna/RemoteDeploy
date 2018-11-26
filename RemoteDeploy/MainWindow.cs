@@ -417,8 +417,9 @@ namespace RemoteDeploy
                                 string deviceName = product.GetDeviceNameByBurnType(item.Key);
                                 if (deviceName != "")
                                 {
-                                    DeviceState state = new DeviceState(item.Value.CommStatus, item.Value.Version,item.Value.FsVersion);
-                                    CDeviceDataFactory.Instance.ZcContainer.SetProductDeviceState(product.Ip,Convert.ToInt32(product.Port), deviceName, state);
+                                    //Modified @ 10.16 暂时屏蔽
+                                    //DeviceState state = new DeviceState(item.Value.CommStatus, item.Value.Version,item.Value.FsVersion); 
+                                    //CDeviceDataFactory.Instance.ZcContainer.SetProductDeviceState(product.Ip,Convert.ToInt32(product.Port), deviceName, state);
                                 }
                             }
                             CDeviceDataFactory.Instance.ZcContainer.dataModify.Modify();
@@ -574,6 +575,8 @@ namespace RemoteDeploy
                 //发送建链信息帧
                 CommandQueue.instance.m_CommandQueue.Enqueue(new VOBCCommand(product.Ip, Convert.ToInt32(product.Port), product.ProductID, vobcCommandType.buildLink));
                 CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(product.Ip, Convert.ToInt32(product.Port), "");
+                //Modified @ 11.13
+                CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(product.Ip, Convert.ToInt32(product.Port), "");
                 //Modified @ 9.10
                 if (!productLinkList.Exists((IProduct temp) => temp.ProductID == product.ProductID))
                 {
@@ -854,7 +857,8 @@ namespace RemoteDeploy
             {
                 int index = dataGrid_VOBC.Rows.Add();
                 dataGrid_VOBC.Rows[index].Cells["Column_VOBCID"].Value = product.ProductID;
-                dataGrid_VOBC.Rows[index].Cells["Column_VOBCSystem"].Value = product.DeployProcess().ToString()+"%";
+                //Modified@ 11.13
+                //dataGrid_VOBC.Rows[index].Cells["Column_VOBCSystem"].Value = product.DeployProcess().ToString()+"%";
                 dataGrid_VOBC.Rows[index].Cells["Column_VOBCState"].Value = product.ProductState;
             }
 
@@ -1033,19 +1037,19 @@ namespace RemoteDeploy
                     _row.Cells[5].Value = device.SoftVersion;
                     _row.Cells[6].Value = device.DataVersion;
 
-                    _row.Cells[11].Value = device.PreCheckResult ? "预检成功" : "预检失败";
-                    _row.Cells[12].Value = device.PreCheckFailReason;
-                    _row.Cells[14].Value = device.ProcessState;
+                    _row.Cells[7].Value = device.PreCheckResult ? "预检成功" : "预检失败";
+                    _row.Cells[8].Value = device.PreCheckFailReason;
+                    _row.Cells[10].Value = device.ProcessState;
 
                     //依据状态 显示结果列的状态图标
                     switch (device.State)
                     {
                         case "更新成功":
-                            _row.Cells[15].Value = RemoteDeploy.Properties.Resources.Green;
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Green;
                             _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
                             break;
                         case "更新失败":
-                            _row.Cells[15].Value = RemoteDeploy.Properties.Resources.Red;
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Red;
                             _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
                             break;
                         case "文件上传中":
@@ -1053,11 +1057,11 @@ namespace RemoteDeploy
                         case "更新执行中":
                         case "文件校验中":
                         case "下发完成":
-                            _row.Cells[15].Value = RemoteDeploy.Properties.Resources.DarkOrange;
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.DarkOrange;
                             _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
                             break;
                         default:
-                            _row.Cells[15].Value = RemoteDeploy.Properties.Resources.Gray;
+                            _row.Cells[11].Value = RemoteDeploy.Properties.Resources.Gray;
                             _row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
                             break;
                     }
@@ -1080,18 +1084,18 @@ namespace RemoteDeploy
                             row.Cells[4].Value = device.BelongProduct.Ip;
                             row.Cells[5].Value = device.SoftVersion;
                             row.Cells[6].Value = device.DataVersion;
-                            row.Cells[11].Value = device.PreCheckResult ? "预检成功" : "预检失败";
-                            row.Cells[12].Value = device.PreCheckFailReason;
-                            row.Cells[14].Value = device.ProcessState;
+                            row.Cells[7].Value = device.PreCheckResult ? "预检成功" : "预检失败";
+                            row.Cells[8].Value = device.PreCheckFailReason;
+                            row.Cells[10].Value = device.ProcessState;
                             //依据状态 显示结果列的状态图标
                             switch (device.State)
                             {
                                 case "更新成功":
-                                    row.Cells[15].Value = RemoteDeploy.Properties.Resources.Green;
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Green;
                                     row.DefaultCellStyle.ForeColor = System.Drawing.Color.Green;
                                     break;
                                 case "更新失败":
-                                    row.Cells[15].Value = RemoteDeploy.Properties.Resources.Red;
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Red;
                                     row.DefaultCellStyle.ForeColor = System.Drawing.Color.Red;
                                     break;
                                 case "文件上传中":
@@ -1099,11 +1103,11 @@ namespace RemoteDeploy
                                 case "更新执行中":
                                 case "文件校验中":
                                 case "下发完成":
-                                    row.Cells[15].Value = RemoteDeploy.Properties.Resources.DarkOrange;
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.DarkOrange;
                                     row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
                                     break;
                                 default:
-                                    row.Cells[15].Value = RemoteDeploy.Properties.Resources.Gray;
+                                    row.Cells[11].Value = RemoteDeploy.Properties.Resources.Gray;
                                     row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
                                     break;
                             }

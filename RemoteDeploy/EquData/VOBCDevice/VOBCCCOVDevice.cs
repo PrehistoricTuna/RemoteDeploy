@@ -140,7 +140,7 @@ namespace RemoteDeploy.EquData
                         vobc.SkipFlag = true;
 
                         //不在执行过程中
-                        vobc.InProcess = false;
+                        //vobc.InProcess = false; Modified @ 10.16
 
                         //日志信息
                         string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;

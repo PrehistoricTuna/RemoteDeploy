@@ -118,8 +118,8 @@ namespace RemoteDeploy.EquData
                 //获取对端状态
                 VOBCProduct oppovobc = CDeviceDataFactory.Instance.GetOppositeProductByIDEnd(vobc.ProductID);
                 //设备预检
-                //string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
-                string preCheckResult = String.Empty;
+                string preCheckResult = PreCheck(vobc.VobcStateInfo, oppovobc.VobcStateInfo);
+
                 //预检结论等于空即预检成功  不等于空 预检失败
                 if (preCheckResult != String.Empty)
                 {
@@ -386,10 +386,13 @@ namespace RemoteDeploy.EquData
             //执行结果
             bool excuteResult = false;
 
+            //重置接收校验状态为false Modified @ 11.9
+            vobc.CheckState = false;
+
             //文件校验请求日志记录
             LogManager.InfoLog.LogProcInfo(this.GetType().Name, "CheckFile", "发送VOBC产品：" + base.BelongProduct.ProductID + "的部署文件校验信息请求");
 
-            Thread.Sleep(2000);
+            Thread.Sleep(20000);
 
             //设置烧录子子系统在界面中的显示状态--文件校验中
             CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),
@@ -419,10 +422,7 @@ namespace RemoteDeploy.EquData
                     LogManager.InfoLog.LogProcInfo(this.GetType().Name, "CheckFile", "已收到VOBC产品：" + base.BelongProduct.ProductID + "的部署文件校验回复");
 
                     //设置处理标志为true
-                    rev = true;
-
-                    //重置接收校验状态为false
-                    vobc.CheckState = false;
+                    rev = true;                    
 
                     //根据子子系统类型 设置相应帧标志
                     switch (vobcSysType)
@@ -495,7 +495,7 @@ namespace RemoteDeploy.EquData
                     //LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "发送文件超时，部署失败！");
                     vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "发送文件超时，部署失败！");
                     vobc.SkipFlag = true;
-                    vobc.InProcess = false;
+                    //vobc.InProcess = false; Modified @ 10.16 在外层置false
                     //Modified @ 9.28 与DataAnalysis的操作重复，且时机不同步，删除此处界面变化，判断仅用于跳出执行流程。
                     //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port), "发送失败");
                     //CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip, Convert.ToInt32(vobc.Port), "更新失败");
@@ -508,14 +508,14 @@ namespace RemoteDeploy.EquData
                     //LogManager.InfoLog.LogProcError(this.GetType().Name, "DeployExec", "VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
                     vobc.Report.ReportWindow("VOBC产品：" + base.BelongProduct.ProductID + "的子子系统：" + base.DeviceType + "校验文件超时或未通过，部署失败！");
                     vobc.SkipFlag = true;
-                    vobc.InProcess = false;
+                    //vobc.InProcess = false; Modified @ 10.16 在外层置false
                     //Modified @ 9.28 与DataAnalysis的操作重复，且时机不同步，删除此处界面变化，判断仅用于跳出执行流程。
                     //CDeviceDataFactory.Instance.VobcContainer.SetProductDeviceState(vobc.Ip, Convert.ToInt32(vobc.Port),"校验失败");
                     //CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip,Convert.ToInt32(vobc.Port),"更新失败");
                     return;
                 }
 
-                //检查VOBC产品是否全部发送和校验
+                //检查VOBC产品是否全部发送和校验，这里有冗余操作，并不是在这里完成的文件校验核对 @ 10.16
                 if (vobc.IsFileChecked())
                 {
                     //记录日志
@@ -542,7 +542,7 @@ namespace RemoteDeploy.EquData
                     ///接收到全部device的校验回复，依然失败，校验失败
                     vobc.Report.ReportWindow("VOBC" + vobc.ProductID + "部署文件校验失败！");
                     vobc.SkipFlag = true;
-                    vobc.InProcess = false;
+                    //vobc.InProcess = false; Modified @ 10.16 在外层置false
                     CDeviceDataFactory.Instance.VobcContainer.SetProductFailReason(vobc.Ip, Convert.ToInt32(vobc.Port), "文件校验未通过");
                     CDeviceDataFactory.Instance.VobcContainer.SetProductState(vobc.Ip, Convert.ToInt32(vobc.Port), "更新失败");
                 }

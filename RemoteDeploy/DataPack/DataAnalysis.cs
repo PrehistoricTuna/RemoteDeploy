@@ -467,10 +467,10 @@ namespace RemoteDeploy.DataPack
                             LogManager.InfoLog.LogCommunicationInfo("DataAnalysis", "VOBCDataAnalysis", "收到文件更新完成回复帧");
 
                             //获取更新子子系统类型
-                            Common.vobcSystemType sysType = getVobcSystemType(recvServerData, (iter + 1));
+                            vobcSystemType sysType = getVobcSystemType(recvServerData, (iter + 1));
 
-                            //获取更新的文件类型
-                            Common.vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
+                            //获取更新的文件类型（未使用）
+                            vobcFileType fileType = getVobcFileType(recvServerData, (iter + 2));
 
                             //根据类型实例化该设备
                             VOBCDevice device = vobc.CBelongsDevice.Find(y => y.DeviceName == CommonMethod.GetStringByType(sysType)) as VOBCDevice;
@@ -850,7 +850,7 @@ namespace RemoteDeploy.DataPack
                 iter = iter + 4;
 
                 //ATP数据版本号（8字节）
-                _vobcInfo.AtpDataVersion = GetMontageData(recvServerData, iter, 2, 8, ".");
+                _vobcInfo.AtpDataVersion = GetMontageData16(recvServerData, iter, 2, 8, ".");
                 iter = iter + 8;
 
                 //ATP运行状态（1字节）
@@ -869,7 +869,7 @@ namespace RemoteDeploy.DataPack
                 iter = iter + 4;
 
                 //ATO数据版本号（8字节）
-                _vobcInfo.AtoDataVersion = GetMontageData(recvServerData, iter, 2, 8, ".");
+                _vobcInfo.AtoDataVersion = GetMontageData16(recvServerData, iter, 2, 8, ".");
                 iter = iter + 8;
 
                 //ATO运行状态（1字节）
@@ -885,7 +885,7 @@ namespace RemoteDeploy.DataPack
                 iter = iter + 4;
 
                 //CCOV数据版本号（8字节）
-                _vobcInfo.CCOVDataVersion = GetMontageData(recvServerData, iter, 2, 8, ".");
+                _vobcInfo.CCOVDataVersion = GetMontageData16(recvServerData, iter, 2, 8, ".");
                 iter = iter + 8;
 
                 //CCOV运行状态（1字节）
@@ -1051,7 +1051,7 @@ namespace RemoteDeploy.DataPack
             for (int i = startIndex; i < startIndex + length; i++)
             {
                 //拼接数据
-                reValue += Convert.ToString(data[i]);
+                reValue += Convert.ToString(data[i]);                
 
                 //拼接.（最后一个字节后不加.）
                 if (i != (startIndex + length - 1) && loopCount == montageInterval)
@@ -1063,6 +1063,43 @@ namespace RemoteDeploy.DataPack
                 {
                     loopCount++;
                 }
+            }
+
+            return reValue;
+
+        }
+
+        /// <summary>
+        /// 获取拼接数据
+        /// </summary>
+        /// <param name="data">拼接数据数组</param>
+        /// <param name="startIndex">需要拼接的数据起始索引</param>
+        /// <param name="montageInterval">间隔多少字节拼接符号</param>
+        /// <param name="length">共拼接多少长度</param>
+        /// <param name="montageSign">拼接数据的连接字符串</param>
+        /// <returns>拼接好的数据</returns>
+        private static string GetMontageData16(byte[] data, int startIndex,
+            int montageInterval, int length, string montageSign)
+        {
+
+            string reValue = string.Empty;
+            //遍历数据并拼接
+            for (int i = startIndex; i < startIndex + length; i++)
+            {
+                //拼接数据
+                reValue += Convert.ToString(CommonMethod.BytesToUInt16(data, i));
+                i++;
+                reValue += montageSign;
+                ////拼接.（最后一个字节后不加.）
+                //if (i != (startIndex + length - 1) && loopCount == montageInterval)
+                //{
+                //    reValue += montageSign;
+                //    loopCount = 1;
+                //}
+                //else
+                //{
+                //    loopCount++;
+                //}
             }
 
             return reValue;

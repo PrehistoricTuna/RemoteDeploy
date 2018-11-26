@@ -53,7 +53,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(258, 48);
             this.label2.TabIndex = 2;
-            this.label2.Text = "Ver. 1.0.0.4\r\n\r\n©2018 TCT Co.,Ltd. Allrights Reserved.";
+            this.label2.Text = "Ver. 1.1.0.0\r\n\r\n©2018 TCT Co.,Ltd. Allrights Reserved.";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pictureBox1
