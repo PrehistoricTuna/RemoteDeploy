@@ -201,7 +201,7 @@ namespace RemoteDeploy.EquData
                         LogManager.InfoLog.LogProcInfo("VOBCProduct", "GenConfigHLHT", "未收到下位机允许上传回复超时或下位机拒绝上传文件");
                         Report.ReportWindow("VOBC" + m_productID + "未收到下位机允许上传回复超时或下位机拒绝上传文件");
                         CDeviceDataFactory.Instance.VobcContainer.SetProductState(Ip, Convert.ToInt32(Port), "更新失败");
-                        CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
+                        //CDeviceDataFactory.Instance.VobcContainer.dataModify.Color();
                         break;
                     }
                     else

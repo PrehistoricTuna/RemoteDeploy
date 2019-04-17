@@ -27,10 +27,11 @@ namespace RemoteDeploy.EquData
         }
 
         #region 成员变量
-
-        private KeyValuePair<string, string> m_atoBootRomPath = new KeyValuePair<string, string>( System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ato_bootloader.bin","/data/vau/ato");
-        private KeyValuePair<string, string> m_atoDataPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ato.fs", "/data/vau/ato");
-        private KeyValuePair<string, string> m_atoCorePath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ato_core", "/data/vau/ato");
+        
+        private KeyValuePair<string, string> m_atoBootRomPath = new KeyValuePair<string, string>( System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\bootloader.bin","/data/vau/ato");
+        private KeyValuePair<string, string> m_atoDataPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ato_1.fs", "/data/vau/ato");
+        
+        private KeyValuePair<string, string> m_atoCorePath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ATO_Bootloader.bin", "/data/vau/ato");
         private KeyValuePair<string, string> m_atoNvRamPath = new KeyValuePair<string, string>(System.Windows.Forms.Application.StartupPath + CShareLib.VOBC_GEN_FILEPATH + "\\ATO\\ato_nvram.txt", "/data/vau/ato");
         
         //执行部署的条件-防止重复执行（例如 2个ATO  只执行一次发送）
@@ -111,7 +112,7 @@ namespace RemoteDeploy.EquData
                         vobc.SkipFlag = true;
 
                         //不在执行过程中
-                        vobc.InProcess = false;
+                        //vobc.InProcess = false; Modified @ 10.16
 
                         //日志信息
                         string logMsg = "VOBC" + vobc.ProductID + " 子子系统设备:" + DeviceType + "的待发送文件不存在，文件地址应为：" + filePath;
